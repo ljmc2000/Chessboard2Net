@@ -19,6 +19,31 @@ setup(app, EncryptedCookieStorage(secret_key))
 async def on_startup(app):
 	await connection_pool.open()
 
+@routes.get('/info')
+async def get_info(request):
+	session = await get_session(request)
+	return web.json_response({
+		"username":session.get("username"),
+		"user_id":session.get("user_id"),
+	})
+
+@routes.post('/login')
+async def login(request):
+	session = await get_session(request)
+	data = await request.json()
+	username=data["username"]
+	password=data["password"]
+
+	async with connection_pool.connection() as db:
+		cur = await db.execute("select user_id, passhash from users where username=%s",(username,))
+		async for user_id, passhash in cur:
+			if bcrypt.checkpw(password.encode(),passhash.encode()):
+				session["user_id"]=user_id
+				session["username"]=username
+				return web.Response(status=200)
+			else:
+				return web.Response(status=401)
+
 @routes.post('/register')
 async def register(request):
 	data = await request.json()
