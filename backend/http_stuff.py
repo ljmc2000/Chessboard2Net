@@ -8,7 +8,7 @@ from psycopg.errors import *
 app = web.Application(middlewares=[generic_error_handler])
 routes = web.RouteTableDef()
 
-@routes.get('/info')
+@routes.get('/api/info')
 async def get_info(request):
 	session = await get_session(request)
 	user_id=session.get("user_id")
@@ -18,7 +18,7 @@ async def get_info(request):
 		"logged_in": user_id is not None,
 	})
 
-@routes.post('/login')
+@routes.post('/api/login')
 async def login(request):
 	session = await get_session(request)
 	data = await request.json()
@@ -34,7 +34,7 @@ async def login(request):
 				return web.Response(status=200)
 		return web.Response(status=401)
 
-@routes.post('/register')
+@routes.post('/api/register')
 async def register(request):
 	data = await request.json()
 	user_id=base64.b85encode(random.randbytes(25)).decode()
