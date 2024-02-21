@@ -4,7 +4,14 @@ from aiohttp import web
 from aiohttp_session import get_session
 from psycopg.errors import *
 
-app = web.Application()
+@web.middleware
+async def generic_error_handler(request,handler):
+	try:
+		await handler(request)
+	except KeyError:
+		return web.Response(status=400)
+
+app = web.Application(middlewares=[generic_error_handler])
 routes = web.RouteTableDef()
 
 @routes.get('/info')
@@ -31,8 +38,7 @@ async def login(request):
 				session["user_id"]=user_id
 				session["username"]=username
 				return web.Response(status=200)
-			else:
-				return web.Response(status=401)
+		return web.Response(status=401)
 
 @routes.post('/register')
 async def register(request):
