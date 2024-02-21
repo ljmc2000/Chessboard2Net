@@ -2,14 +2,8 @@ import base64, bcrypt, random
 
 from aiohttp import web
 from aiohttp_session import get_session
+from error_handling import generic_error_handler
 from psycopg.errors import *
-
-@web.middleware
-async def generic_error_handler(request,handler):
-	try:
-		await handler(request)
-	except KeyError:
-		return web.Response(status=400)
 
 app = web.Application(middlewares=[generic_error_handler])
 routes = web.RouteTableDef()
