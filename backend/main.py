@@ -1,63 +1,12 @@
-import base64, bcrypt, random
+import asyncio
+import aiohttp
+import database_stuff
+import http_stuff
+import session_stuff
 
-from aiohttp import web
-from aiohttp_session import setup, get_session, session_middleware
-from aiohttp_session.cookie_storage import EncryptedCookieStorage
-from cryptography import fernet
-from os import environ as ENV
-from psycopg.errors import *
-from psycopg_pool import AsyncConnectionPool
-
-app = web.Application()
-routes = web.RouteTableDef()
-connection_pool = AsyncConnectionPool(f"host={ENV['CHESSBOARDNET_DATABASE_HOST']} dbname=chessboardnet user=chessboardnet password={ENV['CHESSBOARDNET_DATABASE_PASSWORD']}",open=False)
-
-fernet_key = fernet.Fernet.generate_key()
-secret_key = base64.urlsafe_b64decode(fernet_key)
-setup(app, EncryptedCookieStorage(secret_key))
-
-async def on_startup(app):
-	await connection_pool.open()
-
-@routes.get('/info')
-async def get_info(request):
-	session = await get_session(request)
-	return web.json_response({
-		"username":session.get("username"),
-		"user_id":session.get("user_id"),
-	})
-
-@routes.post('/login')
-async def login(request):
-	session = await get_session(request)
-	data = await request.json()
-	username=data["username"]
-	password=data["password"]
-
-	async with connection_pool.connection() as db:
-		cur = await db.execute("select user_id, passhash from users where username=%s",(username,))
-		async for user_id, passhash in cur:
-			if bcrypt.checkpw(password.encode(),passhash.encode()):
-				session["user_id"]=user_id
-				session["username"]=username
-				return web.Response(status=200)
-			else:
-				return web.Response(status=401)
-
-@routes.post('/register')
-async def register(request):
-	data = await request.json()
-	user_id=base64.b85encode(random.randbytes(25)).decode()
-	username=data["username"]
-	passhash=bcrypt.hashpw(data["password"].encode(),bcrypt.gensalt()).decode()
-	async with connection_pool.connection() as db:
-		try:
-			cur = await db.execute("insert into users (user_id, username, passhash) values (%s, %s, %s)",(user_id, username, passhash))
-		except UniqueViolation as e:
-			return web.Response(status=409,text="Existing User Found")
-
-	return web.Response(status=200)
-
-app.on_startup.append(on_startup)
-app.add_routes(routes)
-web.run_app(app)
+loop=asyncio.get_event_loop()
+http_stuff.app.on_startup.append(database_stuff.on_startup)
+http_stuff.app.on_startup.append(session_stuff.on_startup)
+http_stuff.connection_pool=database_stuff.connection_pool
+loop.create_task(aiohttp.web._run_app(http_stuff.app))
+loop.run_forever()
