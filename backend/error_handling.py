@@ -1,8 +1,9 @@
-from aiohttp.web import middleware
+from aiohttp import web
+from json import JSONDecodeError
 
-@middleware
+@web.middleware
 async def generic_error_handler(request,handler):
 	try:
 		await handler(request)
-	except KeyError:
+	except (KeyError, JSONDecodeError):
 		return web.Response(status=400)
