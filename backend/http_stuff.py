@@ -1,4 +1,5 @@
-import base64, bcrypt, random
+import base64, bcrypt
+import websocket_stuff
 
 from aiohttp import web
 from aiohttp_session import get_session
@@ -12,6 +13,7 @@ routes = web.RouteTableDef()
 async def get_info(request):
 	session = await get_session(request)
 	user_id=session.get("user_id")
+
 	return web.json_response({
 		"username":session.get("username"),
 		"user_id":user_id,
@@ -47,5 +49,15 @@ async def register(request):
 			return web.Response(status=409,text="Existing User Found")
 
 	return web.Response(status=200)
+
+@routes.get('/api/ws')
+async def get_websocket(request):
+	try:
+		session = await get_session(request)
+		user_id = session["user_id"]
+	except KeyError:
+		return web.Response(status=401)
+
+	return await websocket_stuff.new_connection(user_id, request)
 
 app.add_routes(routes)
