@@ -3,3 +3,4 @@ aiohttp_session
 bcrypt
 psycopg
 psycopg_pool
+redis
