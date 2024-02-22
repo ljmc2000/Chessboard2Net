@@ -2,7 +2,7 @@ import base64, bcrypt
 import websocket_stuff
 
 from aiohttp import web
-from aiohttp_session import get_session
+from aiohttp_session import get_session, new_session
 from error_handling import generic_error_handler
 from psycopg.errors import *
 
@@ -22,7 +22,7 @@ async def get_info(request):
 
 @routes.post('/api/login')
 async def login(request):
-	session = await get_session(request)
+	session = await new_session(request)
 	data = await request.json()
 	username=data["username"]
 	password=data["password"]
