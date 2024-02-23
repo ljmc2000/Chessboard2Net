@@ -1,4 +1,5 @@
 logged_in="logged_in"
+login_token="login_token"
 password="password"
 user_id="user_id"
 username="username"
