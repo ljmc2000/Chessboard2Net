@@ -16,7 +16,10 @@ async def new_connection(user_id, request):
 async def yoohoo():
 	while True:
 		for ws in open_connections.values():
-			await ws.send_str("Connection open")
+			try:
+				await ws.send_str("Connection open")
+			except:
+				continue
 
 		await sleep(10)
 
