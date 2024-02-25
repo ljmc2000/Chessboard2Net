@@ -64,6 +64,6 @@ async def register(request):
 @routes.get('/api/ws')
 async def get_websocket(request):
 	user_id, username=await get_user(request, db_connection_pool)
-	return await websocket_stuff.new_connection(user_id, request)
+	return await websocket_stuff.new_connection(user_id, username, request)
 
 app.add_routes(routes)
