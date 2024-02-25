@@ -3,6 +3,8 @@ import base64, random
 
 from aiohttp.web import WebSocketResponse
 
+in_progress_games={}
+
 class ChessGame:
 
 	game_id: str
@@ -22,17 +24,25 @@ class ChessGame:
 				winner=self.p1 if user_id==self.p2 else self.p2
 				loser=user_id
 				message={c.instr:c.game_end, c.winner: winner, c.endstate:c.surrender}
+
 				await self.ws1.send_json(message)
+				self.ws1.handler=empty_handler
 				await self.ws2.send_json(message)
-				raise GameOver(winner, loser, c.surrender)
+				self.ws2.handler=empty_handler
 
-class GameOver(Exception):
-	winner: str
-	loser: str
-	endstate: str
+				return True
+			case _:
+				return False
 
-	def __init__(self, winner, loser, endstate, *args, **kargs):
-		super().__init__(*args, **kargs)
-		self.winner=winner
-		self.loser=loser
-		self.endstate=endstate
+async def empty_handler(ws, data, sender_id, sender_username):
+	pass
+
+def get_handler(ws, user_id):
+	if (cg:=in_progress_games.get(user_id)) is not None:
+		if cg.p1==user_id:
+			cg.ws1=ws
+		elif cg.p2==user_id:
+			cg.ws2=ws
+		return cg.packet_handler
+
+	return empty_handler

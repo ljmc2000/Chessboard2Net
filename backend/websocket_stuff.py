@@ -1,13 +1,11 @@
 import constants as c
+import chess_stuff
 
 from aiohttp.web import WebSocketResponse
-from aiosignal import Signal
 from asyncio import Queue, sleep
-from chess_stuff import ChessGame, GameOver
 from json import JSONDecodeError
 from websocket_utils import ConnectionTable, okay
 
-in_progress_games={}
 public_game_queue=Queue()
 open_connections=ConnectionTable()
 
@@ -33,30 +31,19 @@ async def default_handler(ws, data, sender_id, sender_username):
 			else:
 				await ws.send_json({c.instr: c.error, c.content: "User not found"})
 
-def get_handler(ws, user_id):
-	if (cg:=in_progress_games.get(user_id)) is not None:
-		if cg.p1==user_id:
-			cg.ws1=ws
-		else:
-			cg.ws2=ws
-		return cg.packet_handler
-
-	return default_handler
-
 async def new_connection(user_id, username, request):
 	ws = WebSocketResponse()
-	ws.handler=get_handler(ws, user_id)
+	ws.handler=chess_stuff.get_handler(ws, user_id)
 	await ws.prepare(request)
 	open_connections.put_connection(ws,user_id,username)
 
 	async for msg in ws:
 		try:
 			data=msg.json()
-			await ws.handler(ws, data, user_id, username)
+			if not await ws.handler(ws, data, user_id, username):
+				await default_handler(ws, data, user_id, username)
 		except JSONDecodeError:
 			await ws.send_json({c.instr:c.error, c.content:"JSON Decoding Error"})
-		except GameOver as e:
-			ws.handler=default_handler
 		except Exception as e:
 			await ws.send_json({c.instr:c.error})
 			raise e
@@ -73,9 +60,9 @@ async def make_pairs(queue):
 			queue.task_done()
 			continue
 
-		cg= ChessGame(p1,p2)
-		in_progress_games[p1]=cg
-		in_progress_games[p2]=cg
+		cg=chess_stuff.ChessGame(p1,p2)
+		chess_stuff.in_progress_games[p1]=cg
+		chess_stuff.in_progress_games[p2]=cg
 
 		instr={c.instr:c.game_start, c.game_id:cg.game_id}
 		if (c1:=open_connections.get_connection(p1)) is not None:
