@@ -14,7 +14,7 @@ routes = web.RouteTableDef()
 @routes.get('/api/info')
 async def get_info(request):
 	try:
-		user_id, username=await get_user(request, connection_pool)
+		user_id, username=await get_user(request, db_connection_pool)
 
 		return web.json_response({
 			c.username:username,
@@ -32,7 +32,7 @@ async def login(request):
 	username=data[c.username]
 	password=data[c.password]
 
-	async with connection_pool.connection() as db:
+	async with db_connection_pool.connection() as db:
 		cur = await db.execute("select user_id, passhash from users where username=%s",(username,))
 		async for user_id, passhash in cur:
 			if bcrypt.checkpw(password.encode(),passhash.encode()):
@@ -51,7 +51,7 @@ async def register(request):
 	password=data[c.password]
 	passhash=bcrypt.hashpw(password.encode(),bcrypt.gensalt()).decode()
 	login_token=gen_login_token()
-	async with connection_pool.connection() as db:
+	async with db_connection_pool.connection() as db:
 		try:
 			cur = await db.execute("insert into users (user_id, username, passhash, login_token) values (%s, %s, %s, %s)",(user_id, username, passhash, login_token))
 		except UniqueViolation as e:
@@ -63,7 +63,7 @@ async def register(request):
 
 @routes.get('/api/ws')
 async def get_websocket(request):
-	user_id, username=await get_user(request, connection_pool)
+	user_id, username=await get_user(request, db_connection_pool)
 	return await websocket_stuff.new_connection(user_id, request)
 
 app.add_routes(routes)
