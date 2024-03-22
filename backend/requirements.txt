@@ -1,4 +1,0 @@
-aiohttp
-bcrypt
-psycopg
-psycopg_pool
