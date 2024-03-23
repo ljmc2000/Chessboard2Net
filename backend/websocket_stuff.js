@@ -16,23 +16,6 @@ function parse_cookies(request) {
 	return cookies
 }
 
-async function verify_client(info, mark_safe)
-{
-	try {
-		var cookies = parse_cookies(info.req)
-		var result = await db_pool.query("select * from users where login_token=$1", [cookies.login_token])
-		if(result.rowCount!=1) {
-			mark_safe(false, 401, 'Unauthorized')
-		}
-		else {
-			mark_safe(true)
-		}
-	}
-	catch (ex) {
-		console.error(ex)
-	}
-}
-
 export default (http_server, db_pool) => {
 	const ws_server = new WebSocketServer({noServer: true,
 		verifyClient: async function(info, mark_safe)
@@ -44,6 +27,10 @@ export default (http_server, db_pool) => {
 					mark_safe(false, 401, 'Unauthorized')
 				}
 				else {
+					info.req.user={
+						user_id: result.rows[0].user_id,
+						username: result.rows[0].username,
+					}
 					mark_safe(true)
 				}
 			}
@@ -65,7 +52,7 @@ export default (http_server, db_pool) => {
 		ws.on('error', console.error);
 
 		ws.on('message', (message) => {
-			ws.send(JSON.stringify({message: 'There be gold in them thar hills.'}));
+			ws.send(JSON.stringify({message: 'There be gold in them thar hills.', user_id: request.user.user_id}));
 		})
 	})
 
