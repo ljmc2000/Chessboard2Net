@@ -1,33 +1,20 @@
-const express = require('express')
-const ws = require('ws')
+import express from 'express'
+import pg from 'pg'
+import {WebSocketServer} from 'ws'
 
+import login_stuff from './login_stuff.js'
+import websocket_stuff from './websocket_stuff.js'
 
 const app = express()
-const ws_server = new ws.WebSocketServer({noServer: true})
 const http_server = app.listen(3000)
-
-
-http_server.on('upgrade', (request, socket, head) => {
-  socket.on('error', console.error);
-
-  if(request.url==='/api/ws')
-  {
-    ws_server.handleUpgrade(request, socket, head, (ws) => {
-      ws_server.emit('connection', ws, request)
-    })
-  }
+const ws_server = new WebSocketServer({noServer: true})
+const db_pool = new pg.Pool({
+  user: 'chessboardnet',
+  password: process.env.CHESSBOARDNET_DATABASE_PASSWORD,
+  host: process.env.CHESSBOARDNET_DATABASE_HOST,
+  database: 'chessboardnet',
+  port:5432,
 })
-
-
-ws_server.on('connection',(ws, request, client) => {
-    ws.on('error', console.error);
-
-    ws.on('message', (message) => {
-      ws.send(JSON.stringify({message: 'There be gold in them thar hills.'}));
-    })
-  }
-)
-
-app.get('/api/test', (req, res) => {
-  res.send({working: true})
-})
+app.use(express.json())
+login_stuff(app,db_pool)
+websocket_stuff(http_server, ws_server)

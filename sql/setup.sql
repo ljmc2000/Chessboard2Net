@@ -4,3 +4,5 @@ create table users (
 	passhash character(60),
 	login_token character(48)
 );
+
+--grant select,insert,update on users
