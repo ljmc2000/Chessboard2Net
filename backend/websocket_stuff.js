@@ -1,4 +1,8 @@
 import {WebSocketServer} from 'ws'
+import EventEmitter from 'node:events'
+
+
+const universe = new EventEmitter()
 
 function parse_cookies(request) {
 	var raw = request.headers.cookie
@@ -14,6 +18,22 @@ function parse_cookies(request) {
 		cookies[name] = decodeURIComponent(value)
 	}
 	return cookies
+}
+
+function handle_message(sender, ws, message) {
+	try {
+		var data = JSON.parse(message)
+		switch(data.instr) {
+			case 'tell_all':
+
+				break
+
+		}
+	}
+	catch (err) {
+		ws.send(JSON.stringify({instr:'error'}))
+		console.error(err)
+	}
 }
 
 export default (http_server, db_pool) => {
@@ -48,12 +68,20 @@ export default (http_server, db_pool) => {
 		})
 	})
 
-	ws_server.on('connection',(ws, request, client) => {
-		ws.on('error', console.error);
-
-		ws.on('message', (message) => {
-			ws.send(JSON.stringify({message: 'There be gold in them thar hills.', user_id: request.user.user_id}));
+	ws_server.on('connection', (ws, request, client) => {
+		ws.on('error', console.error)
+		ws.on('message', (buffer) => {
+			try {
+				var data = JSON.parse(buffer)
+				universe.emit(data.instr, request.user, data)
+			}
+			catch (err) {
+				ws.send(JSON.stringify({instr: 'error'}))
+				console.error(err)
+			}
 		})
+
+		universe.on('tell_all', async (sender, data)=>ws.send(JSON.stringify({instr: 'tell_all', message:data.message})))
 	})
 
 
