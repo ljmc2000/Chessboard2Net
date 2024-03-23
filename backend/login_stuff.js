@@ -4,8 +4,10 @@ import { randomBytes } from 'crypto'
 
 import * as c from './constants.js '
 
-function gen_login_token() {
-	return base85.encode(randomBytes(40)).substring(0,48)
+function set_login_token(resp) {
+	var login_token=base85.encode(randomBytes(40)).substring(0,48)
+	resp.cookie(c.LOGIN_TOKEN,login_token, {httpOnly: true, secure: true})
+	return login_token
 }
 
 export default function (app,db_pool) {
@@ -17,10 +19,9 @@ export default function (app,db_pool) {
 		try {
 			var result=await db_pool.query("select * from users where username=$1",[req.body.username])
 			if(result.rowCount==1 && await bcrypt.compare(req.body.password,result.rows[0].passhash)) {
-				var login_token = gen_login_token()
+				var login_token = set_login_token(resp)
 				var user_id=result.rows[0].user_id
 				await db_pool.query("update users set login_token=$1 where user_id=$2",[login_token, user_id])
-				resp.cookie(c.LOGIN_TOKEN,login_token)
 				resp.status(200).send('')
 			}
 			else {
@@ -38,10 +39,9 @@ export default function (app,db_pool) {
 			var user_id = base85.encode(randomBytes(28)).substring(0,32)
 			var password_salt = await bcrypt.genSalt()
 			var passhash = await bcrypt.hash(req.body.password,password_salt)
-			var login_token = gen_login_token()
+			var login_token = set_login_token(resp)
 			var result=await db_pool.query("insert into users (user_id, username, passhash, login_token) values ($1,$2,$3,$4)", [user_id, req.body.username, passhash, login_token])
 
-			resp.cookie(c.LOGIN_TOKEN,login_token)
 			resp.status(200).send('')
 		}
 		catch (err) {
