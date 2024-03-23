@@ -1,3 +1,4 @@
+import cookie_parser from 'cookie-parser'
 import express from 'express'
 import pg from 'pg'
 import {WebSocketServer} from 'ws'
@@ -16,6 +17,8 @@ const db_pool = new pg.Pool({
   database: 'chessboardnet',
   port:5432,
 })
+
+app.use(cookie_parser())
 app.use(express.json())
 login_stuff(app,db_pool)
 websocket_stuff(http_server, ws_server)
