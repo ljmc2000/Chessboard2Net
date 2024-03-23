@@ -15,6 +15,26 @@ export default function (app,db_pool) {
 		res.send({working: true})
 	})
 
+	app.get('/api/selfinfo', async (req, resp, on_error) => {
+		try {
+			var result = await db_pool.query("select * from users where login_token=$1",[req.cookies.login_token])
+			if(result.rowCount==1) {
+				var user = result.rows[0]
+				resp.json({
+					user_id: user.user_id,
+					username: user.username,
+					logged_in: true,
+				})
+			}
+			else {
+				resp.json({logged_in: false})
+			}
+		}
+		catch(err) {
+			on_error(err)
+		}
+	})
+
 	app.post('/api/login', async (req, resp, on_error) => {
 		try {
 			var result=await db_pool.query("select * from users where username=$1",[req.body.username])
