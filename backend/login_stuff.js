@@ -9,8 +9,27 @@ function gen_login_token() {
 }
 
 export default function (app,db_pool) {
-	app.get('/api/test', (request, response, on_error) => {
+	app.get('/api/test', (req, resp, on_error) => {
 		res.send({working: true})
+	})
+
+	app.post('/api/login', async (req, resp, on_error) => {
+		try {
+			var result=await db_pool.query("select * from users where username=$1",[req.body.username])
+			if(result.rowCount==1 && await bcrypt.compare(req.body.password,result.rows[0].passhash)) {
+				var login_token = gen_login_token()
+				var user_id=result.rows[0].user_id
+				await db_pool.query("update users set login_token=$1 where user_id=$2",[login_token, user_id])
+				resp.cookie(c.LOGIN_TOKEN,login_token)
+				resp.status(200).send('')
+			}
+			else {
+				resp.status(401).send('')
+			}
+		}
+		catch(err) {
+			on_error(err)
+		}
 	})
 
 	app.post('/api/register', async (req, resp, on_error) => {
@@ -23,8 +42,7 @@ export default function (app,db_pool) {
 			var result=await db_pool.query("insert into users (user_id, username, passhash, login_token) values ($1,$2,$3,$4)", [user_id, req.body.username, passhash, login_token])
 
 			resp.cookie(c.LOGIN_TOKEN,login_token)
-			resp.status(200)
-			resp.send('')
+			resp.status(200).send('')
 		}
 		catch (err) {
 			if(err.constructor.name=='DatabaseError') {
