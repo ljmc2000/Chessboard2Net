@@ -1,8 +1,5 @@
 import {WebSocketServer} from 'ws'
-import EventEmitter from 'node:events'
-
-
-const universe = new EventEmitter()
+import * as ev_stuff from './event_stuff.js'
 
 function parse_cookies(request) {
 	var raw = request.headers.cookie
@@ -20,20 +17,18 @@ function parse_cookies(request) {
 	return cookies
 }
 
-function handle_message(sender, ws, message) {
-	try {
-		var data = JSON.parse(message)
-		switch(data.instr) {
-			case 'tell_all':
-
-				break
-
-		}
+function forward(ws, instr) {
+	return async function(sender, data) {
+		ws.send(JSON.stringify({instr: instr, sender: sender, message:data.message}))
 	}
-	catch (err) {
-		ws.send(JSON.stringify({instr:'error'}))
-		console.error(err)
-	}
+}
+
+function subscribe_user_evloop(ws, user_evloop) {
+	user_evloop.on('tell', forward(ws, 'tell'))
+}
+
+function subscribe_universe_evloop(ws) {
+	ev_stuff.universe.on('tell_all', forward(ws, 'tell_all'))
 }
 
 export default (http_server, db_pool) => {
@@ -69,19 +64,28 @@ export default (http_server, db_pool) => {
 	})
 
 	ws_server.on('connection', (ws, request, client) => {
+		var user_evloop = ev_stuff.register_user_evloop(request.user)
+		subscribe_user_evloop(ws, user_evloop)
+		subscribe_universe_evloop(ws)
+
 		ws.on('error', console.error)
 		ws.on('message', (buffer) => {
 			try {
 				var data = JSON.parse(buffer)
-				universe.emit(data.instr, request.user, data)
+				if(data.target==null) {
+					ev_stuff.universe.emit(data.instr, request.user, data)
+				}
+				else {
+					var target_evloop = ev_stuff.get_user_evloop_by_username(data.target)
+					if(target_evloop!=null)
+						target_evloop.emit(data.instr, request.user, data)
+				}
 			}
 			catch (err) {
 				ws.send(JSON.stringify({instr: 'error'}))
 				console.error(err)
 			}
 		})
-
-		universe.on('tell_all', async (sender, data)=>ws.send(JSON.stringify({instr: 'tell_all', message:data.message})))
 	})
 
 
