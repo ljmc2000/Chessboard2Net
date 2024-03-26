@@ -53,6 +53,19 @@ export default function (app,db_pool) {
 		}
 	})
 
+	app.get('/api/logout', async (req, resp, on_error) => {
+		try {
+			var result = await db_pool.query("update users set login_token=null where login_token=$1",[req.cookies.login_token])
+			if(result.rowCount!=0)
+				resp.status(200).send('')
+			else
+				resp.status(404).send('')
+		}
+		catch(err) {
+			on_error(err)
+		}
+	})
+
 	app.post('/api/register', async (req, resp, on_error) => {
 
 		try {
