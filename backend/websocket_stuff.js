@@ -3,7 +3,10 @@ import * as ev_stuff from './event_stuff.js'
 
 function parse_cookies(request) {
 	var raw = request.headers.cookie
-	var cookies = []
+	if(!raw)
+		return {}
+
+	var cookies = {}
 	for(var cookie of raw.split(`;`)) {
 		let [ name, ...rest] = cookie.split(`=`)
 		name = name?.trim()
@@ -37,6 +40,11 @@ export default (http_server, db_pool) => {
 		{
 			try {
 				var cookies = parse_cookies(info.req)
+				if(!cookies.login_token){
+					mark_safe(false, 401, 'Unauthorized')
+					return
+				}
+
 				var result = await db_pool.query("select * from users where login_token=$1", [cookies.login_token])
 				if(result.rowCount!=1) {
 					mark_safe(false, 401, 'Unauthorized')
@@ -51,6 +59,7 @@ export default (http_server, db_pool) => {
 			}
 			catch (ex) {
 				console.error(ex)
+				mark_safe(false, 500, 'Server Error')
 			}
 		}
 	})
