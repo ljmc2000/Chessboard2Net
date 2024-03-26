@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
+import {Router} from "@angular/router"
+
 import * as I from 'shared/instructions';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChessWebsocketHandlerService extends WebSocket{
-  constructor() {
+  constructor(private router: Router) {
     super(`ws://${window.location.host}/api`)
     this.onmessage=this.onMessage;
     this.onerror=this.onError;
@@ -16,7 +18,7 @@ export class ChessWebsocketHandlerService extends WebSocket{
     var data = JSON.parse(message.data)
     switch(data.instr) {
       case I.AUTH:
-        console.log("you should authenticate");
+        this.router.navigate(['/login'])
         break;
       default:
         console.log(data.instr);
