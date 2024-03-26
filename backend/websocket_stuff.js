@@ -2,7 +2,7 @@ import {WebSocketServer} from 'ws'
 import * as ev_stuff from './event_stuff.js'
 import * as I from './shared/instructions.js'
 
-async function get_user(request) {
+async function get_user(request, db_pool) {
 	var cookies = parse_cookies(request)
 	if(!cookies.login_token){
 		return null
@@ -84,7 +84,7 @@ export default (http_server, db_pool) => {
 	})
 
 	ws_server.on('connection', async (ws, request, client) => {
-		var user=await get_user(request)
+		var user=await get_user(request, db_pool)
 		if(user==null) {
 			ws.send(JSON.stringify({instr: I.AUTH}))
 		}
