@@ -6,7 +6,7 @@ import * as c from './constants.js '
 
 function set_login_token(resp) {
 	var login_token=base85.encode(randomBytes(40)).substring(0,48)
-	resp.cookie(c.LOGIN_TOKEN,login_token, {httpOnly: true, secure: true})
+	resp.cookie(c.LOGIN_TOKEN,login_token, {httpOnly: true, secure: true, maxAge: 2592000}) //30 days
 	return login_token
 }
 
