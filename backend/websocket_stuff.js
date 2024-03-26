@@ -1,5 +1,25 @@
 import {WebSocketServer} from 'ws'
 import * as ev_stuff from './event_stuff.js'
+import * as I from './shared/instructions.js'
+
+async function get_user(request) {
+	var cookies = parse_cookies(request)
+	if(!cookies.login_token){
+		return null
+	}
+
+	var db_result = await db_pool.query("select * from users where login_token=$1", [cookies.login_token])
+
+	if(db_result.rowCount!=1) {
+		return null
+	}
+	else {
+		return {
+			user_id: db_result.rows[0].user_id,
+			username: db_result.rows[0].username,
+		}
+	}
+}
 
 function parse_cookies(request) {
 	var raw = request.headers.cookie
@@ -34,35 +54,26 @@ function subscribe_universe_evloop(ws) {
 	ev_stuff.universe.on('tell_all', forward(ws, 'tell_all'))
 }
 
-export default (http_server, db_pool) => {
-	const ws_server = new WebSocketServer({noServer: true,
-		verifyClient: async function(info, mark_safe)
-		{
-			try {
-				var cookies = parse_cookies(info.req)
-				if(!cookies.login_token){
-					mark_safe(false, 401, 'Unauthorized')
-					return
-				}
-
-				var result = await db_pool.query("select * from users where login_token=$1", [cookies.login_token])
-				if(result.rowCount!=1) {
-					mark_safe(false, 401, 'Unauthorized')
-				}
-				else {
-					info.req.user={
-						user_id: result.rows[0].user_id,
-						username: result.rows[0].username,
-					}
-					mark_safe(true)
-				}
-			}
-			catch (ex) {
-				console.error(ex)
-				mark_safe(false, 500, 'Server Error')
-			}
+function onMessage(buffer) {
+	try {
+		var data = JSON.parse(buffer)
+		if(data.target==null) {
+			ev_stuff.universe.emit(data.instr, request.user, data)
 		}
-	})
+		else {
+			var target_evloop = ev_stuff.get_user_evloop_by_username(data.target)
+			if(target_evloop!=null)
+				target_evloop.emit(data.instr, request.user, data)
+		}
+	}
+	catch (err) {
+		ws.send(JSON.stringify({instr: 'error'}))
+		console.error(err)
+	}
+}
+
+export default (http_server, db_pool) => {
+	const ws_server = new WebSocketServer({noServer: true})
 
 	http_server.on('upgrade', async (request, socket, head) => {
 		socket.on('error', console.error);
@@ -72,29 +83,19 @@ export default (http_server, db_pool) => {
 		})
 	})
 
-	ws_server.on('connection', (ws, request, client) => {
-		var user_evloop = ev_stuff.register_user_evloop(request.user)
-		subscribe_user_evloop(ws, user_evloop)
-		subscribe_universe_evloop(ws)
+	ws_server.on('connection', async (ws, request, client) => {
+		var user=await get_user(request)
+		if(user==null) {
+			ws.send(JSON.stringify({instr: I.AUTH}))
+		}
+		else {
+			var user_evloop = ev_stuff.register_user_evloop(request.user)
+			subscribe_user_evloop(ws, user_evloop)
+			subscribe_universe_evloop(ws)
 
-		ws.on('error', console.error)
-		ws.on('message', (buffer) => {
-			try {
-				var data = JSON.parse(buffer)
-				if(data.target==null) {
-					ev_stuff.universe.emit(data.instr, request.user, data)
-				}
-				else {
-					var target_evloop = ev_stuff.get_user_evloop_by_username(data.target)
-					if(target_evloop!=null)
-						target_evloop.emit(data.instr, request.user, data)
-				}
-			}
-			catch (err) {
-				ws.send(JSON.stringify({instr: 'error'}))
-				console.error(err)
-			}
-		})
+			ws.on('error', console.error)
+			ws.on('message', onMessage)
+		}
 	})
 
 
