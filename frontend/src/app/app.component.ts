@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ChessWebsocketHandlerService } from './chess-websocket-handler.service';
+
 
 @Component({
   selector: 'app-root',
@@ -11,7 +11,4 @@ import { ChessWebsocketHandlerService } from './chess-websocket-handler.service'
 })
 export class AppComponent {
   title = 'Chessboard2Net';
-
-  constructor(private ws: ChessWebsocketHandlerService) {
-  }
 }

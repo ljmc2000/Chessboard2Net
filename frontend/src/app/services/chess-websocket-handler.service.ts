@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as I from './shared/instructions';
+import * as I from 'shared/instructions';
 
 @Injectable({
   providedIn: 'root'
