@@ -40,18 +40,16 @@ function parse_cookies(request) {
 	return cookies
 }
 
-function forward(ws, instr) {
-	return async function(sender, data) {
-		ws.send(JSON.stringify({instr: instr, sender: sender, message:data.message}))
-	}
-}
-
 function subscribe_user_evloop(ws, user_evloop) {
-	user_evloop.on(I.TELL, forward(ws, I.TELL))
+	user_evloop.on(I.TELL,(sender, data)=>{
+		ws.send(JSON.stringify({instr: I.TELL, sender: sender, content:data.content}))
+	})
 }
 
 function subscribe_universe_evloop(ws) {
-	ev_stuff.universe.on(I.TELL_ALL, forward(ws, I.TELL_ALL))
+	ev_stuff.universe.on(I.TELL_ALL, (sender, data)=>{
+		ws.send(JSON.stringify({instr: I.TELL_ALL, sender: sender, content:data.content}))
+	})
 }
 
 export default (http_server, db_pool) => {
@@ -79,13 +77,14 @@ export default (http_server, db_pool) => {
 			ws.on('message', buffer=>{
 				try {
 					var data = JSON.parse(buffer)
+
 					if(data.target==null) {
-						ev_stuff.universe.emit(data.instr, request.user, data)
+						ev_stuff.universe.emit(data.instr, user, data)
 					}
 					else {
 						var target_evloop = ev_stuff.get_user_evloop_by_username(data.target)
 						if(target_evloop!=null)
-							target_evloop.emit(data.instr, request.user, data)
+							target_evloop.emit(data.instr, user, data)
 					}
 				}
 				catch (err) {
