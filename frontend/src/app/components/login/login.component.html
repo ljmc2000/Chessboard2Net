@@ -16,6 +16,7 @@
     </form>
     <div class="login_error" [ngSwitch]="issue">
       <div *ngSwitchCase="401">Invalid username or password</div>
+      <div *ngSwitchCase="500">Problem reaching authentication server. Please try again later.</div>
     </div>
   </mat-card-content>
 </mat-card>
