@@ -1,3 +1,11 @@
 <html><body>
-  <router-outlet></router-outlet>
+  <mat-toolbar class="page_header">
+    <a href="/" mat-fab><mat-icon class="pagelogo" svgIcon="favicon"></mat-icon></a>
+    <span class="flexExpand"></span>
+    <button (onclick)="logout()" mat-button>Logout</button>
+  </mat-toolbar>
+
+  <div class="page_content">
+    <router-outlet></router-outlet>
+  </div>
 </body></html>
