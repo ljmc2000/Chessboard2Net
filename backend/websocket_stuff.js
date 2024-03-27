@@ -47,29 +47,11 @@ function forward(ws, instr) {
 }
 
 function subscribe_user_evloop(ws, user_evloop) {
-	user_evloop.on('tell', forward(ws, 'tell'))
+	user_evloop.on(I.TELL, forward(ws, I.TELL))
 }
 
 function subscribe_universe_evloop(ws) {
-	ev_stuff.universe.on('tell_all', forward(ws, 'tell_all'))
-}
-
-function onMessage(buffer) {
-	try {
-		var data = JSON.parse(buffer)
-		if(data.target==null) {
-			ev_stuff.universe.emit(data.instr, request.user, data)
-		}
-		else {
-			var target_evloop = ev_stuff.get_user_evloop_by_username(data.target)
-			if(target_evloop!=null)
-				target_evloop.emit(data.instr, request.user, data)
-		}
-	}
-	catch (err) {
-		ws.send(JSON.stringify({instr: 'error'}))
-		console.error(err)
-	}
+	ev_stuff.universe.on(I.TELL_ALL, forward(ws, I.TELL_ALL))
 }
 
 export default (http_server, db_pool) => {
@@ -94,7 +76,23 @@ export default (http_server, db_pool) => {
 			subscribe_universe_evloop(ws)
 
 			ws.on('error', console.error)
-			ws.on('message', onMessage)
+			ws.on('message', buffer=>{
+				try {
+					var data = JSON.parse(buffer)
+					if(data.target==null) {
+						ev_stuff.universe.emit(data.instr, request.user, data)
+					}
+					else {
+						var target_evloop = ev_stuff.get_user_evloop_by_username(data.target)
+						if(target_evloop!=null)
+							target_evloop.emit(data.instr, request.user, data)
+					}
+				}
+				catch (err) {
+					console.error(err)
+					ws.send(JSON.stringify({instr: 'error'}))
+				}
+			})
 		}
 	})
 
