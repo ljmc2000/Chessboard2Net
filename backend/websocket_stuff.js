@@ -89,7 +89,7 @@ export default (http_server, db_pool) => {
 			ws.send(JSON.stringify({instr: I.AUTH}))
 		}
 		else {
-			var user_evloop = ev_stuff.register_user_evloop(request.user)
+			var user_evloop = ev_stuff.register_user_evloop(user)
 			subscribe_user_evloop(ws, user_evloop)
 			subscribe_universe_evloop(ws)
 
