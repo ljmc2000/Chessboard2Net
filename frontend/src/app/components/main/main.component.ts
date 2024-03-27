@@ -17,5 +17,6 @@ export class MainComponent implements WebsocketConsumer {
 
   onChatMessage(message: ChatMessage) {
     alert(`${message.sender.username} says ${message.content}`);
+    console.log(message)
   }
 }

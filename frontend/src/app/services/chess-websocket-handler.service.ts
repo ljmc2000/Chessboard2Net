@@ -29,7 +29,6 @@ export class ChessWebsocketHandlerService extends WebSocket{
         this.router.navigate(['/login']);
         break;
       case I.TELL:
-      case I.TELL_ALL:
         this.consumer.onChatMessage(data as ChatMessage);
         break;
       default:
