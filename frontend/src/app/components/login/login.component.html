@@ -1,22 +1,40 @@
-<mat-card class="example-card">
-  <mat-card-header>
-    <mat-card-title>Login</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+  <mat-tab label="Login">
     <form class="form-group" #loginForm="ngForm" (ngSubmit)="userService.login(this)">
-      <mat-form-field class="example-full-width">
+      <mat-form-field>
         <input matInput minlength="5" placeholder="Username" name="username" [(ngModel)]="username" required>
       </mat-form-field>
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field>
         <input matInput minlength="8" placeholder="Password" type="password" name="password" [(ngModel)]="password" required>
       </mat-form-field>
 
       <button mat-raised-button color="primary" [disabled]="!loginForm.valid">Login</button>
     </form>
-    <div class="login_error" [ngSwitch]="issue">
-      <div *ngSwitchCase="401">Invalid username or password</div>
-      <div *ngSwitchCase="500">Problem reaching authentication server. Please try again later.</div>
-    </div>
-  </mat-card-content>
-</mat-card>
+  </mat-tab>
+
+  <mat-tab label="Register">
+    <form class="form-group" #loginForm="ngForm" (ngSubmit)="userService.register(this)">
+      <mat-form-field>
+        <input matInput minlength="5" placeholder="Username" name="username" [(ngModel)]="username" required>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput minlength="8" placeholder="Password" type="password" name="password" [(ngModel)]="password" required>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput minlength="8" placeholder="Confirm Password" type="password" name="confirmPassword" [(ngModel)]="confirmPassword" required>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" [disabled]="!loginForm.valid || password != confirmPassword">Login</button>
+    </form>
+    <div *ngIf="password != confirmPassword">Passwords must match</div>
+  </mat-tab>
+</mat-tab-group>
+
+<div class="login_error" [ngSwitch]="issue">
+  <div *ngSwitchCase="401">Invalid username or password</div>
+  <div *ngSwitchCase="409">Existing user found</div>
+  <div *ngSwitchCase="500">Problem reaching authentication server. Please try again later.</div>
+</div>
