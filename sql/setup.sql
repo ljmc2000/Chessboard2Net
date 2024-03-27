@@ -1,8 +1,10 @@
 create table users (
 	user_id character(32) primary key,
-	username text unique,
+	username text,
 	passhash character(60),
 	login_token character(48)
 );
+
+create unique index case_insensitive_usernames on users (upper(username));
 
 --grant select,insert,update on users
