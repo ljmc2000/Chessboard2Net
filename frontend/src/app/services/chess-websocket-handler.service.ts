@@ -41,5 +41,6 @@ export class ChessWebsocketHandlerService extends WebSocket{
   }
 
   onClose() {
+    setTimeout(()=>location.reload(), 5000)
   }
 }
