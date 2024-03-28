@@ -18,6 +18,10 @@ export class ChessWebsocketHandlerService extends WebSocket{
     this.onclose=this.onClose;
   }
 
+  public sendChatMessage(content: string, target?: string) {
+    this.send(JSON.stringify({instr: I.TELL, content: content, target: target}))
+  }
+
   public subscribeToWS(consumer: WebsocketConsumer) {
     this.consumer=consumer;
   }

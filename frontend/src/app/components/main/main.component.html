@@ -1,1 +1,17 @@
-<p>main works!</p>
+<div id="chat">
+  <div *ngFor="let message of chatLog; index as i">
+    <span class="message_sender_name">
+      {{message.sender.username}}:
+    </span>
+    <span class="message_content">
+      {{message.content}}
+    </span>
+  </div>
+</div>
+
+<form #messageForm="ngForm" (ngSubmit)="sendChatMessage()">
+  <mat-form-field id="chat_input">
+    <input matInput minlength="5" name="chat_message" [(ngModel)]="chatMessageContent" required>
+    <button matSuffix mat-raised-button color="primary" [disabled]="chatMessageContent.length==0">Send</button>
+  </mat-form-field>
+</form>

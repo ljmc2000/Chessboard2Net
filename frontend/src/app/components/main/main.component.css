@@ -1,0 +1,24 @@
+#chat {
+  border: 1px solid black;
+  height: 75%;
+  width: 90%;
+  left: 5%;
+  right: 5%;
+  position: fixed;
+  overflow: scroll;
+}
+
+#chat_input {
+  position: fixed;
+  bottom: 0;
+  left: 5%;
+  right: 5%;
+  width: 90%;
+}
+
+.message_sender_name {
+  font-weight: bold;
+}
+
+.message_content {
+}
