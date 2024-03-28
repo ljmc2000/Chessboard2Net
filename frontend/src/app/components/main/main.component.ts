@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
+import { CommandInterpreterService } from 'services/command-interpreter.service';
 import { WebsocketConsumer } from 'models/websocket-consumer';
 import { ChatMessage } from 'models/chat-message'
 import { ON_JOIN_MESSAGE } from 'constants/standard-messages';
@@ -24,7 +25,7 @@ export class MainComponent implements WebsocketConsumer {
   chatMessageContent: string='';
   chatLog: ChatMessage[] = [ON_JOIN_MESSAGE];
 
-  constructor(private ws: ChessWebsocketHandlerService) {
+  constructor(private ws: ChessWebsocketHandlerService, private cli: CommandInterpreterService) {
     ws.subscribeToWS(this);
   }
 
@@ -33,14 +34,13 @@ export class MainComponent implements WebsocketConsumer {
   }
 
   sendChatMessage() {
-    var whisper = WhisperPattern.exec(this.chatMessageContent)
-    if(whisper) {
-      this.ws.sendChatMessage(whisper[2], whisper[1]);
+    if(this.chatMessageContent.startsWith("\\")) {
+      var msg = this.cli.interpretCommand(this.chatMessageContent);
+      if(msg) this.chatLog.push(msg)
     }
     else {
       this.ws.sendChatMessage(this.chatMessageContent);
     }
-
     this.chatMessageContent='';
   }
 }

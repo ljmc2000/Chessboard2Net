@@ -42,13 +42,13 @@ function parse_cookies(request) {
 
 function subscribe_user_evloop(ws, user_evloop) {
 	user_evloop.on(I.TELL,(sender, data)=>{
-		ws.send(JSON.stringify({instr: I.TELL, sender: sender, content:data.content, global: false}))
+		ws.send(JSON.stringify({instr: I.TELL, sender: sender, content:data.content, secret_message: true}))
 	})
 }
 
 function subscribe_universe_evloop(ws) {
 	ev_stuff.universe.on(I.TELL, (sender, data)=>{
-		ws.send(JSON.stringify({instr: I.TELL, sender: sender, content:data.content, global: true}))
+		ws.send(JSON.stringify({instr: I.TELL, sender: sender, content:data.content}))
 	})
 }
 

@@ -3,7 +3,7 @@
     <span class="message_sender_name" *ngIf="message.sender!=null">
       {{message.sender.username}}:
     </span>
-    <span class="system_message" *ngIf="message.sender==null">
+    <span class="system_message" *ngIf="message.system_message">
       SYSTEM:
     </span>
     <span class="message_content">
