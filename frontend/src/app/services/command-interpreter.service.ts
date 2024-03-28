@@ -14,17 +14,19 @@ export class CommandInterpreterService {
 
   constructor(private ws: ChessWebsocketHandlerService) { }
 
-  interpretCommand(command: string): ChatMessage | null {
+  interpretCommand(command: string, log: ChatMessage[]): boolean {
     var match;
     if (match=HelpPattern.exec(command)) {
-      return HELP_MESSAGE;
+      log.push(HELP_MESSAGE);
+      return false;
     }
     else if(match=WhisperPattern.exec(command)) {
       this.ws.sendChatMessage(match[2], match[1]);
-      return null;
+      return false;
     }
     else {
-      return COMMAND_ERROR_MESSAGE;
+      log.push(COMMAND_ERROR_MESSAGE);
+      return true;
     }
   }
 }

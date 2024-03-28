@@ -35,12 +35,12 @@ export class MainComponent implements WebsocketConsumer {
 
   sendChatMessage() {
     if(this.chatMessageContent.startsWith("\\")) {
-      var msg = this.cli.interpretCommand(this.chatMessageContent);
-      if(msg) this.chatLog.push(msg)
+      var problem = this.cli.interpretCommand(this.chatMessageContent, this.chatLog);
+      if(!problem) this.chatMessageContent='';
     }
     else {
       this.ws.sendChatMessage(this.chatMessageContent);
+      this.chatMessageContent='';
     }
-    this.chatMessageContent='';
   }
 }
