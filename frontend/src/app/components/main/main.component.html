@@ -1,5 +1,5 @@
 <div id="chat">
-  <div *ngFor="let message of chatLog; index as i">
+  <div *ngFor="let message of chatLog; index as i" [ngClass]="message.secret_message?'secret_message':'message'">
     <span class="message_sender_name" *ngIf="message.sender!=null">
       {{message.sender.username}}:
     </span>

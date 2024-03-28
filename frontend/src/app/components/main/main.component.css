@@ -25,5 +25,9 @@
   color: red;
 }
 
+.secret_message {
+  background-color: pink;
+}
+
 .message_content {
 }

@@ -41,8 +41,10 @@ function parse_cookies(request) {
 }
 
 function subscribe_user_evloop(ws, user_evloop) {
-	user_evloop.on(I.TELL,(sender, data)=>{
-		ws.send(JSON.stringify({instr: I.TELL, sender: sender, content:data.content, secret_message: true}))
+	user_evloop.on(I.TELL,(sender, sender_ws, data)=>{
+		var packet = JSON.stringify({instr: I.TELL, sender: sender, content:data.content, secret_message: true})
+		ws.send(packet)
+		sender_ws.send(packet)
 	})
 }
 
@@ -84,7 +86,7 @@ export default (http_server, db_pool) => {
 					else {
 						var target_evloop = ev_stuff.get_user_evloop_by_username(data.target)
 						if(target_evloop!=null)
-							target_evloop.emit(data.instr, user, data)
+							target_evloop.emit(data.instr, user, ws, data)
 					}
 				}
 				catch (err) {
