@@ -1,7 +1,10 @@
 <div id="chat">
   <div *ngFor="let message of chatLog; index as i">
-    <span class="message_sender_name">
+    <span class="message_sender_name" *ngIf="message.sender!=null">
       {{message.sender.username}}:
+    </span>
+    <span class="system_message" *ngIf="message.sender==null">
+      SYSTEM:
     </span>
     <span class="message_content">
       {{message.content}}

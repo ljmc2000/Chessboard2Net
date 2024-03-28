@@ -20,5 +20,10 @@
   font-weight: bold;
 }
 
+.system_message {
+  font-weight: bold;
+  color: red;
+}
+
 .message_content {
 }
