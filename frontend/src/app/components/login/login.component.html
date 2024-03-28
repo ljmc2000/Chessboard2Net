@@ -7,9 +7,8 @@
 
       <mat-form-field>
         <input matInput minlength="8" placeholder="Password" type="password" name="password" [(ngModel)]="password" required>
+        <button matSuffix mat-raised-button color="primary" [disabled]="!loginForm.valid">Login</button>
       </mat-form-field>
-
-      <button mat-raised-button color="primary" [disabled]="!loginForm.valid">Login</button>
     </form>
   </mat-tab>
 
@@ -25,9 +24,8 @@
 
       <mat-form-field>
         <input matInput minlength="8" placeholder="Confirm Password" type="password" name="confirmPassword" [(ngModel)]="confirmPassword" required>
+        <button matSuffix mat-raised-button color="primary" [disabled]="!loginForm.valid || password != confirmPassword">Register</button>
       </mat-form-field>
-
-      <button mat-raised-button color="primary" [disabled]="!loginForm.valid || password != confirmPassword">Login</button>
     </form>
     <div *ngIf="password != confirmPassword">Passwords must match</div>
   </mat-tab>
