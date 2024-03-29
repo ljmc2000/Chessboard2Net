@@ -45,7 +45,8 @@ function handle_private_packet(data, sender, sender_ws, target, target_ws) {
 		case I.TELL:
 			var packet = JSON.stringify({instr: I.TELL, sender: sender, content:data.content, target: target, secret_message: true})
 			target_ws.send(packet)
-			sender_ws.send(packet)
+			if(target.user_id!=sender.user_id)
+				sender_ws.send(packet)
 			break;
 		case I.OUCNT:
 			sender_ws.send(JSON.stringify({instr: I.OUCNT, count: ev_stuff.count_online_users()}))
