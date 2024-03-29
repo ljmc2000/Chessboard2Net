@@ -8,7 +8,7 @@ async function get_user(request, db_pool) {
 		return null
 	}
 
-	var db_result = await db_pool.query("select * from users where login_token=$1", [cookies.login_token])
+	var db_result = await db_pool.query("select * from users where login_token=$1 and login_expires>now()", [cookies.login_token])
 
 	if(db_result.rowCount!=1) {
 		return null
