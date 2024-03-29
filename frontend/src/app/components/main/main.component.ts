@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -24,9 +24,16 @@ const WhisperPattern = /\/w(?:hisper)? ([^ ]+) (.+)/
 export class MainComponent implements WebsocketConsumer {
   chatMessageContent: string='';
   chatLog: ChatMessage[] = [ON_JOIN_MESSAGE];
+  @ViewChild('chat_parent') chatParent: ElementRef;
+  @ViewChild('chat') chat: ElementRef;
 
   constructor(private ws: ChessWebsocketHandlerService, private cli: CommandInterpreterService) {
     ws.subscribeToWS(this);
+  }
+
+  ngAfterViewInit() {
+    var observer = new ResizeObserver((ev) => this.chatParent.nativeElement.scrollTop=this.chatParent.nativeElement.scrollHeight);
+    observer.observe(this.chat.nativeElement)
   }
 
   onChatMessage(message: ChatMessage) {

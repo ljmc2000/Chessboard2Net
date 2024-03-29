@@ -1,14 +1,16 @@
-<div id="chat">
-  <div *ngFor="let message of chatLog; index as i" [ngClass]="message.secret_message?'secret_message':'message'">
-    <span class="message_sender_name" *ngIf="message.sender!=null">
-      {{message.sender.username}}<span *ngIf="message.secret_message"> -> {{message.target.username}}</span>:
-    </span>
-    <span class="system_message" *ngIf="message.system_message">
-      SYSTEM:
-    </span>
-    <span class="message_content">
-      {{message.content}}
-    </span>
+<div #chat_parent id="chat_parent">
+  <div #chat>
+    <div *ngFor="let message of chatLog; index as i" [ngClass]="message.secret_message?'secret_message':'message'">
+      <span class="message_sender_name" *ngIf="message.sender!=null">
+        {{message.sender.username}}<span *ngIf="message.secret_message"> -> {{message.target.username}}</span>:
+      </span>
+      <span class="system_message" *ngIf="message.system_message">
+        SYSTEM:
+      </span>
+      <span class="message_content">
+        {{message.content}}
+      </span>
+    </div>
   </div>
 </div>
 
