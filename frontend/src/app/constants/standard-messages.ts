@@ -4,6 +4,7 @@ export const COMMAND_ERROR_MESSAGE = {system_message: true, content: "bad comman
 
 export const HELP_MESSAGE = {system_message: true, content: `
 type \\h(elp) to display this message.
+type \\o(nline) to see how many players are online.
 type \\w(hisper) [player] [message] to send a private message.
 `} as ChatMessage;
 
