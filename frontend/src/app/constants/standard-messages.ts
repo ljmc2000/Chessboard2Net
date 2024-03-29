@@ -12,3 +12,7 @@ export const ON_JOIN_MESSAGE = {content: "Welcome to Chessboard2Net. Type \\h fo
 export function ON_NO_PLAYER_MESSAGE(player: string): ChatMessage {
   return {system_message: true, content: `Player "${player}" does not exist or is not online`} as ChatMessage;
 }
+
+export function ONLINE_PLAYER_COUNT_MESSAGE(count: number): ChatMessage {
+  return {system_message: true, content: `There are ${count} players online`} as ChatMessage;
+}

@@ -40,20 +40,28 @@ function parse_cookies(request) {
 	return cookies
 }
 
-function handle_private_packet(sender, sender_ws, target_ws, data) {
+function handle_private_packet(data, sender, sender_ws, target, target_ws) {
 	switch(data.instr) {
 		case I.TELL:
-			var packet = JSON.stringify({instr: I.TELL, sender: sender, content:data.content, target: target_ws.user, secret_message: true})
+			var packet = JSON.stringify({instr: I.TELL, sender: sender, content:data.content, target: target, secret_message: true})
 			target_ws.send(packet)
 			sender_ws.send(packet)
+			break;
+		case I.OUCNT:
+			sender_ws.send(JSON.stringify({instr: I.OUCNT, count: ev_stuff.count_online_users()}))
 			break;
 	}
 }
 
-function subscribe_universe_evloop(ws) {
-	ev_stuff.universe.on(I.TELL, (sender, data)=>{
+function subscribe_universe_evloop(ws, callbacks) {
+	callbacks[I.TELL]=(sender, sender_ws, data)=>{
 		ws.send(JSON.stringify({instr: I.TELL, sender: sender, content:data.content}))
-	})
+	}
+	ev_stuff.universe.on(I.TELL, callbacks[I.TELL])
+}
+
+function unsubscribe_universe_evloop(ws, callbacks) {
+	ev_stuff.universe.removeListener(I.TELL, callbacks[I.TELL])
 }
 
 export default (http_server, db_pool) => {
@@ -69,25 +77,31 @@ export default (http_server, db_pool) => {
 
 	ws_server.on('connection', async (ws, request, client) => {
 		var user=await get_user(request, db_pool)
+		var callbacks=[]
 		if(user==null) {
 			ws.send(JSON.stringify({instr: I.AUTH}))
 		}
 		else {
 			ev_stuff.register_user_ws(ws, user)
-			subscribe_universe_evloop(ws)
+			subscribe_universe_evloop(ws, callbacks)
 
 			ws.on('error', console.error)
+
 			ws.on('message', buffer=>{
 				try {
 					var data = JSON.parse(buffer)
 
 					if(data.target==null) {
-						ev_stuff.universe.emit(data.instr, user, data)
+						ev_stuff.universe.emit(data.instr, data, user, ws)
+					}
+					else if (data.target==0) {
+						handle_private_packet(data, user, ws)
 					}
 					else {
+						var target = ev_stuff.get_user_by_username(data.target)
 						var target_ws = ev_stuff.get_user_ws_by_username(data.target)
 						if(target_ws)
-							handle_private_packet(user, ws, target_ws, data)
+							handle_private_packet(data, user, ws, target, target_ws)
 						else
 							ws.send(JSON.stringify({instr: I.NOPLR, target: data.target}))
 					}
@@ -96,6 +110,10 @@ export default (http_server, db_pool) => {
 					console.error(err)
 					ws.send(JSON.stringify({instr: 'error'}))
 				}
+			})
+
+			ws.on('close',()=>{
+				unsubscribe_universe_evloop(ws, callbacks)
 			})
 		}
 	})

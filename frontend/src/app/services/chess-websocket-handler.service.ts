@@ -22,6 +22,10 @@ export class ChessWebsocketHandlerService extends WebSocket{
     this.send(JSON.stringify({instr: I.TELL, content: content, target: target}))
   }
 
+  public countOnlinePlayers() {
+    this.send(JSON.stringify({instr: I.OUCNT, target: 0}));
+  }
+
   public subscribeToWS(consumer: WebsocketConsumer) {
     this.consumer=consumer;
   }
@@ -31,6 +35,9 @@ export class ChessWebsocketHandlerService extends WebSocket{
     switch(data.instr) {
       case I.AUTH:
         this.router.navigate(['/login']);
+        break;
+      case I.OUCNT:
+        this.consumer.onCountOnline(data.count);
         break;
       case I.NOPLR:
         this.consumer.onNoPlayer(data.target);

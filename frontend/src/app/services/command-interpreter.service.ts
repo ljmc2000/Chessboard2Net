@@ -5,6 +5,7 @@ import { ChatMessage } from 'models/chat-message';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 
 const HelpPattern = /\\h(?:elp)?/
+const OnlinePattern = /\\o(?:nline)?/
 const WhisperPattern = /\\w(?:hisper)? ([^ ]+) (.+)/
 
 @Injectable({
@@ -18,6 +19,10 @@ export class CommandInterpreterService {
     var match;
     if (match=HelpPattern.exec(command)) {
       log.push(HELP_MESSAGE);
+      return false;
+    }
+    else if(match=OnlinePattern.exec(command)) {
+      this.ws.countOnlinePlayers();
       return false;
     }
     else if(match=WhisperPattern.exec(command)) {
