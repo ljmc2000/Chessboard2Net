@@ -1,23 +1,19 @@
 #chat_parent {
   border: 1px solid black;
-  height: 75%;
-  width: 90%;
-  left: 5%;
-  right: 5%;
-  position: fixed;
+  height: 75vh;
+  width: 100%;
   overflow: scroll;
 }
 
-#chat_bottom {
-  height: 10%;
+#chat_input {
+  width: 90vw;
 }
 
-#chat_input {
-  position: fixed;
-  bottom: 0;
-  left: 5%;
-  right: 5%;
-  width: 90%;
+#chat_input_parent {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .message_sender_name {
