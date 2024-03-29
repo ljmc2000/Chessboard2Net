@@ -42,7 +42,7 @@ function parse_cookies(request) {
 
 function subscribe_user_evloop(ws, user_evloop) {
 	user_evloop.on(I.TELL,(sender, sender_ws, data)=>{
-		var packet = JSON.stringify({instr: I.TELL, sender: sender, content:data.content, secret_message: true})
+		var packet = JSON.stringify({instr: I.TELL, sender: sender, content:data.content, target: user_evloop.user, secret_message: true})
 		ws.send(packet)
 		sender_ws.send(packet)
 	})

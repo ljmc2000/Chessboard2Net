@@ -17,6 +17,7 @@ export function register_user_evloop(user) {
 	var evloop = users_by_id[user.user_id]
 	if(user!=undefined) {
 		evloop=new EventEmitter()
+		evloop.user=user;
 		users_by_id[user.user_id]=evloop
 		users_by_username[user.username]=evloop
 	}
