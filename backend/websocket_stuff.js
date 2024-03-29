@@ -54,7 +54,7 @@ function handle_private_packet(data, sender, sender_ws, target, target_ws) {
 }
 
 function subscribe_universe_evloop(ws, callbacks) {
-	callbacks[I.TELL]=(sender, sender_ws, data)=>{
+	callbacks[I.TELL]=(data, sender, sender_ws)=>{
 		ws.send(JSON.stringify({instr: I.TELL, sender: sender, content:data.content}))
 	}
 	ev_stuff.universe.on(I.TELL, callbacks[I.TELL])
