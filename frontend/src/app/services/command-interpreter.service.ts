@@ -4,9 +4,9 @@ import { COMMAND_ERROR_MESSAGE, HELP_MESSAGE } from 'constants/standard-messages
 import { ChatMessage } from 'models/chat-message';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 
-const HelpPattern = /\\h(?:elp)?/
-const OnlinePattern = /\\o(?:nline)?/
-const WhisperPattern = /\\w(?:hisper)? ([^ ]+) (.+)/
+const HelpPattern = /\\h(?:elp)?/i
+const OnlinePattern = /\\o(?:nline)?/i
+const WhisperPattern = /\\w(?:hisper)? ([^ ]+) (.+)/i
 
 @Injectable({
   providedIn: 'root'
