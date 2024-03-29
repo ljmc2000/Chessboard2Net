@@ -1,7 +1,5 @@
 import { ChatMessage } from 'models/chat-message';
 
-export const COMMAND_ERROR_MESSAGE = {system_message: true, content: "Bad Command"} as ChatMessage;
-
 export const HELP_MESSAGE = {system_message: true, content: `
 type \\h(elp) to display this message.
 type \\o(nline) to see how many players are online.

@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 
-import { COMMAND_ERROR_MESSAGE, HELP_MESSAGE, SANTAX_ERROR_MESSAGE } from 'constants/standard-messages';
+import { HELP_MESSAGE, SANTAX_ERROR_MESSAGE } from 'constants/standard-messages';
 import { ChatMessage } from 'models/chat-message';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 
 const HelpPattern = /\\h(?:elp)?$/i
 const OnlinePattern = /\\o(?:nline)?$/i
 const WhisperPattern = /\\w(?:hisper)? ([^ ]+) (.+)/i
-const SantaxErrorPattern = /\\[how]/i
 
 @Injectable({
   providedIn: 'root'
@@ -30,12 +29,8 @@ export class CommandInterpreterService {
       this.ws.sendChatMessage(match[2], match[1]);
       return false;
     }
-    else if(match=SantaxErrorPattern.exec(command)) {
-      log.push(SANTAX_ERROR_MESSAGE);
-      return true;
-    }
     else {
-      log.push(COMMAND_ERROR_MESSAGE);
+      log.push(SANTAX_ERROR_MESSAGE);
       return true;
     }
   }
