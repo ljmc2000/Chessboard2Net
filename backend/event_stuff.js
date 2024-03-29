@@ -1,26 +1,37 @@
 import EventEmitter from 'node:events'
+import { WebSocket } from 'ws'
 
 const users_by_id = {}
 const users_by_username = {}
 
 export const universe = new EventEmitter()
 
-export function get_user_evloop_by_username(username) {
-	return users_by_username[username]
+export function get_user_ws_by_username(username) {
+	var ws = users_by_username[username]
+	if(!ws)
+		return null
+	else if(ws.readyState!=WebSocket.OPEN)
+		return null
+	else
+		return ws
 }
 
-export function get_user_evloop_by_id(user_id) {
-	return users_by_id[user_id]
+export function get_user_ws_by_id(user_id) {
+	var ws = users_by_id[user_id]
+	if(!ws)
+		return null
+	else if(ws.readyState!=WebSocket.OPEN)
+		return null
+	else
+		return ws
 }
 
-export function register_user_evloop(user) {
-	var evloop = users_by_id[user.user_id]
-	if(user!=undefined) {
-		evloop=new EventEmitter()
-		evloop.user=user;
-		users_by_id[user.user_id]=evloop
-		users_by_username[user.username]=evloop
+export function register_user_ws(ws, user) {
+	var old = users_by_id[user.user_id]
+	if(ws && ws.readyState!=WebSocket.OPEN) {
+		ws.close()
 	}
-
-	return evloop
+	users_by_id[user.user_id]=ws
+	users_by_username[user.username]=ws
+	ws.user=user;
 }

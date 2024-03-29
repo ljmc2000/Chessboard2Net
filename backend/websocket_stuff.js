@@ -40,12 +40,14 @@ function parse_cookies(request) {
 	return cookies
 }
 
-function subscribe_user_evloop(ws, user_evloop) {
-	user_evloop.on(I.TELL,(sender, sender_ws, data)=>{
-		var packet = JSON.stringify({instr: I.TELL, sender: sender, content:data.content, target: user_evloop.user, secret_message: true})
-		ws.send(packet)
-		sender_ws.send(packet)
-	})
+function handle_private_packet(sender, sender_ws, target_ws, data) {
+	switch(data.instr) {
+		case I.TELL:
+			var packet = JSON.stringify({instr: I.TELL, sender: sender, content:data.content, target: target_ws.user, secret_message: true})
+			target_ws.send(packet)
+			sender_ws.send(packet)
+			break;
+	}
 }
 
 function subscribe_universe_evloop(ws) {
@@ -71,8 +73,7 @@ export default (http_server, db_pool) => {
 			ws.send(JSON.stringify({instr: I.AUTH}))
 		}
 		else {
-			var user_evloop = ev_stuff.register_user_evloop(user)
-			subscribe_user_evloop(ws, user_evloop)
+			ev_stuff.register_user_ws(ws, user)
 			subscribe_universe_evloop(ws)
 
 			ws.on('error', console.error)
@@ -84,9 +85,11 @@ export default (http_server, db_pool) => {
 						ev_stuff.universe.emit(data.instr, user, data)
 					}
 					else {
-						var target_evloop = ev_stuff.get_user_evloop_by_username(data.target)
-						if(target_evloop!=null)
-							target_evloop.emit(data.instr, user, ws, data)
+						var target_ws = ev_stuff.get_user_ws_by_username(data.target)
+						if(target_ws)
+							handle_private_packet(user, ws, target_ws, data)
+						else
+							ws.send(JSON.stringify({instr: I.NOPLR, target: data.target}))
 					}
 				}
 				catch (err) {
