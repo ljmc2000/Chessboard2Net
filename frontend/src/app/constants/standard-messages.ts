@@ -1,6 +1,6 @@
 import { ChatMessage } from 'models/chat-message';
 
-export const COMMAND_ERROR_MESSAGE = {system_message: true, content: "bad command"} as ChatMessage;
+export const COMMAND_ERROR_MESSAGE = {system_message: true, content: "Bad Command"} as ChatMessage;
 
 export const HELP_MESSAGE = {system_message: true, content: `
 type \\h(elp) to display this message.
@@ -17,3 +17,5 @@ export function ON_NO_PLAYER_MESSAGE(player: string): ChatMessage {
 export function ONLINE_PLAYER_COUNT_MESSAGE(count: number): ChatMessage {
   return {system_message: true, content: `There are ${count} players online`} as ChatMessage;
 }
+
+export const SANTAX_ERROR_MESSAGE = {system_message: true, content: "Santax Error"} as ChatMessage;
