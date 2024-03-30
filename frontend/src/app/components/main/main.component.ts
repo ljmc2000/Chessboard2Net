@@ -11,7 +11,7 @@ import { ChatMessage } from 'models/chat-message';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { CommandInterpreterService } from 'services/command-interpreter.service';
 import { WebsocketConsumer } from 'models/websocket-consumer';
-import { CHAT_CONNECTING_MESSAGE, CHAT_CONNECTED_MESSAGE, ON_JOIN_MESSAGE, ON_NO_PLAYER_MESSAGE, ONLINE_PLAYER_COUNT_MESSAGE } from 'constants/standard-messages';
+import { CHAT_CONNECTING_MESSAGE, CHAT_CONNECTED_MESSAGE, DISCONNECTION_MESSAGE, ON_JOIN_MESSAGE, ON_NO_PLAYER_MESSAGE, ONLINE_PLAYER_COUNT_MESSAGE } from 'constants/standard-messages';
 
 const WhisperPattern = /\/w(?:hisper)? ([^ ]+) (.+)/
 
@@ -52,6 +52,10 @@ export class MainComponent implements WebsocketConsumer {
 
   onCountOnline(online :number) {
     this.chatLog.push(ONLINE_PLAYER_COUNT_MESSAGE(online));
+  }
+
+  onDisconnect() {
+    this.chatLog.push(DISCONNECTION_MESSAGE);
   }
 
   onNoPlayer(player: string) {

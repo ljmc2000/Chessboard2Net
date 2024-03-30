@@ -1,7 +1,9 @@
 import { ChatMessage } from 'models/chat-message';
 
-export const CHAT_CONNECTING_MESSAGE = {content:"Connecting to chat…"} as ChatMessage;
-export const CHAT_CONNECTED_MESSAGE = {content:"Connected to chat"} as ChatMessage;
+export const CHAT_CONNECTING_MESSAGE = {content: "Connecting to chat…"} as ChatMessage;
+export const CHAT_CONNECTED_MESSAGE = {content: "Connected to chat"} as ChatMessage;
+
+export const DISCONNECTION_MESSAGE = {system_message: true, content: "Disconnected from the server! Please refresh to reconnect."} as ChatMessage;
 
 export const HELP_MESSAGE = {system_message: true, content: `
 type \\h(elp) to display this message.
