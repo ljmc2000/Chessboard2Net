@@ -36,6 +36,15 @@ export class MainComponent implements WebsocketConsumer {
     observer.observe(this.chat.nativeElement)
   }
 
+  ngAfterContentInit() {
+    try {
+      this.ws.subscribeToPublicChat();
+    }
+    catch(err) {
+      setTimeout(()=>this.ws.subscribeToPublicChat(), 1000);
+    }
+  }
+
   onChatMessage(message: ChatMessage) {
     this.chatLog.push(message);
   }

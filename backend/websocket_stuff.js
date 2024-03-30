@@ -47,22 +47,41 @@ function handle_private_packet(data, sender, sender_ws, target, target_ws) {
 			target_ws.send(packet)
 			if(target.user_id!=sender.user_id)
 				sender_ws.send(packet)
-			break;
+			break
+		case I.SUB:
+			subscribe_universe_evloop(sender_ws, data.callback)
+			break
 		case I.OUCNT:
 			sender_ws.send(JSON.stringify({instr: I.OUCNT, count: ev_stuff.count_online_users()}))
-			break;
+			break
+		case I.USUB:
+			unsubscribe_universe_evloop(sender_ws, data.callback)
+			break
 	}
 }
 
-function subscribe_universe_evloop(ws, callbacks) {
-	callbacks[I.TELL]=(data, sender, sender_ws)=>{
-		ws.send(JSON.stringify({instr: I.TELL, sender: sender, content:data.content}))
+function callback_for(ws, callback) {
+	switch(callback)
+	{
+		case I.TELL:
+			return (data, sender, sender_ws) => {
+				ws.send(JSON.stringify({instr: I.TELL, sender: sender, content:data.content}))
+			}
 	}
-	ev_stuff.universe.on(I.TELL, callbacks[I.TELL])
 }
 
-function unsubscribe_universe_evloop(ws, callbacks) {
-	ev_stuff.universe.removeListener(I.TELL, callbacks[I.TELL])
+function subscribe_universe_evloop(ws, callback) {
+	if(!ws.callbacks[callback])
+	{
+		var func = callback_for(ws, callback)
+		ev_stuff.universe.on(callback, func)
+		ws.callbacks[callback]=func
+	}
+}
+
+function unsubscribe_universe_evloop(ws, cb) {
+	ev_stuff.universe.removeListener(cb, callbacks[cb])
+	delete ws.callbacks[cb]
 }
 
 export default (http_server, db_pool) => {
@@ -78,13 +97,14 @@ export default (http_server, db_pool) => {
 
 	ws_server.on('connection', async (ws, request, client) => {
 		var user=await get_user(request, db_pool)
-		var callbacks=[]
+		ws.callbacks={}
+
 		if(user==null) {
 			ws.send(JSON.stringify({instr: I.AUTH}))
 		}
+
 		else {
 			ev_stuff.register_user_ws(ws, user)
-			subscribe_universe_evloop(ws, callbacks)
 
 			ws.on('error', console.error)
 
@@ -114,7 +134,8 @@ export default (http_server, db_pool) => {
 			})
 
 			ws.on('close',()=>{
-				unsubscribe_universe_evloop(ws, callbacks)
+				for(var cb in ws.callbacks)
+					ev_stuff.universe.removeListener(cb, ws.callbacks[cb])
 			})
 		}
 	})
