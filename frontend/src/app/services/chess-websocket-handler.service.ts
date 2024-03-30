@@ -20,15 +20,15 @@ export class ChessWebsocketHandlerService extends WebSocket{
   }
 
   public sendChatMessage(content: string, target?: string) {
-    this.send(JSON.stringify({instr: I.TELL, content: content, target: target}));
+    this.jsend({instr: I.TELL, content: content, target: target});
   }
 
   public countOnlinePlayers() {
-    this.send(JSON.stringify({instr: I.OUCNT, target: 0}));
+    this.jsend({instr: I.OUCNT, target: 0});
   }
 
   public subscribeToPublicChat() {
-    this.send(JSON.stringify({instr: I.SUB, callback: I.TELL, target: 0}));
+    this.jsend({instr: I.SUB, callback: I.TELL, target: 0});
   }
 
   public subscribeToWS(consumer: WebsocketConsumer) {
@@ -69,6 +69,10 @@ export class ChessWebsocketHandlerService extends WebSocket{
   }
 
   onClose() {
-    this.consumer.onDisconnect()
+    this.consumer.onDisconnect();
+  }
+
+  jsend(data: any) {
+    this.send(JSON.stringify(data));
   }
 }
