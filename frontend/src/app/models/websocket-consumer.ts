@@ -4,4 +4,6 @@ export interface WebsocketConsumer {
   onChatMessage(message: ChatMessage): void
   onCountOnline(online: number): void
   onNoPlayer(player: string): void
+  onSub(callback: string): void
+  onUnSub(callback: string): void
 }

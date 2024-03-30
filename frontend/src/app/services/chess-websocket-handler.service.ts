@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {Router} from "@angular/router"
 
-import { ChatMessage } from 'models/chat-message'
 import * as I from 'shared/instructions';
+import { ChatMessage } from 'models/chat-message'
 import { WebsocketConsumer } from 'models/websocket-consumer';
 
 @Injectable({
@@ -47,8 +47,14 @@ export class ChessWebsocketHandlerService extends WebSocket{
       case I.NOPLR:
         this.consumer.onNoPlayer(data.target);
         break;
+      case I.SUB:
+        this.consumer.onSub(data.callback);
+        break;
       case I.TELL:
         this.consumer.onChatMessage(data as ChatMessage);
+        break;
+      case I.UNSUB:
+        this.consumer.onUnSub(data.callback);
         break;
       default:
         console.log(data.instr);

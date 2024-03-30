@@ -6,11 +6,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
+import * as I from 'shared/instructions';
+import { ChatMessage } from 'models/chat-message';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { CommandInterpreterService } from 'services/command-interpreter.service';
 import { WebsocketConsumer } from 'models/websocket-consumer';
-import { ChatMessage } from 'models/chat-message'
-import { ON_JOIN_MESSAGE, ON_NO_PLAYER_MESSAGE, ONLINE_PLAYER_COUNT_MESSAGE } from 'constants/standard-messages';
+import { CHAT_CONNECTING_MESSAGE, CHAT_CONNECTED_MESSAGE, ON_JOIN_MESSAGE, ON_NO_PLAYER_MESSAGE, ONLINE_PLAYER_COUNT_MESSAGE } from 'constants/standard-messages';
 
 const WhisperPattern = /\/w(?:hisper)? ([^ ]+) (.+)/
 
@@ -23,7 +24,7 @@ const WhisperPattern = /\/w(?:hisper)? ([^ ]+) (.+)/
 })
 export class MainComponent implements WebsocketConsumer {
   chatMessageContent: string='';
-  chatLog: ChatMessage[] = [ON_JOIN_MESSAGE];
+  chatLog: ChatMessage[] = [ON_JOIN_MESSAGE, CHAT_CONNECTING_MESSAGE];
   @ViewChild('chat_parent') chatParent: ElementRef;
   @ViewChild('chat') chat: ElementRef;
 
@@ -45,7 +46,7 @@ export class MainComponent implements WebsocketConsumer {
     }
   }
 
-  onChatMessage(message: ChatMessage) {
+  onChatMessage(message: ChatMessage): void {
     this.chatLog.push(message);
   }
 
@@ -66,5 +67,16 @@ export class MainComponent implements WebsocketConsumer {
       this.ws.sendChatMessage(this.chatMessageContent);
       this.chatMessageContent='';
     }
+  }
+
+  onSub(callback: string) {
+    switch(callback) {
+      case I.TELL:
+        this.chatLog.push(CHAT_CONNECTED_MESSAGE);
+        break;
+    }
+  }
+
+  onUnSub(callback: string) {
   }
 }

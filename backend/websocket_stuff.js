@@ -54,7 +54,7 @@ function handle_private_packet(data, sender, sender_ws, target, target_ws) {
 		case I.OUCNT:
 			sender_ws.send(JSON.stringify({instr: I.OUCNT, count: ev_stuff.count_online_users()}))
 			break
-		case I.USUB:
+		case I.UNSUB:
 			unsubscribe_universe_evloop(sender_ws, data.callback)
 			break
 	}
@@ -76,12 +76,17 @@ function subscribe_universe_evloop(ws, callback) {
 		var func = callback_for(ws, callback)
 		ev_stuff.universe.on(callback, func)
 		ws.callbacks[callback]=func
+		ws.send(JSON.stringify({instr: I.SUB, callback: callback}))
 	}
 }
 
 function unsubscribe_universe_evloop(ws, cb) {
-	ev_stuff.universe.removeListener(cb, callbacks[cb])
-	delete ws.callbacks[cb]
+	if(ws.callbacks[callback])
+	{
+		ev_stuff.universe.removeListener(cb, callbacks[cb])
+		delete ws.callbacks[cb]
+		ws.send(JSON.stringify({instr: I.UNSUB, callback: callback}))
+	}
 }
 
 export default (http_server, db_pool) => {
@@ -139,6 +144,4 @@ export default (http_server, db_pool) => {
 			})
 		}
 	})
-
-
 }

@@ -4,4 +4,4 @@ export const NOPLR: string
 export const SUB: string
 export const TELL: string
 export const OUCNT: string
-export const USUB: string
+export const UNSUB: string
