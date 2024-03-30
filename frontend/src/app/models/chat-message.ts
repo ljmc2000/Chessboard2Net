@@ -1,8 +1,8 @@
-import { User } from 'models/user';
+import { UserInfo } from 'models/user-info';
 
 export interface ChatMessage {
-  sender: User;
-  target: User;
+  sender: UserInfo;
+  target: UserInfo;
   content: string;
   secret_message: boolean;
   system_message: boolean;
