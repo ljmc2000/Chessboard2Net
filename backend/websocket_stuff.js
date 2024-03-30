@@ -142,6 +142,8 @@ export default (http_server, db_pool) => {
 				for(var cb in ws.callbacks)
 					ev_stuff.universe.removeListener(cb, ws.callbacks[cb])
 			})
+
+			ws.send(JSON.stringify({instr: I.READY}))
 		}
 	})
 }

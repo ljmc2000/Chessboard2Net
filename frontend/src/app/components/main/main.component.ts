@@ -37,13 +37,8 @@ export class MainComponent implements WebsocketConsumer {
     observer.observe(this.chat.nativeElement)
   }
 
-  onConnect() {
-    try {
-      this.ws.subscribeToPublicChat();
-    }
-    catch(err) {
-      setTimeout(()=>this.ws.subscribeToPublicChat(), 3000);
-    }
+  onReady() {
+    this.ws.subscribeToPublicChat();
   }
 
   onChatMessage(message: ChatMessage): void {

@@ -1,6 +1,7 @@
 export const AUTH='authenticate'
 export const ERR='error'
 export const NOPLR='no_player'
+export const READY='ready'
 export const SUB='subscribe_universe_callback'
 export const TELL='tell'
 export const OUCNT='count_online_users'

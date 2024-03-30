@@ -16,7 +16,6 @@ export class ChessWebsocketHandlerService extends WebSocket{
     super(`ws://${window.location.host}/api`)
     this.onmessage=this.onMessage;
     this.onerror=this.onError;
-    this.onopen=this.onOpen;
     this.onclose=this.onClose;
   }
 
@@ -48,6 +47,9 @@ export class ChessWebsocketHandlerService extends WebSocket{
       case I.NOPLR:
         this.consumer.onNoPlayer(data.target);
         break;
+      case I.READY:
+        this.consumer.onReady()
+        break;
       case I.SUB:
         this.consumer.onSub(data.callback);
         break;
@@ -64,10 +66,6 @@ export class ChessWebsocketHandlerService extends WebSocket{
 
   onError(err: Event) {
     console.error(err);
-  }
-
-  onOpen() {
-    this.consumer.onConnect()
   }
 
   onClose() {
