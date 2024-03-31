@@ -1,5 +1,6 @@
 export const ACLNG: string
 export const AUTH: string
+export const BUSY: string
 export const CLNG: string
 export const ERR: string
 export const NOPLR: string

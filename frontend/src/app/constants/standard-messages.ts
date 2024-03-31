@@ -1,5 +1,9 @@
 import { ChatMessage } from 'models/chat-message';
 
+export function BUSY_MESSAGE(username: string): ChatMessage {
+  return {system_message: true, content: `${username} is not available right now`} as ChatMessage
+}
+
 export function CHALLENGE_ACCEPT_MESSAGE(username: string): ChatMessage {
   return {system_message: true, content: `${username} has accepted your challenge, but actual games aren't implemented yet`} as ChatMessage
 }

@@ -30,6 +30,7 @@ export class MainComponent {
 
   constructor(private ws: ChessWebsocketHandlerService, private cli: CommandInterpreterService) {
     ws.on(I.ACLNG, (data: any)=>this.chatLog.push(M.CHALLENGE_ACCEPT_MESSAGE(data.sender.username)));
+    ws.on(I.BUSY, (data: any)=>this.chatLog.push(M.BUSY_MESSAGE(data.target.username)));
     ws.on(I.CLNG, (data: any)=>this.onChallenge(data));
     ws.on(I.NOPLR, (data: any)=>this.chatLog.push(M.ON_NO_PLAYER_MESSAGE(data.target)));
     ws.on(I.READY, (data: any)=>this.ws.subscribeToPublicChat());

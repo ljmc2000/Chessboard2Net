@@ -43,23 +43,19 @@ function parse_cookies(request) {
 function handle_private_packet(data, sender, sender_ws, target, target_ws) {
 	switch(data.instr) {
 		case I.ACLNG:
-			if(sender.user_id==target_ws.challenger.user_id) {
+			if(sender.user_id==target.challenge.user_id) {
 				target_ws.send(JSON.stringify({instr: I.ACLNG, sender: sender}))
-				delete target_ws.challenger
+				//create chessboard
+				delete target.challenge
 			}
-			delete sender_ws.challenger
 			break
 		case I.CLNG:
-			if(sender_ws.challenger) {
-				sender_ws.send(JSON.stringify({instr: I.BUSY, target: sender.challenger}))
-			}
-			else if(target_ws.challenger) {
-				sender_ws.send(JSON.stringify({instr: I.BUSY}))
+			if(sender.user_id!=target.user_id) {
+				sender.challenge=target
+				target_ws.send(JSON.stringify({instr: I.CLNG, sender: sender, game: data.game}))
 			}
 			else {
-				target_ws.challenger=sender
-				sender_ws.challenger=target
-				target_ws.send(JSON.stringify({instr: I.CLNG, sender: sender, game: data.game}))
+				sender_ws.send(JSON.stringify({instr: I.BUSY, target: target}))
 			}
 			break
 		case I.TELL:
@@ -78,11 +74,10 @@ function handle_private_packet(data, sender, sender_ws, target, target_ws) {
 			unsubscribe_universe_evloop(sender_ws, data.callback)
 			break
 		case I.XCLNG:
-			if(sender.user_id==target_ws.challenger.user_id) {
+			if(sender.user_id==target.challenge.user_id) {
 				target_ws.send(JSON.stringify({instr: I.XCLNG, sender: sender}))
-				delete target_ws.challenger
+				delete target.challenge
 			}
-			delete sender_ws.challenger
 			break
 	}
 }
