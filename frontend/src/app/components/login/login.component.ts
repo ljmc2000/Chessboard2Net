@@ -19,9 +19,9 @@ import { LoginDetails } from 'models/login-details';
 })
 export class LoginComponent implements LoginDetails {
 
-  username: string;
-  password: string;
-  confirmPassword: string;
+  username: string='';
+  password: string='';
+  confirmPassword: string='';
   issue: number;
 
   constructor(public userService: UserService) {

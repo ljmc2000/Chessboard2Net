@@ -86,6 +86,8 @@ export default function (app,db_pool) {
 					case '23505':
 						resp.status(409).send('Existing User Found')
 						break
+					case '23514':
+						resp.status(400).send('Provided credentials violate constraint')
 					default:
 						on_error(err)
 				}
