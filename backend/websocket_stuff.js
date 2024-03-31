@@ -42,6 +42,19 @@ function parse_cookies(request) {
 
 function handle_private_packet(data, sender, sender_ws, target, target_ws) {
 	switch(data.instr) {
+		case I.CLNG:
+			if(sender_ws.challenger) {
+				sender_ws.send(JSON.stringify({instr: I.BUSY, target: sender.challenger}))
+			}
+			else if(target_ws.challenger) {
+				sender_ws.send(JSON.stringify({instr: I.BUSY}))
+			}
+			else {
+				target_ws.challenger=sender
+				sender_ws.challenger=target
+				target_ws.send(JSON.stringify({instr: I.CLNG, sender: sender, game: data.game}))
+			}
+			break
 		case I.TELL:
 			var packet = JSON.stringify({instr: I.TELL, sender: sender, content:data.content, target: target, secret_message: true})
 			target_ws.send(packet)
@@ -56,6 +69,13 @@ function handle_private_packet(data, sender, sender_ws, target, target_ws) {
 			break
 		case I.UNSUB:
 			unsubscribe_universe_evloop(sender_ws, data.callback)
+			break
+		case I.XCLNG:
+			if(sender.user_id==target_ws.challenger.user_id) {
+				target_ws.send(JSON.stringify({instr: I.XCLNG, sender: sender}))
+				delete target_ws.challenger
+			}
+			delete sender_ws.challenger
 			break
 	}
 }

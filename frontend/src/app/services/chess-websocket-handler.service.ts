@@ -18,20 +18,24 @@ export class ChessWebsocketHandlerService extends WebSocket {
     this.setupDefaultEventListeners();
   }
 
-  public sendChatMessage(content: string, target?: string) {
-    this.jsend({instr: I.TELL, content: content, target: target});
+  public challenge(player: string, game: string) {
+    this.jsend({instr: I.CLNG, target: player, game: game});
   }
 
   public countOnlinePlayers() {
     this.jsend({instr: I.OUCNT, target: 0});
   }
 
-  public subscribeToPublicChat() {
-    this.jsend({instr: I.SUB, callback: I.TELL, target: 0});
+  public rejectChallenge(player: string) {
+    this.jsend({instr: I.XCLNG, target: player});
   }
 
-  public on(instr: string, callback: Function) {
-    this.addEventListener(instr, (ev: any) => callback(ev.data));
+  public sendChatMessage(content: string, target?: string) {
+    this.jsend({instr: I.TELL, content: content, target: target});
+  }
+
+  public subscribeToPublicChat() {
+    this.jsend({instr: I.SUB, callback: I.TELL, target: 0});
   }
 
   onMessage(message: MessageEvent) {
@@ -46,6 +50,10 @@ export class ChessWebsocketHandlerService extends WebSocket {
   }
 
   onClose() {
+  }
+
+  on(instr: string, callback: Function) {
+    this.addEventListener(instr, (ev: any) => callback(ev.data));
   }
 
   jsend(data: any) {

@@ -11,7 +11,7 @@ import { ChatMessage } from 'models/chat-message';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { CommandInterpreterService } from 'services/command-interpreter.service';
 
-import { CHAT_CONNECTING_MESSAGE, CHAT_CONNECTED_MESSAGE, DISCONNECTION_MESSAGE, ON_JOIN_MESSAGE, ON_NO_PLAYER_MESSAGE, ONLINE_PLAYER_COUNT_MESSAGE } from 'constants/standard-messages';
+import * as M from 'constants/standard-messages';
 
 const WhisperPattern = /\/w(?:hisper)? ([^ ]+) (.+)/
 
@@ -24,23 +24,41 @@ const WhisperPattern = /\/w(?:hisper)? ([^ ]+) (.+)/
 })
 export class MainComponent {
   chatMessageContent: string='';
-  chatLog: ChatMessage[] = [ON_JOIN_MESSAGE, CHAT_CONNECTING_MESSAGE];
+  chatLog: ChatMessage[] = [M.ON_JOIN_MESSAGE, M.CHAT_CONNECTING_MESSAGE];
   @ViewChild('chat_parent') chatParent: ElementRef;
   @ViewChild('chat') chat: ElementRef;
 
   constructor(private ws: ChessWebsocketHandlerService, private cli: CommandInterpreterService) {
-    ws.on(I.NOPLR, (data: any)=>this.chatLog.push(ON_NO_PLAYER_MESSAGE(data.target)));
+    ws.on(I.CLNG, (data: any)=>this.onChallenge(data));
+    ws.on(I.NOPLR, (data: any)=>this.chatLog.push(M.ON_NO_PLAYER_MESSAGE(data.target)));
     ws.on(I.READY, (data: any)=>this.ws.subscribeToPublicChat());
     ws.on(I.SUB, (data: any)=>this.onSub(data.callback));
     ws.on(I.TELL, (data: ChatMessage)=>this.chatLog.push(data));
-    ws.on(I.OUCNT, (data: any)=>this.chatLog.push(ONLINE_PLAYER_COUNT_MESSAGE(data.count)));
+    ws.on(I.OUCNT, (data: any)=>this.chatLog.push(M.ONLINE_PLAYER_COUNT_MESSAGE(data.count)));
+    ws.on(I.XCLNG, (data: any)=>this.chatLog.push(M.CHALLENGE_REJECTION_MESSAGE(data.sender.username)));
 
-    ws.addEventListener('close',()=>this.chatLog.push(DISCONNECTION_MESSAGE));
+    ws.addEventListener('close',()=>this.chatLog.push(M.DISCONNECTION_MESSAGE));
   }
 
   ngAfterViewInit() {
     var observer = new ResizeObserver((ev) => this.chatParent.nativeElement.scrollTop=this.chatParent.nativeElement.scrollHeight);
     observer.observe(this.chat.nativeElement)
+  }
+
+  onChallenge(data: any) {
+    if(confirm(M.CHALLENGE_MESSAGE(data.sender.username, data.game))) {
+    }
+    else {
+      this.ws.rejectChallenge(data.sender.username);
+    }
+  }
+
+  onSub(callback: string) {
+    switch(callback) {
+      case I.TELL:
+        this.chatLog.push(M.CHAT_CONNECTED_MESSAGE);
+        break;
+    }
   }
 
   sendChatMessage() {
@@ -51,14 +69,6 @@ export class MainComponent {
     else {
       this.ws.sendChatMessage(this.chatMessageContent);
       this.chatMessageContent='';
-    }
-  }
-
-  onSub(callback: string) {
-    switch(callback) {
-      case I.TELL:
-        this.chatLog.push(CHAT_CONNECTED_MESSAGE);
-        break;
     }
   }
 }

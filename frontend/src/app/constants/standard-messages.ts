@@ -1,5 +1,12 @@
 import { ChatMessage } from 'models/chat-message';
 
+export function CHALLENGE_MESSAGE(username: string, game: string): string {
+  return `${username} would like to play ${game}`
+}
+export function CHALLENGE_REJECTION_MESSAGE(username: string): ChatMessage {
+  return {system_message: true, content: `${username} has rejected your challenge`} as ChatMessage
+}
+
 export const CHAT_CONNECTING_MESSAGE = {content: "Connecting to chat…"} as ChatMessage;
 export const CHAT_CONNECTED_MESSAGE = {content: "Connected to chat"} as ChatMessage;
 
