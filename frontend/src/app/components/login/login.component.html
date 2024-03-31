@@ -24,7 +24,7 @@
 
       <mat-form-field>
         <input matInput minlength="8" placeholder="Confirm Password" type="password" name="confirmPassword" [(ngModel)]="confirmPassword" required>
-        <button matSuffix mat-raised-button color="primary" [disabled]="!loginForm.valid || password != confirmPassword">Register</button>
+        <button matSuffix mat-raised-button color="primary" [disabled]="!loginForm.valid || password != confirmPassword || username.includes(' ')">Register</button>
       </mat-form-field>
     </form>
     <div *ngIf="username.includes(' ')">Username must not contain any spaces</div>
