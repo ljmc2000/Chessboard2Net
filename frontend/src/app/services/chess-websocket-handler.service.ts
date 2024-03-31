@@ -1,22 +1,21 @@
 import { Injectable } from '@angular/core';
-import {Router} from "@angular/router"
+import { Router } from "@angular/router";
 
 import * as I from 'shared/instructions';
-import { ChatMessage } from 'models/chat-message'
-import { WebsocketConsumer } from 'models/websocket-consumer';
+import { ChatMessage } from 'models/chat-message';
+class WsPacketEvent extends Event {data: any};
 
 @Injectable({
   providedIn: 'root'
 })
-export class ChessWebsocketHandlerService extends WebSocket{
-  consumer: WebsocketConsumer;
-
+export class ChessWebsocketHandlerService extends WebSocket {
 
   constructor(private router: Router) {
     super(`ws://${window.location.host}/api`)
     this.onmessage=this.onMessage;
     this.onerror=this.onError;
     this.onclose=this.onClose;
+    this.setupDefaultEventListeners();
   }
 
   public sendChatMessage(content: string, target?: string) {
@@ -31,37 +30,15 @@ export class ChessWebsocketHandlerService extends WebSocket{
     this.jsend({instr: I.SUB, callback: I.TELL, target: 0});
   }
 
-  public subscribeToWS(consumer: WebsocketConsumer) {
-    this.consumer=consumer;
+  public on(instr: string, callback: Function) {
+    this.addEventListener(instr, (ev: any) => callback(ev.data));
   }
 
   onMessage(message: MessageEvent) {
-    var data = JSON.parse(message.data)
-    switch(data.instr) {
-      case I.AUTH:
-        this.router.navigate(['/login']);
-        break;
-      case I.OUCNT:
-        this.consumer.onCountOnline(data.count);
-        break;
-      case I.NOPLR:
-        this.consumer.onNoPlayer(data.target);
-        break;
-      case I.READY:
-        this.consumer.onReady()
-        break;
-      case I.SUB:
-        this.consumer.onSub(data.callback);
-        break;
-      case I.TELL:
-        this.consumer.onChatMessage(data as ChatMessage);
-        break;
-      case I.UNSUB:
-        this.consumer.onUnSub(data.callback);
-        break;
-      default:
-        console.log(data.instr);
-    }
+    var data = JSON.parse(message.data);
+    var ev = new WsPacketEvent(data.instr);
+    ev.data=data;
+    this.dispatchEvent(ev);
   }
 
   onError(err: Event) {
@@ -69,10 +46,13 @@ export class ChessWebsocketHandlerService extends WebSocket{
   }
 
   onClose() {
-    this.consumer.onDisconnect();
   }
 
   jsend(data: any) {
     this.send(JSON.stringify(data));
+  }
+
+  setupDefaultEventListeners() {
+    this.addEventListener(I.AUTH,()=>this.router.navigate(['/login']));
   }
 }
