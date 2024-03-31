@@ -29,6 +29,7 @@ export class MainComponent {
   @ViewChild('chat') chat: ElementRef;
 
   constructor(private ws: ChessWebsocketHandlerService, private cli: CommandInterpreterService) {
+    ws.on(I.ACLNG, (data: any)=>this.chatLog.push(M.CHALLENGE_ACCEPT_MESSAGE(data.sender.username)));
     ws.on(I.CLNG, (data: any)=>this.onChallenge(data));
     ws.on(I.NOPLR, (data: any)=>this.chatLog.push(M.ON_NO_PLAYER_MESSAGE(data.target)));
     ws.on(I.READY, (data: any)=>this.ws.subscribeToPublicChat());
@@ -47,6 +48,7 @@ export class MainComponent {
 
   onChallenge(data: any) {
     if(confirm(M.CHALLENGE_MESSAGE(data.sender.username, data.game))) {
+      this.ws.acceptChallenge(data.sender.username);
     }
     else {
       this.ws.rejectChallenge(data.sender.username);

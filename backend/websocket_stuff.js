@@ -42,6 +42,13 @@ function parse_cookies(request) {
 
 function handle_private_packet(data, sender, sender_ws, target, target_ws) {
 	switch(data.instr) {
+		case I.ACLNG:
+			if(sender.user_id==target_ws.challenger.user_id) {
+				target_ws.send(JSON.stringify({instr: I.ACLNG, sender: sender}))
+				delete target_ws.challenger
+			}
+			delete sender_ws.challenger
+			break
 		case I.CLNG:
 			if(sender_ws.challenger) {
 				sender_ws.send(JSON.stringify({instr: I.BUSY, target: sender.challenger}))

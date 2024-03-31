@@ -1,5 +1,8 @@
 import { ChatMessage } from 'models/chat-message';
 
+export function CHALLENGE_ACCEPT_MESSAGE(username: string): ChatMessage {
+  return {system_message: true, content: `${username} has accepted your challenge, but actual games aren't implemented yet`} as ChatMessage
+}
 export function CHALLENGE_MESSAGE(username: string, game: string): string {
   return `${username} would like to play ${game}`
 }

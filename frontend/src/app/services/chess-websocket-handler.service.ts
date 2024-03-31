@@ -18,6 +18,10 @@ export class ChessWebsocketHandlerService extends WebSocket {
     this.setupDefaultEventListeners();
   }
 
+  public acceptChallenge(player: string) {
+    this.jsend({instr: I.ACLNG, target: player});
+  }
+
   public challenge(player: string, game: string) {
     this.jsend({instr: I.CLNG, target: player, game: game});
   }
