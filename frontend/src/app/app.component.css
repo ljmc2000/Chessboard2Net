@@ -2,7 +2,7 @@
   background-color: coral;
 }
 
-.page_header button,a {
+.page_header a, .page_header button {
   background-color: white;
   color: coral;
   margin: 3px;
