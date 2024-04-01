@@ -1,9 +1,9 @@
 <html><body>
-  <mat-toolbar class="page_header">
+  <mat-toolbar color="primary" class="page_header">
     <a href="/" mat-fab><mat-icon class="pagelogo" svgIcon="favicon"></mat-icon></a>
     <span class="flexExpand"></span>
-    <a href="/settings" mat-button>Settings</a>
-    <button (click)="userService.logout()" *ngIf="logged_in" mat-button>Logout</button>
+    <a *ngIf="logged_in" href="/settings" mat-button>Settings</a>
+    <button *ngIf="logged_in" (click)="userService.logout()" mat-button>Logout</button>
   </mat-toolbar>
 
   <div class="page_content">

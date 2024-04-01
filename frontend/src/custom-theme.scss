@@ -9,11 +9,46 @@
 // Be sure that you only ever include this mixin once!
 @include mat.core();
 
+
+/* For use in src/lib/core/theming/_palette.scss */
+$md-coral: (
+  50 : #fff0ea,
+  100 : #ffd9cb,
+  200 : #ffbfa8,
+  300 : #ffa585,
+  400 : #ff926a,
+  500 : #ff7f50,
+  600 : #ff7749,
+  700 : #ff6c40,
+  800 : #ff6237,
+  900 : #ff4f27,
+  A100 : #ffffff,
+  A200 : #ffffff,
+  A400 : #ffdbd4,
+  A700 : #ffc6bb,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #000000,
+    400 : #000000,
+    500 : #ffffff,
+    600 : #ffffff,
+    700 : #ffffff,
+    800 : #ffffff,
+    900 : #ffffff,
+    A100 : #ff7f50,
+    A200 : #ff7749,
+    A400 : #ff7749,
+    A700 : #ff6c40,
+  )
+);
+
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$Chessboard2Net-primary: mat.define-palette(mat.$indigo-palette);
-$Chessboard2Net-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$Chessboard2Net-primary: mat.define-palette($md-coral);
+$Chessboard2Net-accent: mat.define-palette($md-coral);
 
 // The warn palette is optional (defaults to red).
 $Chessboard2Net-warn: mat.define-palette(mat.$red-palette);
@@ -34,4 +69,3 @@ $Chessboard2Net-theme: mat.define-light-theme((
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 @include mat.all-component-themes($Chessboard2Net-theme);
-
