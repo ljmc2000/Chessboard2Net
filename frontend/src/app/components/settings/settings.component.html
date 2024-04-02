@@ -1,4 +1,17 @@
 <h2>Privacy Settings</h2>
 <mat-checkbox [(ngModel)]="visibleAsOnline" (click)="onChangeFlags()">Allow other users to see you when you're online</mat-checkbox>
 
-<h2>Game Settings</h2>
+<h2>Favourite Colour</h2>
+<div class="box" [ngStyle]="{'background-color': getFavouriteColourString()}"></div>
+<div class="colour_input">
+  <mat-slider min=0 max=255>
+    <input [(ngModel)]="favouriteColourRed" (input)="onChangeColour()" matSliderThumb>
+  </mat-slider>
+  <mat-slider min=0 max=255>
+    <input [(ngModel)]="favouriteColourGreen" (input)="onChangeColour()" matSliderThumb>
+  </mat-slider>
+  <mat-slider min=0 max=255>
+    <input [(ngModel)]="favouriteColourBlue" (input)="onChangeColour()" matSliderThumb>
+  </mat-slider>
+  <button matSuffix mat-raised-button color="primary" (click)="saveColour()">Save</button>
+</div>
