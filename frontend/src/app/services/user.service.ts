@@ -43,7 +43,7 @@ export class UserService {
   public logout() {
     fetch('/api/logout').then(resp=>{
       if(resp.status==200)
-        window.location.reload();
+        window.location.pathname='/login';
       else
         alert(resp)
     })
