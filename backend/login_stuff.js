@@ -25,6 +25,9 @@ export default function (app,db_pool) {
 				resp.json({
 					user_id: user.user_id,
 					username: user.username,
+					profile_flags: user.profile_flags,
+					prefered_set: user.prefered_set,
+					favourite_colour: user.favourite_colour,
 					logged_in: true,
 				})
 			}
@@ -95,6 +98,31 @@ export default function (app,db_pool) {
 			else {
 				on_error(err)
 			}
+		}
+	})
+
+	app.post('/api/update_prefs', async (req, resp, on_error) => {
+		try {
+			var token = req.cookies.login_token
+			if(!token) {
+				resp.status(401).send('')
+			}
+
+			var success=true
+			var result
+			console.log(req.body)
+
+			for(var col of ['profile_flags', 'favourite_colour']) {
+				if(req.body[col]) {
+					result = await db_pool.query(`update users set ${col}=$1 where login_token=$2`,[req.body[col], token])
+					success &= result.rowCount>0
+				}
+			}
+
+			resp.status(success?200:400).send('')
+		}
+		catch (err) {
+			on_error(err)
 		}
 	})
 }
