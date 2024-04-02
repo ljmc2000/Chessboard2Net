@@ -2,7 +2,7 @@ import base85 from 'base85'
 import bcrypt from 'bcrypt'
 import { randomBytes } from 'crypto'
 
-import * as c from './constants.js '
+import * as c from './constants.js'
 import { create_login_expiry } from './utils.js'
 
 function set_login_token(resp) {
@@ -13,15 +13,20 @@ function set_login_token(resp) {
 }
 
 export default function (app,db_pool) {
-	app.get('/api/test', (req, resp, on_error) => {
-		res.send({working: true})
-	})
+
+	async function get_user(login_token) {
+		var result = await db_pool.query("select * from users where login_token=$1 and login_expires>now()",[login_token])
+
+		if(result.rowCount==1)
+			return result.rows[0]
+			else
+				return null
+	}
 
 	app.get('/api/selfinfo', async (req, resp, on_error) => {
 		try {
-			var result = await db_pool.query("select * from users where login_token=$1 and login_expires>now()",[req.cookies.login_token])
-			if(result.rowCount==1) {
-				var user = result.rows[0]
+			var user = get_user(req.cookies.login_token)
+			if(user) {
 				resp.json({
 					user_id: user.user_id,
 					username: user.username,
