@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from "@angular/router";
 
 import * as I from 'shared/instructions';
 import { ChatMessage } from 'models/chat-message';
@@ -10,7 +9,7 @@ class WsPacketEvent extends Event {data: any};
 })
 export class ChessWebsocketHandlerService extends WebSocket {
 
-  constructor(private router: Router) {
+  constructor() {
     super(`ws://${window.location.host}/api`)
     this.onmessage=this.onMessage;
     this.onerror=this.onError;
@@ -65,6 +64,5 @@ export class ChessWebsocketHandlerService extends WebSocket {
   }
 
   setupDefaultEventListeners() {
-    this.addEventListener(I.AUTH,()=>this.router.navigate(['/login']));
   }
 }
