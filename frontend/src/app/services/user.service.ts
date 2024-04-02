@@ -21,13 +21,17 @@ export class UserService {
   }
 
   public getUserInfo(reciever: UserInfo) {
-    this.http.get<UserInfo>('/api/selfinfo')
-    .subscribe((src)=>{
+    return fetch('/api/selfinfo')
+    .then(resp=>resp.json())
+    .then((src: UserInfo)=>{
       if(!src.logged_in && window.location.pathname!='/login')
         window.location.pathname='/login';
 
       reciever.user_id=src.user_id;
       reciever.username=src.username;
+      reciever.profile_flags=src.profile_flags;
+      reciever.prefered_set=src.prefered_set;
+      reciever.favourite_colour=src.favourite_colour;
       reciever.logged_in=src.logged_in;
     })
   }
