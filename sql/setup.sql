@@ -5,6 +5,10 @@ create table users (
 	login_token character(48),
 	login_expires timestamp,
 
+	profile_flags integer default 0,
+	prefered_set integer default 0,
+	favourite_colour integer default 16777215,
+
 	constraint no_spaces_in_usernames check (username !~ '\s')
 );
 
