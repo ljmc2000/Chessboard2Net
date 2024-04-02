@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import { randomBytes } from 'crypto'
 
 import * as c from './constants.js'
+import * as chess_set from './shared/chess-sets.js'
 import { create_login_expiry } from './utils.js'
 
 function set_login_token(resp) {
@@ -23,9 +24,28 @@ export default function (app,db_pool) {
 				return null
 	}
 
+	async function unlocked_sets(user) {
+		var sets=chess_set.DOODLES
+
+		if(!user) {
+			resp.status(401).send('')
+			return
+		}
+
+		if(false) {
+			sets|=chess_set.GOBLINS
+		}
+
+		if(false) {
+			sets|=chess_set.TEATIME
+		}
+
+		return sets
+	}
+
 	app.get('/api/selfinfo', async (req, resp, on_error) => {
 		try {
-			var user = get_user(req.cookies.login_token)
+			var user = await get_user(req.cookies.login_token)
 			if(user) {
 				resp.json({
 					user_id: user.user_id,
@@ -33,6 +53,7 @@ export default function (app,db_pool) {
 					profile_flags: user.profile_flags,
 					prefered_set: user.prefered_set,
 					favourite_colour: user.favourite_colour,
+					unlocked_sets: await unlocked_sets(user),
 					logged_in: true,
 				})
 			}
