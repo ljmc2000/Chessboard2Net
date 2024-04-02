@@ -110,10 +110,9 @@ export default function (app,db_pool) {
 
 			var success=true
 			var result
-			console.log(req.body)
 
 			for(var col of ['profile_flags', 'favourite_colour']) {
-				if(req.body[col]) {
+				if(col in req.body) {
 					result = await db_pool.query(`update users set ${col}=$1 where login_token=$2`,[req.body[col], token])
 					success &= result.rowCount>0
 				}
