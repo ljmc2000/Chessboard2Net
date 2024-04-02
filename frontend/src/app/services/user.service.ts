@@ -29,6 +29,7 @@ export class UserService {
 
       reciever.user_id=src.user_id;
       reciever.username=src.username;
+      reciever.unlocked_sets=src.unlocked_sets;
       reciever.profile_flags=src.profile_flags;
       reciever.prefered_set=src.prefered_set;
       reciever.favourite_colour=src.favourite_colour;

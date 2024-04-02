@@ -5,6 +5,15 @@
   border: 1px solid black;
 }
 
+.set_icon {
+  height: 128px;
+  width: 128px;
+}
+
+.opponent_colour {
+  fill: red;
+}
+
 mat-slider {
   margin-left: 32px;
   margin-right: 32px;
