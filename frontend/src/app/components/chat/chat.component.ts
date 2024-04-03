@@ -19,10 +19,10 @@ const WhisperPattern = /\/w(?:hisper)? ([^ ]+) (.+)/
   selector: 'app-main',
   standalone: true,
   imports: [CommonModule, FormsModule,  MatButtonModule, MatInputModule, MatFormFieldModule],
-  templateUrl: './main.component.html',
-  styleUrl: './main.component.css'
+  templateUrl: './chat.component.html',
+  styleUrl: './chat.component.css'
 })
-export class MainComponent {
+export class ChatComponent {
   chatMessageContent: string='';
   chatLog: ChatMessage[] = [M.ON_JOIN_MESSAGE, M.CHAT_CONNECTING_MESSAGE];
   @ViewChild('chat_parent') chatParent: ElementRef;
