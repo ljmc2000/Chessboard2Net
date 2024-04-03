@@ -2,23 +2,13 @@ import {WebSocketServer} from 'ws'
 import * as ev_stuff from './event_stuff.js'
 import * as I from './shared/instructions.js'
 
-async function get_user(request, db_pool) {
+async function get_user(request, db) {
 	var cookies = parse_cookies(request)
 	if(!cookies.login_token){
 		return null
 	}
 
-	var db_result = await db_pool.query("select * from users where login_token=$1 and login_expires>now()", [cookies.login_token])
-
-	if(db_result.rowCount!=1) {
-		return null
-	}
-	else {
-		return {
-			user_id: db_result.rows[0].user_id,
-			username: db_result.rows[0].username,
-		}
-	}
+	return await db.get_user(cookies.login_token)
 }
 
 function parse_cookies(request) {
@@ -111,7 +101,7 @@ function unsubscribe_universe_evloop(ws, cb) {
 	}
 }
 
-export default (http_server, db_pool) => {
+export default (http_server, db) => {
 	const ws_server = new WebSocketServer({noServer: true})
 
 	http_server.on('upgrade', async (request, socket, head) => {
@@ -123,7 +113,7 @@ export default (http_server, db_pool) => {
 	})
 
 	ws_server.on('connection', async (ws, request, client) => {
-		var user=await get_user(request, db_pool)
+		var user=await get_user(request, db)
 		ws.callbacks={}
 
 		if(user==null) {

@@ -13,16 +13,7 @@ function set_login_token(resp) {
 	return {token: token, expires: expires}
 }
 
-export default function (app,db_pool) {
-
-	async function get_user(login_token) {
-		var result = await db_pool.query("select * from users where login_token=$1 and login_expires>now()",[login_token])
-
-		if(result.rowCount==1)
-			return result.rows[0]
-			else
-				return null
-	}
+export default function (app, db) {
 
 	async function unlocked_sets(user) {
 		var sets=chess_set.DOODLES
@@ -45,7 +36,7 @@ export default function (app,db_pool) {
 
 	app.get('/api/selfinfo', async (req, resp, on_error) => {
 		try {
-			var user = await get_user(req.cookies.login_token)
+			var user = await db.get_user(req.cookies.login_token)
 			if(user) {
 				resp.json({
 					user_id: user.user_id,
@@ -68,11 +59,11 @@ export default function (app,db_pool) {
 
 	app.post('/api/login', async (req, resp, on_error) => {
 		try {
-			var result=await db_pool.query("select * from users where username=$1",[req.body.username])
+			var result=await db.pool.query("select * from users where username=$1",[req.body.username])
 			if(result.rowCount==1 && await bcrypt.compare(req.body.password,result.rows[0].passhash)) {
 				var login = set_login_token(resp)
 				var user_id=result.rows[0].user_id
-				await db_pool.query("update users set login_token=$1, login_expires=$2 where user_id=$3",[login.token, login.expires, user_id])
+				await db.pool.query("update users set login_token=$1, login_expires=$2 where user_id=$3",[login.token, login.expires, user_id])
 				resp.status(200).send('')
 			}
 			else {
@@ -86,7 +77,7 @@ export default function (app,db_pool) {
 
 	app.get('/api/logout', async (req, resp, on_error) => {
 		try {
-			var result = await db_pool.query("update users set login_token=null where login_token=$1",[req.cookies.login_token])
+			var result = await db.pool.query("update users set login_token=null where login_token=$1",[req.cookies.login_token])
 			if(result.rowCount!=0)
 				resp.status(200).send('')
 			else
@@ -104,7 +95,7 @@ export default function (app,db_pool) {
 			var password_salt = await bcrypt.genSalt()
 			var passhash = await bcrypt.hash(req.body.password,password_salt)
 			var login = set_login_token(resp)
-			var result=await db_pool.query("insert into users (user_id, username, passhash, login_token, login_expires) values ($1,$2,$3,$4,$5)", [user_id, req.body.username, passhash, login.token, login.expires])
+			var result=await db.pool.query("insert into users (user_id, username, passhash, login_token, login_expires) values ($1,$2,$3,$4,$5)", [user_id, req.body.username, passhash, login.token, login.expires])
 
 			resp.status(200).send('')
 		}
@@ -139,7 +130,7 @@ export default function (app,db_pool) {
 
 			for(var col of ['profile_flags', 'favourite_colour']) {
 				if(col in req.body) {
-					result = await db_pool.query(`update users set ${col}=$1 where login_token=$2`,[req.body[col], token])
+					result = await db.pool.query(`update users set ${col}=$1 where login_token=$2`,[req.body[col], token])
 					success &= result.rowCount>0
 				}
 			}
