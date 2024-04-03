@@ -46,8 +46,8 @@ export class SettingsComponent implements UserInfo {
     return parse_colour(this.favourite_colour);
   }
 
-  loadSet(target: ElementRef, pawn: string) {
-    fetch(pawn)
+  loadSet(setId: number, target: ElementRef, pawn: string) {
+    fetch(setId&this.unlocked_sets?pawn:'assets/locked.svg')
     .then(resp=>resp.text())
     .then(body=>{
       target.nativeElement.innerHTML=body
@@ -58,9 +58,9 @@ export class SettingsComponent implements UserInfo {
   }
 
   loadSets() {
-    this.loadSet(this.doodlePawn,'/assets/doodles_white_src/pawn.svg')
-    this.loadSet(this.goblinPawn,'/assets/goblins_src/pawn.svg')
-    this.loadSet(this.teatimePawn,'/assets/teatime_src/pawn.svg')
+    this.loadSet(S.DOODLES, this.doodlePawn,'/assets/doodles_white_src/pawn.svg')
+    this.loadSet(S.GOBLINS, this.goblinPawn,'/assets/goblins_src/pawn.svg')
+    this.loadSet(S.TEATIME, this.teatimePawn,'/assets/teatime_src/pawn.svg')
   }
 
   onChangeColour() {
