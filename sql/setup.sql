@@ -9,6 +9,8 @@ create table users (
 	prefered_set integer default 0,
 	favourite_colour integer default 16777215,
 
+	current_gameid character(40),
+
 	constraint no_spaces_in_usernames check (username !~ '\s')
 );
 
