@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 
+import { CHALLENGE_MESSAGE } from 'constants/standard-messages';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import * as I from 'shared/instructions';
 import { UserInfo } from 'models/user-info';
@@ -35,6 +36,7 @@ export class AppComponent implements UserInfo {
     public userService: UserService
   ) {
     this.ws.on(I.AUTH,()=>this.onauth())
+    this.ws.on(I.CLNG, (data: any)=>this.onChallenge(data));
     this.ws.subscribeToSinf(this,()=>this.onsinf())
     this.registerIcons();
   }
@@ -42,6 +44,15 @@ export class AppComponent implements UserInfo {
   onauth() {
     if(window.location.pathname!='/login')
       window.location.pathname='/login'
+  }
+
+  onChallenge(data: any) {
+    if(confirm(CHALLENGE_MESSAGE(data.sender.username, data.game))) {
+      this.ws.acceptChallenge(data.sender.username);
+    }
+    else {
+      this.ws.rejectChallenge(data.sender.username);
+    }
   }
 
   onsinf() {

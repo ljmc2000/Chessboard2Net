@@ -29,7 +29,6 @@ export class ChatComponent {
   constructor(private ws: ChessWebsocketHandlerService, private cli: CommandInterpreterService) {
     ws.on(I.ACLNG, (data: any)=>this.chatLog.push(M.CHALLENGE_ACCEPT_MESSAGE(data.sender.username)));
     ws.on(I.BUSY, (data: any)=>this.chatLog.push(M.BUSY_MESSAGE(data.target.username)));
-    ws.on(I.CLNG, (data: any)=>this.onChallenge(data));
     ws.on(I.NOPLR, (data: any)=>this.chatLog.push(M.ON_NO_PLAYER_MESSAGE(data.target)));
     ws.on(I.READY, (data: any)=>this.ws.subscribeToPublicChat());
     ws.on(I.SUB, (data: any)=>this.onSub(data.callback));
@@ -43,15 +42,6 @@ export class ChatComponent {
   ngAfterViewInit() {
     var observer = new ResizeObserver((ev) => this.chatParent.nativeElement.scrollTop=this.chatParent.nativeElement.scrollHeight);
     observer.observe(this.chat.nativeElement)
-  }
-
-  onChallenge(data: any) {
-    if(confirm(M.CHALLENGE_MESSAGE(data.sender.username, data.game))) {
-      this.ws.acceptChallenge(data.sender.username);
-    }
-    else {
-      this.ws.rejectChallenge(data.sender.username);
-    }
   }
 
   onSub(callback: string) {
