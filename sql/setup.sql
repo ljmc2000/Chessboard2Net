@@ -1,3 +1,5 @@
+create type gametype as enum ('chess', 'checkers');
+
 create table users (
 	user_id character(32) primary key,
 	username text,
@@ -10,6 +12,7 @@ create table users (
 	favourite_colour integer default 16777215,
 
 	current_gameid character(40),
+	current_gametype gametype,
 
 	constraint no_spaces_in_usernames check (username !~ '\s')
 );
