@@ -35,6 +35,8 @@ export class UserService {
       reciever.profile_flags=src.profile_flags;
       reciever.prefered_set=src.prefered_set;
       reciever.favourite_colour=src.favourite_colour;
+      reciever.current_gameid=src.current_gameid;
+      reciever.current_gametype=src.current_gametype;
       reciever.logged_in=src.logged_in;
     })
   }

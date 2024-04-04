@@ -22,6 +22,7 @@ export class AppComponent implements UserInfo {
   title = 'Chessboard2Net';
   public user_id: string;
   public username: string;
+  public current_gameid: string;
   public logged_in: boolean;
 
   constructor(

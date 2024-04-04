@@ -3,9 +3,11 @@
     <a mat-fab><mat-icon class="pagelogo" svgIcon="favicon"></mat-icon></a>
     <span class="flexExpand"></span>
 
-    <a *ngIf="logged_in" href="/chat" mat-button>Chat</a>
-    <a *ngIf="logged_in" href="/settings" mat-button>Settings</a>
-    <button *ngIf="logged_in" (click)="userService.logout()" mat-button>Logout</button>
+    <span *ngIf="logged_in && !current_gameid">
+      <a href="/chat" mat-button>Chat</a>
+      <a href="/settings" mat-button>Settings</a>
+      <button (click)="userService.logout()" mat-button>Logout</button>
+    </span>
   </mat-toolbar>
 
   <div class="page_content">
