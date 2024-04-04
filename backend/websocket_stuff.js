@@ -3,6 +3,7 @@ import { WebSocketServer } from 'ws'
 
 import * as ev_stuff from './event_stuff.js'
 import * as I from './shared/instructions.js'
+import { user_info } from './utils.js'
 
 function gen_gameId(p1,p2) {
 	var hash = createHash('sha224')
@@ -75,6 +76,9 @@ async function handle_private_packet(data, db, sender, sender_ws, target, target
 			var result = await db.pool.query("update users set current_gameid=null, current_gametype=null where current_gameid=$1", [sender.current_gameid])
 			sender_ws.send(JSON.stringify({instr: I.SRNDR, surrendering_party: sender.user_id}))
 			break
+		/*case I.SINF:
+			sender_ws.send(JSON.stringify({instr: I.SINF, ...await user_info(sender)}))
+			break*/
 		case I.SUB:
 			subscribe_universe_evloop(sender_ws, data.callback)
 			break
@@ -177,6 +181,7 @@ export default (http_server, db) => {
 			})
 
 			ws.send(JSON.stringify({instr: I.READY}))
+			ws.send(JSON.stringify({instr: I.SINF, ...await user_info(user)}))
 		}
 	})
 }

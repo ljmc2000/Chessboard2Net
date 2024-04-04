@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
 
+import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { parse_colour } from 'utils';
 import { UserInfo } from 'models/user-info';
 import { UserService } from 'services/user.service';
@@ -36,11 +37,12 @@ export class SettingsComponent implements UserInfo {
   @ViewChild('teatimePawn') teatimePawn: ElementRef;
   Sets: any = S
 
-  constructor(public userService: UserService, private http: HttpClient) {
-    this.userService.getUserInfo(this)
-    .then(()=>this.parseFlags())
-    .then(()=>this.parseColour())
-    .then(()=>this.loadSets());
+  constructor(public ws: ChessWebsocketHandlerService, public userService: UserService, private http: HttpClient) {
+    this.ws.subscribeToSinf(this, ()=>{
+      this.parseFlags()
+      this.parseColour()
+      this.loadSets()
+    });
   }
 
   getFavouriteColourString() {
@@ -91,12 +93,12 @@ export class SettingsComponent implements UserInfo {
 
   saveColour() {
     this.http.post('/api/update_prefs',{favourite_colour: this.favourite_colour})
-    .subscribe()
+    .subscribe(()=>this.ws.refreshSelfInfo())
   }
 
   setFavoriteSet(set_id: number) {
     this.http.post('/api/update_prefered_set',{prefered_set: set_id})
-    .subscribe()
+    .subscribe(()=>this.ws.refreshSelfInfo())
   }
 
   updateSetColours() {

@@ -8,6 +8,7 @@ export const GST: string
 export const MOVE: string
 export const NOPLR: string
 export const READY: string
+export const SINF: string
 export const SUB: string
 export const SRNDR: string
 export const TELL: string

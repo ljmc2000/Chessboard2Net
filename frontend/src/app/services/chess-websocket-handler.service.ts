@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import * as I from 'shared/instructions';
 import { ChatMessage } from 'models/chat-message';
+import { UserInfo } from 'models/user-info';
 class WsPacketEvent extends Event {data: any};
 
 @Injectable({
@@ -33,6 +34,10 @@ export class ChessWebsocketHandlerService extends WebSocket {
     this.jsend({instr: I.XCLNG, target: player});
   }
 
+  public refreshSelfInfo() {
+    this.jsend({instr: I.SINF, target: 0});
+  }
+
   public sendChatMessage(content: string, target?: string) {
     this.jsend({instr: I.TELL, content: content, target: target});
   }
@@ -43,6 +48,22 @@ export class ChessWebsocketHandlerService extends WebSocket {
 
   public subscribeToPublicChat() {
     this.jsend({instr: I.SUB, callback: I.TELL, target: 0});
+  }
+
+  public subscribeToSinf(reciever: UserInfo, callback: Function) {
+    this.on(I.SINF, (data: UserInfo)=> {
+      reciever.user_id=data.user_id;
+      reciever.username=data.username;
+      reciever.unlocked_sets=data.unlocked_sets;
+      reciever.profile_flags=data.profile_flags;
+      reciever.prefered_set=data.prefered_set;
+      reciever.favourite_colour=data.favourite_colour;
+      reciever.current_gameid=data.current_gameid;
+      reciever.current_gametype=data.current_gametype;
+      reciever.logged_in=data.logged_in
+
+      callback()
+    })
   }
 
   onMessage(message: MessageEvent) {

@@ -7,6 +7,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 
+import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
+import * as I from 'shared/instructions';
 import { UserInfo } from 'models/user-info';
 import { UserService } from 'services/user.service';
 
@@ -26,14 +28,25 @@ export class AppComponent implements UserInfo {
   public logged_in: boolean;
 
   constructor(
-    private http: HttpClient,
     private iconRegistry: MatIconRegistry,
     private sanitizer: DomSanitizer,
 
+    public ws: ChessWebsocketHandlerService,
     public userService: UserService
   ) {
+    this.ws.on(I.AUTH,()=>this.onauth())
+    this.ws.subscribeToSinf(this,()=>this.onsinf())
     this.registerIcons();
-    this.userService.getUserInfo(this)
+  }
+
+  onauth() {
+    if(window.location.pathname!='/login')
+      window.location.pathname='/login'
+  }
+
+  onsinf() {
+    if(this.current_gameid && !window.location.pathname.startsWith('/game'))
+      window.location.pathname=`/game/${this.current_gameid}`;
   }
 
   registerIcons() {
