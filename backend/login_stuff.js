@@ -16,14 +16,14 @@ function set_login_token(resp) {
 export default function (app, db) {
 
 	async function unlocked_sets(user) {
-		var sets=chess_set.DOODLES
+		var sets=[chess_set.DOODLES]
 
 		if(false) {
-			sets|=chess_set.GOBLINS
+			sets.push(chess_set.GOBLINS)
 		}
 
 		if(false) {
-			sets|=chess_set.TEATIME
+			sets.push(chess_set.TEATIME)
 		}
 
 		return sets
@@ -122,7 +122,7 @@ export default function (app, db) {
 
 			var sets = await unlocked_sets(user)
 
-			if((sets&req.body.prefered_set)!=0 && (Math.log2(req.body.prefered_set) % 1 === 0)) {
+			if(sets.includes(req.body.prefered_set)) {
 				var result = await db.pool.query(`update users set prefered_set=$1 where login_token=$2`,[req.body.prefered_set, req.cookies.login_token])
 				if(result.rowCount!=0) {
 					resp.status(200).send('')

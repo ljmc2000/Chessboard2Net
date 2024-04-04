@@ -24,7 +24,7 @@ export class SettingsComponent implements UserInfo {
 
   profile_flags: number;
   favourite_colour: number=0;
-  unlocked_sets: number;
+  unlocked_sets: number[];
 
   favouriteColourRed: number=0;
   favouriteColourGreen: number=0;
@@ -48,7 +48,7 @@ export class SettingsComponent implements UserInfo {
   }
 
   loadSet(setId: number, target: ElementRef, setName: string) {
-    fetch(setId&this.unlocked_sets?`/assets/${setName}/pawn.svg`:'assets/locked.svg')
+    fetch(this.unlocked_sets.includes(setId)?`/assets/${setName}/pawn.svg`:'assets/locked.svg')
     .then(resp=>resp.text())
     .then(body=>{
       target.nativeElement.innerHTML=body;
@@ -97,10 +97,6 @@ export class SettingsComponent implements UserInfo {
   setFavoriteSet(set_id: number) {
     this.http.post('/api/update_prefered_set',{prefered_set: set_id})
     .subscribe()
-  }
-
-  showSet(flag: number) {
-    return (flag&this.unlocked_sets)!=0;
   }
 
   updateSetColours() {
