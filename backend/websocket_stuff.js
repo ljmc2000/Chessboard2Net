@@ -48,9 +48,8 @@ async function handle_private_packet(data, db, sender, sender_ws, target, target
 	switch(data.instr) {
 		case I.ACLNG:
 			if(sender.user_id==target.challenge.user_id) {
-				target_ws.send(JSON.stringify({instr: I.ACLNG, sender: sender}))
 				var game_id = gen_gameId(sender.user_id, target.user_id)
-				var result1 = await db.pool.query("update users set current_gameid=$1, current_gametype=$2 where user_id=$3 or user_id=$4",[game_id, target.challenge.game, sender.user_id, target.user_id])
+				var result = await db.pool.query("update users set current_gameid=$1, current_gametype=$2 where user_id=$3 or user_id=$4",[game_id, target.challenge.game, sender.user_id, target.user_id])
 				sender_ws.send(JSON.stringify({instr: I.IGME, game_id: game_id}))
 				target_ws.send(JSON.stringify({instr: I.IGME, game_id: game_id}))
 				delete target.challenge
@@ -71,6 +70,10 @@ async function handle_private_packet(data, db, sender, sender_ws, target, target
 			target_ws.send(packet)
 			if(target.user_id!=sender.user_id)
 				sender_ws.send(packet)
+			break
+		case I.SRNDR:
+			var result = await db.pool.query("update users set current_gameid=null, current_gametype=null where current_gameid=$1", [sender.current_gameid])
+			sender_ws.send(JSON.stringify({instr: I.SRNDR, surrendering_party: sender.user_id}))
 			break
 		case I.SUB:
 			subscribe_universe_evloop(sender_ws, data.callback)

@@ -13,8 +13,6 @@ import { CommandInterpreterService } from 'services/command-interpreter.service'
 
 import * as M from 'constants/standard-messages';
 
-const WhisperPattern = /\/w(?:hisper)? ([^ ]+) (.+)/
-
 @Component({
   selector: 'app-main',
   standalone: true,

@@ -37,6 +37,10 @@ export class ChessWebsocketHandlerService extends WebSocket {
     this.jsend({instr: I.TELL, content: content, target: target});
   }
 
+  public surrender() {
+    this.jsend({instr: I.SRNDR, target:0});
+  }
+
   public subscribeToPublicChat() {
     this.jsend({instr: I.SUB, callback: I.TELL, target: 0});
   }
