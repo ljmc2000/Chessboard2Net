@@ -20,6 +20,22 @@ export class UserService {
     .subscribe(resp=>window.location.pathname=redirect, err=>login.onError(err.status))
   }
 
+  public getUserInfo(reciever: UserInfo) {
+    return fetch('/api/selfinfo')
+    .then(resp=>resp.json())
+    .then((src: UserInfo)=>{
+      reciever.user_id=src.user_id;
+      reciever.username=src.username;
+      reciever.unlocked_sets=src.unlocked_sets;
+      reciever.profile_flags=src.profile_flags;
+      reciever.prefered_set=src.prefered_set;
+      reciever.favourite_colour=src.favourite_colour;
+      reciever.current_gameid=src.current_gameid;
+      reciever.current_gametype=src.current_gametype;
+      reciever.logged_in=src.logged_in;
+    })
+  }
+
   public login(details: LoginDetails) {
     this.login_or_register(details, '/api/login', '/')
   }
