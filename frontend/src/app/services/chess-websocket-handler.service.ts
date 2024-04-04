@@ -64,5 +64,9 @@ export class ChessWebsocketHandlerService extends WebSocket {
   }
 
   setupDefaultEventListeners() {
+    this.on(I.IGME, (data: any)=>{
+      if(!window.location.pathname.startsWith('/game'))
+        window.location.pathname=`/game/${data.game_id}`;
+    })
   }
 }

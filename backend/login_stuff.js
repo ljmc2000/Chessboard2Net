@@ -40,6 +40,7 @@ export default function (app, db) {
 					prefered_set: user.prefered_set,
 					favourite_colour: user.favourite_colour,
 					unlocked_sets: await unlocked_sets(user),
+					current_gameid: user.current_gameid,
 					logged_in: true,
 				})
 			}

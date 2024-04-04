@@ -1,6 +1,20 @@
-import {WebSocketServer} from 'ws'
+import { createHash } from 'crypto'
+import { WebSocketServer } from 'ws'
+
 import * as ev_stuff from './event_stuff.js'
 import * as I from './shared/instructions.js'
+
+function gen_gameId(p1,p2) {
+	var hash = createHash('sha224')
+	hash.update(p1)
+	hash.update(p2)
+	hash.update(new Date().toString())
+	return hash.digest()
+		.toString('base64')
+		.replace(/\+/g, '-')
+		.replace(/\//g, '_')
+		.replace(/=+$/, '')
+}
 
 async function get_user(request, db) {
 	var cookies = parse_cookies(request)
@@ -30,19 +44,23 @@ function parse_cookies(request) {
 	return cookies
 }
 
-function handle_private_packet(data, sender, sender_ws, target, target_ws) {
+async function handle_private_packet(data, db, sender, sender_ws, target, target_ws) {
 	switch(data.instr) {
 		case I.ACLNG:
 			if(sender.user_id==target.challenge.user_id) {
 				target_ws.send(JSON.stringify({instr: I.ACLNG, sender: sender}))
-				//create chessboard
+				var game_id = gen_gameId(sender.user_id, target.user_id)
+				var result1 = await db.pool.query("update users set current_gameid=$1, current_gametype=$2 where user_id=$3 or user_id=$4",[game_id, target.challenge.game, sender.user_id, target.user_id])
+				sender_ws.send(JSON.stringify({instr: I.IGME, game_id: game_id}))
+				target_ws.send(JSON.stringify({instr: I.IGME, game_id: game_id}))
 				delete target.challenge
 			}
 			break
 		case I.CLNG:
 			if(sender.user_id!=target.user_id) {
-				sender.challenge=target
-				target_ws.send(JSON.stringify({instr: I.CLNG, sender: sender, game: data.game}))
+				var game=data.game.toLowerCase()
+				sender.challenge={user_id: target.user_id, game: game}
+				target_ws.send(JSON.stringify({instr: I.CLNG, sender: sender, game: game}))
 			}
 			else {
 				sender_ws.send(JSON.stringify({instr: I.BUSY, target: target}))
@@ -125,7 +143,7 @@ export default (http_server, db) => {
 
 			ws.on('error', console.error)
 
-			ws.on('message', buffer=>{
+			ws.on('message', async buffer=>{
 				try {
 					var data = JSON.parse(buffer)
 
@@ -133,13 +151,13 @@ export default (http_server, db) => {
 						ev_stuff.universe.emit(data.instr, data, user, ws)
 					}
 					else if (data.target==0) {
-						handle_private_packet(data, user, ws)
+						await handle_private_packet(data, db, user, ws)
 					}
 					else {
 						var target = ev_stuff.get_user_by_username(data.target)
 						var target_ws = ev_stuff.get_user_ws_by_username(data.target)
 						if(target_ws)
-							handle_private_packet(data, user, ws, target, target_ws)
+							await handle_private_packet(data, db, user, ws, target, target_ws)
 						else
 							ws.send(JSON.stringify({instr: I.NOPLR, target: data.target}))
 					}

@@ -26,6 +26,8 @@ export class UserService {
     .then((src: UserInfo)=>{
       if(!src.logged_in && window.location.pathname!='/login')
         window.location.pathname='/login';
+      if(src.current_gameid && !window.location.pathname.startsWith('/game'))
+        window.location.pathname=`/game/${src.current_gameid}`;
 
       reciever.user_id=src.user_id;
       reciever.username=src.username;
