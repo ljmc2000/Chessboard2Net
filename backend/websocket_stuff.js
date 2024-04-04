@@ -49,8 +49,8 @@ function callback_for(ws, callback) {
 	switch(callback)
 	{
 		case I.TELL:
-			return (data, sender, sender_ws) => {
-				ws.send(JSON.stringify({instr: I.TELL, sender: sender, content:data.content}))
+			return (data, sender_ws) => {
+				ws.send(JSON.stringify({instr: I.TELL, sender: sender_ws.user, content:data.content}))
 			}
 	}
 }
@@ -68,6 +68,14 @@ export default (app, http_server, db) => {
 		}
 	}
 
+	function subscribe_universe_x(ws, callback, func) {
+		if(!ws.callbacks[callback])
+		{
+			app.universe.on(callback, func)
+			ws.callbacks[callback]=func
+		}
+	}
+
 	function unsubscribe_universe(ws, cb) {
 		if(ws.callbacks[callback])
 		{
@@ -77,39 +85,39 @@ export default (app, http_server, db) => {
 		}
 	}
 
-	async function handle_private_packet(data, sender, sender_ws, target, target_ws) {
+	async function handle_private_packet(data, sender_ws, target_ws) {
 		switch(data.instr) {
 			case I.ACLNG:
-				if(sender.user_id==target.challenge.user_id) {
-					var game_id = gen_gameId(sender.user_id, target.user_id)
-					var result = await db.pool.query("update users set current_gameid=$1, current_gametype=$2 where user_id=$3 or user_id=$4",[game_id, target.challenge.game, sender.user_id, target.user_id])
+				if(sender_ws.user.user_id==target_ws.user.challenge.user_id) {
+					var game_id = gen_gameId(sender_ws.user.user_id, target_ws.user.user_id)
+					var result = await db.pool.query("update users set current_gameid=$1, current_gametype=$2 where user_id=$3 or user_id=$4",[game_id, target_ws.user.challenge.game, sender_ws.user.user_id, target_ws.user.user_id])
 					sender_ws.send(JSON.stringify({instr: I.IGME, game_id: game_id}))
 					target_ws.send(JSON.stringify({instr: I.IGME, game_id: game_id}))
-					delete target.challenge
+					delete target_ws.user.challenge
 				}
 				break
 			case I.CLNG:
-				if(sender.user_id!=target.user_id) {
+				if(sender_ws.user.user_id!=target_ws.user.user_id) {
 					var game=data.game.toLowerCase()
-					sender.challenge={user_id: target.user_id, game: game}
-					target_ws.send(JSON.stringify({instr: I.CLNG, sender: sender, game: game}))
+					sender_ws.user.challenge={user_id: target_ws.user.user_id, game: game}
+					target_ws.send(JSON.stringify({instr: I.CLNG, sender: sender_ws.user, game: game}))
 				}
 				else {
 					sender_ws.send(JSON.stringify({instr: I.BUSY, target: target}))
 				}
 				break
 			case I.TELL:
-				var packet = JSON.stringify({instr: I.TELL, sender: sender, content:data.content, target: target, secret_message: true})
+				var packet = JSON.stringify({instr: I.TELL, sender: sender_ws.user, content:data.content, target: target_ws.user, secret_message: true})
 				target_ws.send(packet)
-				if(target.user_id!=sender.user_id)
+				if(target_ws.user.user_id!=sender_ws.user.user_id)
 					sender_ws.send(packet)
 					break
 			case I.SRNDR:
-				var result = await db.pool.query("update users set current_gameid=null, current_gametype=null where current_gameid=$1", [sender.current_gameid])
-				sender_ws.send(JSON.stringify({instr: I.SRNDR, surrendering_party: sender.user_id}))
+				var result = await db.pool.query("update users set current_gameid=null, current_gametype=null where current_gameid=$1", [sender_ws.user.current_gameid])
+				sender_ws.send(JSON.stringify({instr: I.SRNDR, surrendering_party: sender_ws.user.user_id}))
 				break
 			case I.SINF:
-				sender_ws.send(JSON.stringify({instr: I.SINF, ...await user_info(sender)}))
+				sender_ws.send(JSON.stringify({instr: I.SINF, ...await user_info(sender_ws.user)}))
 				break
 			case I.SUB:
 				subscribe_universe(sender_ws, data.callback)
@@ -121,11 +129,18 @@ export default (app, http_server, db) => {
 				unsubscribe_universe(sender_ws, data.callback)
 				break
 			case I.XCLNG:
-				if(sender.user_id==target.challenge.user_id) {
-					target_ws.send(JSON.stringify({instr: I.XCLNG, sender: sender}))
-					delete target.challenge
+				if(sender_ws.user.user_id==target_ws.user.challenge.user_id) {
+					target_ws.send(JSON.stringify({instr: I.XCLNG, sender: sender_ws.user}))
+					delete target_ws.user.challenge
 				}
 				break
+		}
+	}
+
+	function onsinf(ws) {
+		return async function(user) {
+			ws.user=user
+			ws.send(JSON.stringify({instr: I.SINF, ...await user_info(user)}))
 		}
 	}
 
@@ -138,33 +153,34 @@ export default (app, http_server, db) => {
 	})
 
 	ws_server.on('connection', async (ws, request, client) => {
-		var user=await get_user(request, db)
+		ws.user=await get_user(request, db)
 		ws.callbacks={}
 
-		if(user==null) {
+		if(ws.user==null) {
 			ws.send(JSON.stringify({instr: I.AUTH}))
 		}
 
 		else {
-			ws_factory.register_user_ws(ws, user)
+			ws_factory.register_user_ws(ws)
 
 			ws.on('error', console.error)
+
+			subscribe_universe_x(ws, `${I.SINF} ${ws.user.user_id}`, onsinf(ws))
 
 			ws.on('message', async buffer=>{
 				try {
 					var data = JSON.parse(buffer)
 
 					if(data.target==null) {
-						app.universe.emit(data.instr, data, user, ws)
+						app.universe.emit(data.instr, data, ws)
 					}
 					else if (data.target==0) {
-						await handle_private_packet(data, user, ws)
+						await handle_private_packet(data, ws)
 					}
 					else {
-						var target = ws_factory.get_user_by_username(data.target)
 						var target_ws = ws_factory.get_user_ws_by_username(data.target)
 						if(target_ws)
-							await handle_private_packet(data, user, ws, target, target_ws)
+							await handle_private_packet(data, ws, target_ws)
 						else
 							ws.send(JSON.stringify({instr: I.NOPLR, target: data.target}))
 					}
@@ -181,7 +197,7 @@ export default (app, http_server, db) => {
 			})
 
 			ws.send(JSON.stringify({instr: I.READY}))
-			ws.send(JSON.stringify({instr: I.SINF, ...await user_info(user)}))
+			ws.send(JSON.stringify({instr: I.SINF, ...await user_info(ws.user)}))
 		}
 	})
 }

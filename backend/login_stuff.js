@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import { randomBytes } from 'crypto'
 
 import * as c from './constants.js'
+import * as I from './shared/instructions.js'
 import { create_login_expiry, unlocked_sets, user_info } from './utils.js'
 
 function set_login_token(resp) {
@@ -101,8 +102,10 @@ export default function (app, db) {
 
 			if(sets.includes(req.body.prefered_set)) {
 				var result = await db.pool.query(`update users set prefered_set=$1 where login_token=$2`,[req.body.prefered_set, req.cookies.login_token])
+				user.prefered_set=req.body.prefered_set
 				if(result.rowCount!=0) {
 					resp.status(200).send('')
+					app.universe.emit(`${I.SINF} ${user.user_id}`, user)
 				}
 				else {
 					resp.status(500).send('')
@@ -119,8 +122,8 @@ export default function (app, db) {
 
 	app.post('/api/update_prefs', async (req, resp, on_error) => {
 		try {
-			var token = req.cookies.login_token
-			if(!token) {
+			var user= await db.get_user(req.cookies.login_token)
+			if(!user) {
 				resp.status(401).send('')
 			}
 
@@ -129,12 +132,14 @@ export default function (app, db) {
 
 			for(var col of ['profile_flags', 'favourite_colour']) {
 				if(col in req.body) {
-					result = await db.pool.query(`update users set ${col}=$1 where login_token=$2`,[req.body[col], token])
+					result = await db.pool.query(`update users set ${col}=$1 where user_id=$2`,[req.body[col], user.user_id])
+					user[col]=req.body[col]
 					success &= result.rowCount>0
 				}
 			}
 
 			resp.status(success?200:400).send('')
+			app.universe.emit(`${I.SINF} ${user.user_id}`, user)
 		}
 		catch (err) {
 			on_error(err)
