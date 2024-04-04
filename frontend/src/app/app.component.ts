@@ -36,6 +36,6 @@ export class AppComponent implements UserInfo {
   }
 
   registerIcons() {
-    this.iconRegistry.addSvgIcon('favicon', this.sanitizer.bypassSecurityTrustResourceUrl('/assets/doodles_white_src/pawn.svg'));
+    this.iconRegistry.addSvgIcon('favicon', this.sanitizer.bypassSecurityTrustResourceUrl('/assets/doodles/pawn.svg'));
   }
 }
