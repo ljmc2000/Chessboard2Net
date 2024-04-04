@@ -18,11 +18,6 @@ export default function (app, db) {
 	async function unlocked_sets(user) {
 		var sets=chess_set.DOODLES
 
-		if(!user) {
-			resp.status(401).send('')
-			return
-		}
-
 		if(false) {
 			sets|=chess_set.GOBLINS
 		}
@@ -115,6 +110,33 @@ export default function (app, db) {
 			else {
 				on_error(err)
 			}
+		}
+	})
+
+	app.post('/api/update_prefered_set', async (req, resp, on_error) => {
+		try {
+			var user= await db.get_user(req.cookies.login_token)
+			if(!user) {
+				resp.status(401).send('')
+			}
+
+			var sets = await unlocked_sets(user)
+
+			if((sets&req.body.prefered_set)!=0 && (Math.log2(req.body.prefered_set) % 1 === 0)) {
+				var result = await db.pool.query(`update users set prefered_set=$1 where login_token=$2`,[req.body.prefered_set, req.cookies.login_token])
+				if(result.rowCount!=0) {
+					resp.status(200).send('')
+				}
+				else {
+					resp.status(500).send('')
+				}
+			}
+			else {
+				resp.status(405).send('')
+			}
+		}
+		catch(err) {
+			on_error(err)
 		}
 	})
 

@@ -34,6 +34,7 @@ export class SettingsComponent implements UserInfo {
   @ViewChild('doodlePawn') doodlePawn: ElementRef;
   @ViewChild('goblinPawn') goblinPawn: ElementRef;
   @ViewChild('teatimePawn') teatimePawn: ElementRef;
+  Sets: any = S
 
   constructor(public userService: UserService, private http: HttpClient) {
     this.userService.getUserInfo(this)
@@ -50,9 +51,10 @@ export class SettingsComponent implements UserInfo {
     fetch(setId&this.unlocked_sets?`/assets/${setName}/pawn.svg`:'assets/locked.svg')
     .then(resp=>resp.text())
     .then(body=>{
-      target.nativeElement.innerHTML=body
-      target.nativeElement.children[0].style.height="128px"
-      target.nativeElement.children[0].style.width="128px"
+      target.nativeElement.innerHTML=body;
+      target.nativeElement.children[0].style.height="128px";
+      target.nativeElement.children[0].style.width="128px";
+      target.nativeElement.setAttribute("set_id",setId);
     })
     .then(()=>this.updateSetColours())
   }
@@ -89,6 +91,11 @@ export class SettingsComponent implements UserInfo {
 
   saveColour() {
     this.http.post('/api/update_prefs',{favourite_colour: this.favourite_colour})
+    .subscribe()
+  }
+
+  setFavoriteSet(set_id: number) {
+    this.http.post('/api/update_prefered_set',{prefered_set: set_id})
     .subscribe()
   }
 
