@@ -1,12 +1,9 @@
-import EventEmitter from 'node:events'
 import { WebSocket } from 'ws'
 
 const user_wss_by_id = {}
 const user_wss_by_username = {}
 const users_by_id = {}
 const users_by_username = {}
-
-export const universe = new EventEmitter()
 
 export function count_online_users() {
 	var count=0;
