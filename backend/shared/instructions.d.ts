@@ -7,6 +7,7 @@ export const IGME: string
 export const GST: string
 export const MOVE: string
 export const NOPLR: string
+export const NOSCP: string
 export const READY: string
 export const SINF: string
 export const SUB: string

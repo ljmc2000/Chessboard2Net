@@ -31,7 +31,7 @@ export class CommandInterpreterService {
       return false;
     }
     else if(match=WhisperPattern.exec(command)) {
-      this.ws.sendChatMessage(match[2], match[1]);
+      this.ws.sendWhisperMessage(match[2], match[1]);
       return false;
     }
     else {

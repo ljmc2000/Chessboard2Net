@@ -3,6 +3,9 @@ import { WebSocketServer } from 'ws'
 
 import * as ws_factory from './websocket_factory.js'
 import * as I from './shared/instructions.js'
+import * as GAME from './shared/games.js'
+import * as SCOPE from './shared/scope.js'
+import { ChessGame, CheckersGame, NullGame } from './game.js'
 import { user_info } from './utils.js'
 
 function gen_gameId(p1,p2) {
@@ -57,6 +60,7 @@ function callback_for(ws, callback) {
 
 export default (app, http_server, db) => {
 	const ws_server = new WebSocketServer({noServer: true})
+	const games = {}
 
 	function subscribe_universe(ws, callback) {
 		if(!ws.callbacks[callback])
@@ -85,7 +89,64 @@ export default (app, http_server, db) => {
 		}
 	}
 
-	async function handle_private_packet(data, sender_ws, target_ws) {
+	async function get_game(user) {
+		if(!user.current_gameid) {
+			return NullGame
+		}
+
+		var game = games[user.current_gameid]
+		if(!game) {
+			switch(user.game_type) {
+				case GAME.CHECKERS:
+					game=new CheckersGame()
+					break
+				case GAME.CHESS:
+					game=new ChessGame()
+					break
+			}
+
+			game.game_id=user.current_gameid
+			game.player1_id=user.user_id
+
+			game.onend=async function() {
+				var result = await db.pool.query("update users set current_gameid=null, current_gametype=null where current_gameid=$1", [this.game_id])
+
+				for(var player in [this.player1, this.player2]) {
+					if(!player)
+						continue
+					console.log(player)
+					player.user.current_gameid=null
+					player.user.current_gametype=null
+					player.send(JSON.stringify({instr: I.SINF, ...player.user}))
+				}
+			}
+
+			games[user.current_gameid]=game
+		}
+
+		return game
+	}
+
+	async function handle_private_packet(data, ws) {
+		switch(data.instr) {
+			case I.SINF:
+				ws.send(JSON.stringify({instr: I.SINF, ...await user_info(ws.user)}))
+				break
+			case I.SUB:
+				subscribe_universe(ws, data.callback)
+				break
+			case I.OUCNT:
+				ws.send(JSON.stringify({instr: I.OUCNT, count: ws_factory.count_online_users()}))
+				break
+			case I.UNSUB:
+				unsubscribe_universe(ws, data.callback)
+				break
+			default:
+				ws.send(JSON.stringify({instr: I.ERR}))
+		}
+	}
+
+	async function handle_direct_packet(data, sender_ws, target_ws) {
 		switch(data.instr) {
 			case I.ACLNG:
 				if(sender_ws.user.user_id==target_ws.user.challenge.user_id) {
@@ -112,28 +173,14 @@ export default (app, http_server, db) => {
 				if(target_ws.user.user_id!=sender_ws.user.user_id)
 					sender_ws.send(packet)
 					break
-			case I.SRNDR:
-				var result = await db.pool.query("update users set current_gameid=null, current_gametype=null where current_gameid=$1", [sender_ws.user.current_gameid])
-				sender_ws.send(JSON.stringify({instr: I.SRNDR, surrendering_party: sender_ws.user.user_id}))
-				break
-			case I.SINF:
-				sender_ws.send(JSON.stringify({instr: I.SINF, ...await user_info(sender_ws.user)}))
-				break
-			case I.SUB:
-				subscribe_universe(sender_ws, data.callback)
-				break
-			case I.OUCNT:
-				sender_ws.send(JSON.stringify({instr: I.OUCNT, count: ws_factory.count_online_users()}))
-				break
-			case I.UNSUB:
-				unsubscribe_universe(sender_ws, data.callback)
-				break
 			case I.XCLNG:
 				if(sender_ws.user.user_id==target_ws.user.challenge.user_id) {
 					target_ws.send(JSON.stringify({instr: I.XCLNG, sender: sender_ws.user}))
 					delete target_ws.user.challenge
 				}
 				break
+			default:
+				ws.send(JSON.stringify({instr: I.ERR}))
 		}
 	}
 
@@ -154,35 +201,46 @@ export default (app, http_server, db) => {
 
 	ws_server.on('connection', async (ws, request, client) => {
 		ws.user=await get_user(request, db)
-		ws.callbacks={}
-
 		if(ws.user==null) {
 			ws.send(JSON.stringify({instr: I.AUTH}))
 		}
 
 		else {
+			ws.callbacks={}
+			ws.send(JSON.stringify({instr: I.SINF, ...await user_info(ws.user)}))
 			ws_factory.register_user_ws(ws)
+			subscribe_universe_x(ws, `${I.SINF} ${ws.user.user_id}`, onsinf(ws))
+
+			ws.game=await get_game(ws.user)
+			if(ws.game.player1_id==ws.user.user_id)
+				ws.game.player1=ws
+			else
+				ws.game.player2=ws
 
 			ws.on('error', console.error)
-
-			subscribe_universe_x(ws, `${I.SINF} ${ws.user.user_id}`, onsinf(ws))
 
 			ws.on('message', async buffer=>{
 				try {
 					var data = JSON.parse(buffer)
 
-					if(data.target==null) {
-						app.universe.emit(data.instr, data, ws)
-					}
-					else if (data.target==0) {
-						await handle_private_packet(data, ws)
-					}
-					else {
-						var target_ws = ws_factory.get_user_ws_by_username(data.target)
-						if(target_ws)
-							await handle_private_packet(data, ws, target_ws)
-						else
-							ws.send(JSON.stringify({instr: I.NOPLR, target: data.target}))
+					switch(data.scope) {
+						case SCOPE.PRIVATE:
+							await handle_private_packet(data, ws)
+							break
+						case SCOPE.DIRECT:
+							var target_ws = ws_factory.get_user_ws_by_username(data.target)
+							if(target_ws)
+								await handle_direct_packet(data, ws, target_ws)
+								else
+									ws.send(JSON.stringify({instr: I.NOPLR, target: data.target}))
+						case SCOPE.GAME:
+							await ws.game.onmessage(data, ws)
+							break
+						case SCOPE.UNIVERSE:
+							app.universe.emit(data.instr, data, ws)
+							break
+						default:
+							ws.send(JSON.stringify({instr: I.NOSCP, ...data}))
 					}
 				}
 				catch (err) {
@@ -197,7 +255,6 @@ export default (app, http_server, db) => {
 			})
 
 			ws.send(JSON.stringify({instr: I.READY}))
-			ws.send(JSON.stringify({instr: I.SINF, ...await user_info(ws.user)}))
 		}
 	})
 }

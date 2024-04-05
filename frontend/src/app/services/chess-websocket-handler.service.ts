@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import * as I from 'shared/instructions';
+import * as S from 'shared/scope';
 import { ChatMessage } from 'models/chat-message';
 import { UserInfo } from 'models/user-info';
 class WsPacketEvent extends Event {data: any};
@@ -19,35 +20,39 @@ export class ChessWebsocketHandlerService extends WebSocket {
   }
 
   public acceptChallenge(player: string) {
-    this.jsend({instr: I.ACLNG, target: player});
+    this.jsend({instr: I.ACLNG, scope: S.DIRECT, target: player});
   }
 
   public challenge(player: string, game: string) {
-    this.jsend({instr: I.CLNG, target: player, game: game});
+    this.jsend({instr: I.CLNG, scope: S.DIRECT, target: player, game: game});
   }
 
   public countOnlinePlayers() {
-    this.jsend({instr: I.OUCNT, target: 0});
+    this.jsend({instr: I.OUCNT, scope: S.PRIVATE});
   }
 
   public rejectChallenge(player: string) {
-    this.jsend({instr: I.XCLNG, target: player});
+    this.jsend({instr: I.XCLNG, scope: S.DIRECT, target: player});
   }
 
   public refreshSelfInfo() {
-    this.jsend({instr: I.SINF, target: 0});
+    this.jsend({instr: I.SINF, scope: S.PRIVATE});
   }
 
-  public sendChatMessage(content: string, target?: string) {
-    this.jsend({instr: I.TELL, content: content, target: target});
+  public sendChatMessage(content: string) {
+    this.jsend({instr: I.TELL, scope: S.UNIVERSE, content: content});
+  }
+
+  public sendWhisperMessage(content: string, target: string) {
+    this.jsend({instr: I.TELL, scope: S.DIRECT, content: content, target: target});
   }
 
   public surrender() {
-    this.jsend({instr: I.SRNDR, target:0});
+    this.jsend({instr: I.SRNDR, scope: S.GAME});
   }
 
   public subscribeToPublicChat() {
-    this.jsend({instr: I.SUB, callback: I.TELL, target: 0});
+    this.jsend({instr: I.SUB, callback: I.TELL, scope: S.PRIVATE});
   }
 
   public subscribeToSinf(reciever: UserInfo, callback: Function) {
@@ -71,6 +76,7 @@ export class ChessWebsocketHandlerService extends WebSocket {
     var ev = new WsPacketEvent(data.instr);
     ev.data=data;
     this.dispatchEvent(ev);
+    console.log(data);
   }
 
   onError(err: Event) {
@@ -85,6 +91,7 @@ export class ChessWebsocketHandlerService extends WebSocket {
   }
 
   jsend(data: any) {
+    console.log(data)
     this.send(JSON.stringify(data));
   }
 
