@@ -24,11 +24,15 @@ class Game extends EventEmitter {
 	async onmessage(data, ws) {
 		switch(data.instr) {
 			case I.SRNDR:
-				await this.onend(ENDSTATE.SURRENDER)
+				await this.onend(ENDSTATE.SURRENDER, this.gamestate)
 				break
 			default:
 				ws.send(JSON.stringify({instr: I.ERR}))
 		}
+	}
+
+	async onjoin(ws) {
+		ws.send(JSON.stringify({instr: I.GST, gamestate: this.gamestate}))
 	}
 }
 

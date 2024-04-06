@@ -1,1 +1,1 @@
-<button matSuffix mat-raised-button color="primary" (click)="ws.surrender()">Surrender</button>
+<button matSuffix mat-raised-button color="primary" (click)="ws.surrender()" *ngIf="in_game">Surrender</button>

@@ -77,6 +77,7 @@ export default (app, http_server, db) => {
 				ws.game_callbacks[cb] = game_callback_for(ws, cb)
 				ws.game.on(cb, ws.game_callbacks[cb])
 			}
+			await ws.game.onjoin(ws)
 		}
 	}
 
@@ -97,7 +98,7 @@ export default (app, http_server, db) => {
 
 		var game = games[user.current_gameid]
 		if(!game) {
-			switch(user.game_type) {
+			switch(user.current_gametype) {
 				case GAME.CHECKERS:
 					game=new CheckersGame()
 					break
@@ -128,11 +129,12 @@ export default (app, http_server, db) => {
 					ws.send(JSON.stringify(message))
 				}
 			case GAME_END:
-				return async function() {
+				return async function(endstate) {
 					delete ws.user.current_gameid
 					delete ws.user.current_gametype
 					subscribe_game(ws)
 					ws.send(JSON.stringify({instr: I.SINF, ...await user_info(ws.user)}))
+					ws.send(JSON.stringify({instr: I.GOVER, endstate: endstate}))
 				}
 		}
 	}
