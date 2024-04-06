@@ -13,6 +13,7 @@ export const SINF: string
 export const SUB: string
 export const SRNDR: string
 export const TELL: string
+export const PINF: string
 export const OUCNT: string
 export const UNSUB: string
 export const XCLNG: string
