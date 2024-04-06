@@ -3,6 +3,7 @@ import * as ENDSTATE from './shared/endstate.js'
 import * as I from './shared/instructions.js'
 
 export const GAME_MESSAGE='game_message'
+export const GAME_END='game_end'
 
 class Game extends EventEmitter {
 	gamestate=" ".repeat(64)
@@ -20,7 +21,7 @@ class Game extends EventEmitter {
 		}
 	}
 
-	async onmessage(data) {
+	async onmessage(data, ws) {
 		switch(data.instr) {
 			case I.SRNDR:
 				await this.onend(ENDSTATE.SURRENDER)
@@ -59,5 +60,5 @@ export const NullGame = {
 	onmessage: async function(data, ws) {
 		ws.send(JSON.stringify({instr: I.ERROR}))
 	},
-	on: function(){}
+	NULL: true
 }

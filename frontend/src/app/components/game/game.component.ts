@@ -15,6 +15,5 @@ import * as I from 'shared/instructions';
 export class GameComponent {
 
   constructor(public ws: ChessWebsocketHandlerService) {
-    ws.on(I.GOVER, ()=>ws.sinf())
   }
 }

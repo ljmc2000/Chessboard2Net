@@ -5,7 +5,7 @@ import * as ws_factory from './websocket_factory.js'
 import * as I from './shared/instructions.js'
 import * as GAME from './shared/games.js'
 import * as SCOPE from './shared/scope.js'
-import { GAME_MESSAGE, ChessGame, CheckersGame, NullGame } from './game.js'
+import { GAME_MESSAGE, GAME_END, ChessGame, CheckersGame, NullGame } from './game.js'
 import { user_info } from './utils.js'
 
 function gen_gameId(p1,p2) {
@@ -55,6 +55,12 @@ function callback_for(ws, callback) {
 			return (data, sender_ws) => {
 				ws.send(JSON.stringify({instr: I.TELL, sender: sender_ws.user, content:data.content}))
 			}
+		case I.SINF:
+			return async (user) => {
+				if(user)
+					ws.user=user
+				ws.send(JSON.stringify({instr: I.SINF, ...await user_info(user)}))
+			}
 	}
 }
 
@@ -62,34 +68,29 @@ export default (app, http_server, db) => {
 	const ws_server = new WebSocketServer({noServer: true})
 	const games = {}
 
-	function subscribe_universe(ws, callback) {
-		if(!ws.callbacks[callback])
-		{
-			var func = callback_for(ws, callback)
-			app.universe.on(callback, func)
-			ws.callbacks[callback]=func
-			ws.send(JSON.stringify({instr: I.SUB, callback: callback}))
+	async function subscribe_game(ws) {
+		unsubscribe_game(ws)
+
+		ws.game = get_game(ws.user)
+		if(!ws.game.NULL) {
+			for(var cb of [GAME_MESSAGE, GAME_END]) {
+				ws.game_callbacks[cb] = game_callback_for(ws, cb)
+				ws.game.on(cb, ws.game_callbacks[cb])
+			}
 		}
 	}
 
-	function subscribe_universe_x(ws, callback, func) {
-		if(!ws.callbacks[callback])
-		{
-			app.universe.on(callback, func)
-			ws.callbacks[callback]=func
+	function unsubscribe_game(ws) {
+		if(ws.game) {
+			for(var cb in ws.game_callbacks) {
+				ws.game.removeListener(cb, ws.game_callbacks[cb])
+				delete ws.game_callbacks[cb]
+			}
+			delete ws.game
 		}
 	}
 
-	function unsubscribe_universe(ws, cb) {
-		if(ws.callbacks[callback])
-		{
-			app.universe.removeListener(cb, callbacks[cb])
-			delete ws.callbacks[cb]
-			ws.send(JSON.stringify({instr: I.UNSUB, callback: callback}))
-		}
-	}
-
-	async function get_game(user) {
+	function get_game(user) {
 		if(!user.current_gameid) {
 			return NullGame
 		}
@@ -111,13 +112,58 @@ export default (app, http_server, db) => {
 			game.onend=async function() {
 				var result = await db.pool.query("update users set current_gameid=null, current_gametype=null where current_gameid=$1", [this.game_id])
 
-				this.emit(GAME_MESSAGE, {instr: I.GOVER})
+				this.emit(GAME_END)
 			}
 
 			games[user.current_gameid]=game
 		}
 
 		return game
+	}
+
+	function game_callback_for(ws, callback) {
+		switch(callback) {
+			case GAME_MESSAGE:
+				return function (message) {
+					ws.send(JSON.stringify(message))
+				}
+			case GAME_END:
+				return async function() {
+					delete ws.user.current_gameid
+					delete ws.user.current_gametype
+					subscribe_game(ws)
+					ws.send(JSON.stringify({instr: I.SINF, ...await user_info(ws.user)}))
+				}
+		}
+	}
+
+	function subscribe_universe(ws, callback) {
+		if(!ws.callbacks[callback])
+		{
+			var func = callback_for(ws, callback)
+			app.universe.on(callback, func)
+			ws.callbacks[callback]=func
+			ws.send(JSON.stringify({instr: I.SUB, callback: callback}))
+		}
+	}
+
+	function subscribe_universe_private(ws, callback, user_id) {
+		if(!ws.callbacks[callback])
+		{
+			var func = callback_for(ws, callback)
+			var callback_name = `${callback} ${user_id}`
+			app.universe.on(callback_name, func)
+			ws.callbacks[callback_name]=func
+		}
+	}
+
+	function unsubscribe_universe(ws, cb) {
+		if(ws.callbacks[callback])
+		{
+			app.universe.removeListener(cb, callbacks[cb])
+			delete ws.callbacks[cb]
+			ws.send(JSON.stringify({instr: I.UNSUB, callback: callback}))
+		}
 	}
 
 	async function handle_private_packet(data, ws) {
@@ -156,6 +202,8 @@ export default (app, http_server, db) => {
 					target_ws.send(JSON.stringify({instr: I.SINF, ...target_ws.user}))
 
 					delete target_ws.user.challenge
+					subscribe_game(sender_ws)
+					subscribe_game(target_ws)
 				}
 				break
 			case I.CLNG:
@@ -185,13 +233,6 @@ export default (app, http_server, db) => {
 		}
 	}
 
-	function onsinf(ws) {
-		return async function(user) {
-			ws.user=user
-			ws.send(JSON.stringify({instr: I.SINF, ...await user_info(user)}))
-		}
-	}
-
 	http_server.on('upgrade', async (request, socket, head) => {
 		socket.on('error', console.error);
 
@@ -208,12 +249,12 @@ export default (app, http_server, db) => {
 
 		else {
 			ws.callbacks={}
+			ws.game_callbacks={}
 			ws.send(JSON.stringify({instr: I.SINF, ...await user_info(ws.user)}))
 			ws_factory.register_user_ws(ws)
-			subscribe_universe_x(ws, `${I.SINF} ${ws.user.user_id}`, onsinf(ws))
 
-			ws.game=await get_game(ws.user)
-			ws.game.on(GAME_MESSAGE,(message)=>ws.send(JSON.stringify(message)))
+			subscribe_universe_private(ws, I.SINF, ws.user.user_id)
+			subscribe_game(ws)
 
 			ws.on('error', console.error)
 
@@ -248,6 +289,7 @@ export default (app, http_server, db) => {
 			})
 
 			ws.on('close',()=>{
+				unsubscribe_game(ws)
 				for(var cb in ws.callbacks)
 					app.universe.removeListener(cb, ws.callbacks[cb])
 			})
