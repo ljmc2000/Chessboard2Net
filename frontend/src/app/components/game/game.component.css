@@ -1,0 +1,25 @@
+#board {
+  width: 512px;
+  display: inline-block;
+}
+
+.chess_row {
+  display: block;
+  margin: 0px;
+}
+
+.square .mat-icon {
+  width:64px;
+  height:64px;
+  font-size: 0px;
+  background-color: #4900BA;
+  border: 0px;
+}
+
+.odd_square .mat-icon {
+  background-color: #CCCCCC;
+}
+
+#surrender_button {
+  float: right;
+}

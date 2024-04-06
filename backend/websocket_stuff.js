@@ -77,7 +77,9 @@ export default (app, http_server, db) => {
 				ws.game_callbacks[cb] = game_callback_for(ws, cb)
 				ws.game.on(cb, ws.game_callbacks[cb])
 			}
+			ws.game.register(ws)
 			await ws.game.onjoin(ws)
+			await ws.game.onready()
 		}
 	}
 
@@ -108,7 +110,6 @@ export default (app, http_server, db) => {
 			}
 
 			game.game_id=user.current_gameid
-			game.player1_id=user.user_id
 
 			game.onend=async function() {
 				var result = await db.pool.query("update users set current_gameid=null, current_gametype=null where current_gameid=$1", [this.game_id])

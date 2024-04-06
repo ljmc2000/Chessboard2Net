@@ -8,6 +8,8 @@ export const GAME_END='game_end'
 class Game extends EventEmitter {
 	gamestate=" ".repeat(64)
 	moveNumber=0
+	player1={user_id: null}
+	player2={user_id: null}
 
 	doMove(move, player) {
 		if(this.p1==player && moveNumber%2==0) {
@@ -27,7 +29,23 @@ class Game extends EventEmitter {
 	}
 
 	async onjoin(ws) {
-		ws.send(JSON.stringify({instr: I.GST, gamestate: this.gamestate}))
+		ws.send(JSON.stringify({instr: I.GST, gamestate: this.gamestate, is_player1: this.player1.user_id==ws.user.user_id}))
+	}
+
+	register(ws) {
+		if(!this.player1.user_id) {
+			this.player1=ws.user
+		}
+		else if(!this.player2.user_id && this.player1.user_id!=ws.user.user_id) {
+			this.player2=ws.user
+		}
+	}
+
+	async onready() {
+		if(this.player1.user_id)
+			this.emit(GAME_MESSAGE, {instr: I.PINF, username: this.player1.username, favourite_colour: this.player1.favourite_colour, prefered_set: this.player1.prefered_set, is_player1: true})
+		if(this.player2.user_id)
+			this.emit(GAME_MESSAGE, {instr: I.PINF, username: this.player2.username, favourite_colour: this.player2.favourite_colour, prefered_set: this.player2.prefered_set, is_player1: false})
 	}
 }
 
