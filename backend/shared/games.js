@@ -1,2 +1,2 @@
-const CHECKERS='checkers'
-const CHESS='chess'
+export const CHECKERS='checkers'
+export const CHESS='chess'

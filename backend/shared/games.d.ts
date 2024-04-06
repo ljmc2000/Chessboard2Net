@@ -1,2 +1,2 @@
-const CHECKERS: string
-const CHESS: string
+export const CHECKERS: string
+export const CHESS: string
