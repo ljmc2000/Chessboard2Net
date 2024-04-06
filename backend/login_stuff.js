@@ -30,6 +30,21 @@ export default function (app, db) {
 		}
 	})
 
+	app.get('/api/user/:username', async (req, resp, on_error) => {
+		try {
+			var result = await db.pool.query("select username, prefered_set, favourite_colour from users where username=$1",[req.params.username])
+			if(result.rowCount!=0) {
+				resp.json(result.rows[0])
+			}
+			else {
+				resp.status(404).send('')
+			}
+		}
+		catch(err) {
+			on_error(err)
+		}
+	})
+
 	app.post('/api/login', async (req, resp, on_error) => {
 		try {
 			var result=await db.pool.query("select * from users where username=$1",[req.body.username])
