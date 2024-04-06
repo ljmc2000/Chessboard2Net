@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
+import * as I from 'shared/instructions';
 
 @Component({
   selector: 'app-game',
@@ -14,5 +15,6 @@ import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.s
 export class GameComponent {
 
   constructor(public ws: ChessWebsocketHandlerService) {
+    ws.on(I.GOVER, ()=>ws.sinf())
   }
 }

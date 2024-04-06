@@ -47,6 +47,10 @@ export class ChessWebsocketHandlerService extends WebSocket {
     this.jsend({instr: I.TELL, scope: S.DIRECT, content: content, target: target});
   }
 
+  public sinf() {
+    this.jsend({instr: I.SINF, scope: S.PRIVATE});
+  }
+
   public surrender() {
     this.jsend({instr: I.SRNDR, scope: S.GAME});
   }
@@ -76,7 +80,6 @@ export class ChessWebsocketHandlerService extends WebSocket {
     var ev = new WsPacketEvent(data.instr);
     ev.data=data;
     this.dispatchEvent(ev);
-    console.log(data);
   }
 
   onError(err: Event) {
@@ -91,14 +94,9 @@ export class ChessWebsocketHandlerService extends WebSocket {
   }
 
   jsend(data: any) {
-    console.log(data)
     this.send(JSON.stringify(data));
   }
 
   setupDefaultEventListeners() {
-    this.on(I.IGME, (data: any)=>{
-      if(!window.location.pathname.startsWith('/game'))
-        window.location.pathname=`/game/${data.game_id}`;
-    })
   }
 }

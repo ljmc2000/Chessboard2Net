@@ -5,7 +5,7 @@ import * as ws_factory from './websocket_factory.js'
 import * as I from './shared/instructions.js'
 import * as GAME from './shared/games.js'
 import * as SCOPE from './shared/scope.js'
-import { ChessGame, CheckersGame, NullGame } from './game.js'
+import { GAME_MESSAGE, ChessGame, CheckersGame, NullGame } from './game.js'
 import { user_info } from './utils.js'
 
 function gen_gameId(p1,p2) {
@@ -111,14 +111,7 @@ export default (app, http_server, db) => {
 			game.onend=async function() {
 				var result = await db.pool.query("update users set current_gameid=null, current_gametype=null where current_gameid=$1", [this.game_id])
 
-				for(var player in [this.player1, this.player2]) {
-					if(!player)
-						continue
-					console.log(player)
-					player.user.current_gameid=null
-					player.user.current_gametype=null
-					player.send(JSON.stringify({instr: I.SINF, ...player.user}))
-				}
+				this.emit(GAME_MESSAGE, {instr: I.GOVER})
 			}
 
 			games[user.current_gameid]=game
@@ -130,6 +123,8 @@ export default (app, http_server, db) => {
 	async function handle_private_packet(data, ws) {
 		switch(data.instr) {
 			case I.SINF:
+				var result = await db.pool.query("select * from users where user_id=$1",[ws.user.user_id])
+				ws.user=result.rows[0]
 				ws.send(JSON.stringify({instr: I.SINF, ...await user_info(ws.user)}))
 				break
 			case I.SUB:
@@ -152,8 +147,14 @@ export default (app, http_server, db) => {
 				if(sender_ws.user.user_id==target_ws.user.challenge.user_id) {
 					var game_id = gen_gameId(sender_ws.user.user_id, target_ws.user.user_id)
 					var result = await db.pool.query("update users set current_gameid=$1, current_gametype=$2 where user_id=$3 or user_id=$4",[game_id, target_ws.user.challenge.game, sender_ws.user.user_id, target_ws.user.user_id])
-					sender_ws.send(JSON.stringify({instr: I.IGME, game_id: game_id}))
-					target_ws.send(JSON.stringify({instr: I.IGME, game_id: game_id}))
+
+					sender_ws.user.current_gameid=game_id
+					sender_ws.user.current_gametype=target_ws.user.challenge.game
+					sender_ws.send(JSON.stringify({instr: I.SINF, ...sender_ws.user}))
+					target_ws.user.current_gameid=game_id
+					target_ws.user.current_gametype=target_ws.user.challenge.game
+					target_ws.send(JSON.stringify({instr: I.SINF, ...target_ws.user}))
+
 					delete target_ws.user.challenge
 				}
 				break
@@ -212,10 +213,7 @@ export default (app, http_server, db) => {
 			subscribe_universe_x(ws, `${I.SINF} ${ws.user.user_id}`, onsinf(ws))
 
 			ws.game=await get_game(ws.user)
-			if(ws.game.player1_id==ws.user.user_id)
-				ws.game.player1=ws
-			else
-				ws.game.player2=ws
+			ws.game.on(GAME_MESSAGE,(message)=>ws.send(JSON.stringify(message)))
 
 			ws.on('error', console.error)
 

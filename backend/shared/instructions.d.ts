@@ -3,7 +3,7 @@ export const AUTH: string
 export const BUSY: string
 export const CLNG: string
 export const ERR: string
-export const IGME: string
+export const GOVER: string
 export const GST: string
 export const MOVE: string
 export const NOPLR: string

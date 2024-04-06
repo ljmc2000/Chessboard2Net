@@ -2,6 +2,8 @@ import EventEmitter from 'node:events'
 import * as ENDSTATE from './shared/endstate.js'
 import * as I from './shared/instructions.js'
 
+export const GAME_MESSAGE='game_message'
+
 class Game extends EventEmitter {
 	gamestate=" ".repeat(64)
 	moveNumber=0
@@ -54,7 +56,8 @@ export class CheckersGame extends Game {
 }
 
 export const NullGame = {
-	async onmessage (data, ws) {
+	onmessage: async function(data, ws) {
 		ws.send(JSON.stringify({instr: I.ERROR}))
-	}
+	},
+	on: function(){}
 }
