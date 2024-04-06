@@ -9,11 +9,6 @@ class Game extends EventEmitter {
 	gamestate=" ".repeat(64)
 	moveNumber=0
 
-	constructor() {
-		super()
-		this.gamestate=this.DEFAULT_GAMESTATE
-	}
-
 	doMove(move, player) {
 		if(this.p1==player && moveNumber%2==0) {
 		}
@@ -37,27 +32,34 @@ class Game extends EventEmitter {
 }
 
 export class ChessGame extends Game {
-	DEFAULT_GAMESTATE=
-		`rnbkqbnr`+
-		`pppppppp`+
-		`        `+
-		`        `+
-		`        `+
-		`        `+
-		`PPPPPPPP`+
-		`RNBKQBNR`
+	constructor() {
+		super()
+		this.gamestate=
+			`rnbkqbnr`+
+			`pppppppp`+
+			`        `+
+			`        `+
+			`        `+
+			`        `+
+			`PPPPPPPP`+
+			`RNBKQBNR`
+	}
 }
 
 export class CheckersGame extends Game {
-	DEFAULT_GAMESTATE=
-	`p p p p `+
-	` p p p p`+
-	`p p p p `+
-	`        `+
-	`        `+
-	` P P P P`+
-	`P P P P `+
-	` P P P P`
+
+	constructor() {
+		super()
+		this.gamestate=
+			`p p p p `+
+			` p p p p`+
+			`p p p p `+
+			`        `+
+			`        `+
+			` P P P P`+
+			`P P P P `+
+			` P P P P`
+	}
 }
 
 export const NullGame = {
