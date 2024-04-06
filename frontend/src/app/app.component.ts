@@ -61,6 +61,12 @@ export class AppComponent implements UserInfo {
   }
 
   registerIcons() {
-    this.iconRegistry.addSvgIcon('favicon', this.sanitizer.bypassSecurityTrustResourceUrl('/assets/doodles/pawn.svg'));
+    for(var _set of ['doodles', 'goblins', 'teatime'])
+    {
+      for(var piece of ['king','queen','bishop','knight','rook','pawn']) {
+        this.iconRegistry.addSvgIcon(`${_set}/${piece}`, this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/${_set}/${piece}.svg`))
+        this.iconRegistry.addSvgIcon(`${_set}/${piece}_back`, this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/${_set}/${piece}_back.svg`))
+      }
+    }
   }
 }
