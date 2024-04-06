@@ -43,10 +43,6 @@ export class GameComponent {
     this.board.changes.subscribe((icons: QueryList<MatIcon>)=>this.afterUpdateGamestate(icons))
   }
 
-  invertBoard(gamestate: string) {
-    return gamestate.split('').reverse().join('')
-  }
-
   onPlayerInfo(msg: PlayerInfo) {
     if(msg.is_player1)
       this.player1_colour=parse_colour(msg.favourite_colour)
@@ -109,7 +105,7 @@ export class GameComponent {
     if(this.is_player1)
       this.gamestate=msg.gamestate;
     else
-      this.gamestate=this.invertBoard(msg.gamestate)
+      this.gamestate=msg.gamestate.split('').reverse().join('')
   }
 
   async afterUpdateGamestate(icons: QueryList<MatIcon>) {
