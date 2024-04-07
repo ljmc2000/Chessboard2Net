@@ -17,4 +17,9 @@
 </div>
 
 <h2>Prefered Set</h2>
-<mat-icon class="set_icon" *ngFor="let s of [1,2,4]; index as i" (click)="setFavoriteSet(s)" [svgIcon]="setFor(s)" [ngStyle]="{'onload': updateSetColours()}"></mat-icon>
+<mat-icon
+  class="set_icon"
+  *ngFor="let s of [1,2,4]; index as i"
+  [svgIcon]="setFor(s)"
+  [ngStyle]="{'onload': updateSetColours()}"
+  (click)="setFavoriteSet(s)" />
