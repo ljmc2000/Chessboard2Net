@@ -1,15 +1,15 @@
-import { Component, ViewChildren, QueryList } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule, MatIcon } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { GameState } from 'models/gamestate'
 import { PlayerInfo } from 'models/playerinfo'
 import * as S from 'shared/chess-sets'
 import * as I from 'shared/instructions';
-import { parse_colour, set_for, waitForElm } from 'utils';
+import { parse_colour, set_for } from 'utils';
 
 @Component({
   selector: 'app-game',
@@ -31,16 +31,10 @@ export class GameComponent {
   player1_colour: string='white';
   player2_colour: string='black';
 
-  @ViewChildren('chess_square') board: QueryList<MatIcon>;
-
   constructor(public ws: ChessWebsocketHandlerService) {
     ws.on(I.GOVER, ()=>this.in_game=false);
     ws.on(I.GST, (msg: GameState)=>this.updateGamestate(msg));
     ws.on(I.PINF, (msg: PlayerInfo)=>this.onPlayerInfo(msg));
-  }
-
-  ngAfterViewInit() {
-    this.board.changes.subscribe((icons: QueryList<MatIcon>)=>this.afterUpdateGamestate(icons))
   }
 
   onPlayerInfo(msg: PlayerInfo) {
@@ -98,19 +92,15 @@ export class GameComponent {
       this.gamestate=msg.gamestate.split('').reverse().join('')
   }
 
-  async afterUpdateGamestate(icons: QueryList<MatIcon>) {
-    for(var icon of icons) {
-      waitForElm(icon._elementRef.nativeElement,'.player1 .custom_colour')
-      .then((list)=>list.forEach(area=>{
-          area.style.fill=this.player1_colour
-      }))
-    }
+  afterUpdateGamestate() {
+    document.querySelectorAll<SVGElement>('.player1 .custom_colour')
+    .forEach((area)=>{
+      area.style.fill=this.player1_colour
+    });
 
-    for(var icon of icons) {
-      waitForElm(icon._elementRef.nativeElement,'.player2 .custom_colour')
-      .then((list)=>list.forEach(area=>{
-        area.style.fill=this.player2_colour
-      }))
-    }
+    document.querySelectorAll<SVGElement>('.player2 .custom_colour')
+    .forEach((area)=>{
+    area.style.fill=this.player2_colour
+    });
   }
 }

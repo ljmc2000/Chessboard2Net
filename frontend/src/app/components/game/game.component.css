@@ -10,7 +10,7 @@
   margin: 0px;
 }
 
-.square .mat-icon {
+.square {
   width:12.5%;
   height:12.5%;
   font-size: 0px;
@@ -18,7 +18,7 @@
   border: 0px;
 }
 
-.odd_square .mat-icon {
+.odd_square {
   background-color: #CCCCCC;
 }
 

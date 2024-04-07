@@ -1,6 +1,4 @@
 <span id="board" #board>
-  <span class="square" *ngFor="let icon of gamestate.split(''); index as i" [ngClass]="{'odd_square': (i%2==1) != (i%16>=8), 'player1': IS_PLAYER1.exec(icon), 'player2': IS_PLAYER2.exec(icon)}">
-    <mat-icon [svgIcon]="icon_map[icon]" #chess_square></mat-icon>
-  </span>
+  <mat-icon class="square" *ngFor="let icon of gamestate.split(''); index as i" [svgIcon]="icon_map[icon]" [ngClass]="{'odd_square': (i%2==1) != (i%16>=8), 'player1': IS_PLAYER1.exec(icon), 'player2': IS_PLAYER2.exec(icon)}" [ngStyle]="{'onload':afterUpdateGamestate()}"></mat-icon>
 </span>
 <button id="surrender_button" matSuffix mat-raised-button color="primary" (click)="ws.surrender()" *ngIf="in_game">Surrender</button>
