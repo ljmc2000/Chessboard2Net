@@ -68,5 +68,7 @@ export class AppComponent implements UserInfo {
         this.iconRegistry.addSvgIcon(`${_set}/${piece}_back`, this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/${_set}/${piece}_back.svg`))
       }
     }
+
+    this.iconRegistry.addSvgIcon('locked', this.sanitizer.bypassSecurityTrustResourceUrl('/assets/locked.svg'))
   }
 }

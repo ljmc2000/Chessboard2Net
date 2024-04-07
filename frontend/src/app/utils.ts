@@ -1,5 +1,20 @@
+import * as S from 'shared/chess-sets'
+
 export function parse_colour(colour: number): string {
   return '#'+colour.toString(16).padStart(6,'0')
+}
+
+export function set_for(id: number): string {
+  switch(id) {
+    case S.DOODLES:
+      return 'doodles'
+    case S.GOBLINS:
+     return 'goblins'
+    case S.TEATIME:
+      return 'teatime'
+    default:
+      return 'doodles'
+  }
 }
 
 export function waitForElm(e: HTMLElement, selector: string): Promise<NodeListOf<HTMLElement>> {

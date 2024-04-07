@@ -1,13 +1,14 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSliderModule } from '@angular/material/slider';
 
-import { parse_colour } from 'utils';
+import { parse_colour, set_for } from 'utils';
 import { UserInfo } from 'models/user-info';
 import { UserService } from 'services/user.service';
 import * as S from 'shared/chess-sets';
@@ -16,53 +17,29 @@ import * as U from 'shared/user-profile-flags';
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatSliderModule],
+  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatIconModule, MatSliderModule],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css'
 })
 export class SettingsComponent implements UserInfo {
 
-  profile_flags: number;
+  profile_flags: number=0;
   favourite_colour: number=0;
-  unlocked_sets: number[];
+  unlocked_sets: number[]=[];
 
   favouriteColourRed: number=0;
   favouriteColourGreen: number=0;
   favouriteColourBlue: number=0;
   visibleAsOnline: boolean;
 
-  @ViewChild('doodlePawn') doodlePawn: ElementRef;
-  @ViewChild('goblinPawn') goblinPawn: ElementRef;
-  @ViewChild('teatimePawn') teatimePawn: ElementRef;
-  Sets: any = S
-
   constructor(public userService: UserService, private http: HttpClient) {
     this.userService.getUserInfo(this)
     .then(()=>this.parseFlags())
-    .then(()=>this.parseColour())
-    .then(()=>this.loadSets());
+    .then(()=>this.parseColour());
   }
 
   getFavouriteColourString() {
     return parse_colour(this.favourite_colour);
-  }
-
-  loadSet(setId: number, target: ElementRef, setName: string) {
-    fetch(this.unlocked_sets.includes(setId)?`/assets/${setName}/pawn.svg`:'assets/locked.svg')
-    .then(resp=>resp.text())
-    .then(body=>{
-      target.nativeElement.innerHTML=body;
-      target.nativeElement.children[0].style.height="128px";
-      target.nativeElement.children[0].style.width="128px";
-      target.nativeElement.setAttribute("set_id",setId);
-    })
-    .then(()=>this.updateSetColours())
-  }
-
-  loadSets() {
-    this.loadSet(S.DOODLES, this.doodlePawn,'doodles')
-    this.loadSet(S.GOBLINS, this.goblinPawn,'goblins')
-    this.loadSet(S.TEATIME, this.teatimePawn,'teatime')
   }
 
   onChangeColour() {
@@ -97,6 +74,10 @@ export class SettingsComponent implements UserInfo {
   setFavoriteSet(set_id: number) {
     this.http.post('/api/update_prefered_set',{prefered_set: set_id})
     .subscribe()
+  }
+
+  setFor(id: number) {
+    return this.unlocked_sets.includes(id)?set_for(id)+'/pawn':'locked';
   }
 
   updateSetColours() {

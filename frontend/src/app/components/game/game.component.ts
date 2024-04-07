@@ -9,7 +9,7 @@ import { GameState } from 'models/gamestate'
 import { PlayerInfo } from 'models/playerinfo'
 import * as S from 'shared/chess-sets'
 import * as I from 'shared/instructions';
-import { parse_colour, waitForElm } from 'utils';
+import { parse_colour, set_for, waitForElm } from 'utils';
 
 @Component({
   selector: 'app-game',
@@ -49,52 +49,42 @@ export class GameComponent {
     else
       this.player2_colour=parse_colour(msg.favourite_colour)
 
-    var c_set='doodles/';
-    switch(msg.prefered_set) {
-      case S.DOODLES:
-        c_set='doodles/'
-        break
-      case S.GOBLINS:
-        c_set='goblins/'
-        break
-      case S.TEATIME:
-        c_set='teatime/'
-        break
-    }
+    var c_set=set_for(msg.prefered_set);
+
     if(this.is_player1) {
       if(msg.is_player1) {
-        this.icon_map['P']=c_set+'pawn_back'
-        this.icon_map['R']=c_set+'rook_back'
-        this.icon_map['N']=c_set+'knight_back'
-        this.icon_map['B']=c_set+'bishop_back'
-        this.icon_map['Q']=c_set+'queen_back'
-        this.icon_map['K']=c_set+'king_back'
+        this.icon_map['P']=c_set+'/pawn_back'
+        this.icon_map['R']=c_set+'/rook_back'
+        this.icon_map['N']=c_set+'/knight_back'
+        this.icon_map['B']=c_set+'/bishop_back'
+        this.icon_map['Q']=c_set+'/queen_back'
+        this.icon_map['K']=c_set+'/king_back'
       }
       else {
-        this.icon_map['p']=c_set+'pawn'
-        this.icon_map['r']=c_set+'rook'
-        this.icon_map['n']=c_set+'knight'
-        this.icon_map['b']=c_set+'bishop'
-        this.icon_map['q']=c_set+'queen'
-        this.icon_map['k']=c_set+'king'
+        this.icon_map['p']=c_set+'/pawn'
+        this.icon_map['r']=c_set+'/rook'
+        this.icon_map['n']=c_set+'/knight'
+        this.icon_map['b']=c_set+'/bishop'
+        this.icon_map['q']=c_set+'/queen'
+        this.icon_map['k']=c_set+'/king'
       }
     }
     else {
       if(msg.is_player1) {
-        this.icon_map['P']=c_set+'pawn'
-        this.icon_map['R']=c_set+'rook'
-        this.icon_map['N']=c_set+'knight'
-        this.icon_map['B']=c_set+'bishop'
-        this.icon_map['Q']=c_set+'queen'
-        this.icon_map['K']=c_set+'king'
+        this.icon_map['P']=c_set+'/pawn'
+        this.icon_map['R']=c_set+'/rook'
+        this.icon_map['N']=c_set+'/knight'
+        this.icon_map['B']=c_set+'/bishop'
+        this.icon_map['Q']=c_set+'/queen'
+        this.icon_map['K']=c_set+'/king'
       }
       else {
-        this.icon_map['p']=c_set+'pawn_back'
-        this.icon_map['r']=c_set+'rook_back'
-        this.icon_map['n']=c_set+'knight_back'
-        this.icon_map['b']=c_set+'bishop_back'
-        this.icon_map['q']=c_set+'queen_back'
-        this.icon_map['k']=c_set+'king_back'
+        this.icon_map['p']=c_set+'/pawn_back'
+        this.icon_map['r']=c_set+'/rook_back'
+        this.icon_map['n']=c_set+'/knight_back'
+        this.icon_map['b']=c_set+'/bishop_back'
+        this.icon_map['q']=c_set+'/queen_back'
+        this.icon_map['k']=c_set+'/king_back'
       }
     }
   }
