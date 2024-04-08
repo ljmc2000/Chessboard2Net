@@ -18,10 +18,22 @@
   background-color: #4900BA;
 }
 
+.my_turn {
+  border: solid;
+}
+
+.player_icon {
+  width: 48px;
+  height: 48px;
+  padding: 8px;
+  float: right;
+}
+
 .odd_square {
   background-color: #CCCCCC;
 }
 
 #surrender_button {
   float: right;
+  margin-left: 32px;
 }

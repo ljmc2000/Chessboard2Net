@@ -25,9 +25,12 @@ export class GameComponent {
 
   in_game: boolean=false;
   is_player1: boolean=true;
+  move_number: number;
   gamestate: string='';
   icon_map: any={};
 
+  player1_set: string='doodles';
+  player2_set: string='doodles';
   player1_colour: string='white';
   player2_colour: string='black';
 
@@ -38,10 +41,14 @@ export class GameComponent {
   }
 
   onPlayerInfo(msg: PlayerInfo) {
-    if(msg.is_player1)
+    if(msg.is_player1) {
       this.player1_colour=parse_colour(msg.favourite_colour)
-    else
+      this.player1_set=set_for(msg.prefered_set);
+    }
+    else {
       this.player2_colour=parse_colour(msg.favourite_colour)
+      this.player2_set=set_for(msg.prefered_set);
+    }
 
     var c_set=set_for(msg.prefered_set);
 
@@ -101,7 +108,8 @@ export class GameComponent {
 
   updateGamestate(msg: GameState) {
     this.in_game=true;
-    this.is_player1=msg.is_player1
+    this.is_player1=msg.is_player1;
+    this.move_number=msg.move_number;
     if(this.is_player1)
       this.gamestate=msg.gamestate;
     else

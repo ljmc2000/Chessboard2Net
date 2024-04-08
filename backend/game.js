@@ -29,7 +29,7 @@ class Game extends EventEmitter {
 	}
 
 	async onjoin(ws) {
-		ws.send(JSON.stringify({instr: I.GST, gamestate: this.gamestate, is_player1: this.player1.user_id==ws.user.user_id}))
+		ws.send(JSON.stringify({instr: I.GST, gamestate: this.gamestate, move_number: this.moveNumber, is_player1: this.player1.user_id==ws.user.user_id}))
 	}
 
 	register(ws) {
