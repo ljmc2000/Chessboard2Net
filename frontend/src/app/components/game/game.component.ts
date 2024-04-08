@@ -53,6 +53,10 @@ export class GameComponent {
         this.icon_map['B']=c_set+'/bishop_back'
         this.icon_map['Q']=c_set+'/queen_back'
         this.icon_map['K']=c_set+'/king_back'
+
+        this.icon_map['F']=c_set+'/pawn_back'
+        this.icon_map['C']=c_set+'/rook_back'
+        this.icon_map['J']=c_set+'/king_back'
       }
       else {
         this.icon_map['p']=c_set+'/pawn'
@@ -61,6 +65,10 @@ export class GameComponent {
         this.icon_map['b']=c_set+'/bishop'
         this.icon_map['q']=c_set+'/queen'
         this.icon_map['k']=c_set+'/king'
+
+        this.icon_map['f']=c_set+'/pawn'
+        this.icon_map['c']=c_set+'/rook'
+        this.icon_map['j']=c_set+'/king'
       }
     }
     else {
@@ -71,6 +79,10 @@ export class GameComponent {
         this.icon_map['B']=c_set+'/bishop'
         this.icon_map['Q']=c_set+'/queen'
         this.icon_map['K']=c_set+'/king'
+
+        this.icon_map['F']=c_set+'/pawn'
+        this.icon_map['C']=c_set+'/rook'
+        this.icon_map['J']=c_set+'/king'
       }
       else {
         this.icon_map['p']=c_set+'/pawn_back'
@@ -79,6 +91,10 @@ export class GameComponent {
         this.icon_map['b']=c_set+'/bishop_back'
         this.icon_map['q']=c_set+'/queen_back'
         this.icon_map['k']=c_set+'/king_back'
+
+        this.icon_map['f']=c_set+'/pawn_back'
+        this.icon_map['c']=c_set+'/rook_back'
+        this.icon_map['j']=c_set+'/king_back'
       }
     }
   }
