@@ -18,7 +18,7 @@ import { parse_colour, set_for } from 'utils';
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
-export class GameComponent {
+export abstract class GameComponent {
 
   IS_PLAYER1=/[A-Z]/
   IS_PLAYER2=/[a-z]/

@@ -28,6 +28,7 @@ export async function user_info(user, db) {
 		favourite_colour: user.favourite_colour,
 		unlocked_sets: await unlocked_sets(user, db),
 		current_gameid: user.current_gameid,
+		current_gametype: user.current_gametype,
 		logged_in: true,
 	}
 }

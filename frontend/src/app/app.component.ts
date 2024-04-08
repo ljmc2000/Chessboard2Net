@@ -26,6 +26,7 @@ export class AppComponent implements UserInfo {
   public user_id: string;
   public username: string;
   public current_gameid: string;
+  public current_gametype: string;
   public logged_in: boolean;
 
   constructor(
@@ -57,7 +58,7 @@ export class AppComponent implements UserInfo {
 
   onsinf() {
     if(this.current_gameid && !window.location.pathname.startsWith('/game'))
-      window.location.pathname=`/game/${this.current_gameid}`;
+      window.location.pathname=`/game/${this.current_gametype}/${this.current_gameid}`;
   }
 
   registerIcons() {
