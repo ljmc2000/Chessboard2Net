@@ -12,7 +12,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { parse_colour, set_for } from 'utils';
 import { UserInfo } from 'models/user-info';
 import { UserService } from 'services/user.service';
-import { ChessSet as S, UserProfileFlags as U } from 'shared/constants';
+import { ChessSet as S, UserProfileFlag as U } from 'shared/constants';
 
 @Component({
   selector: 'app-settings',

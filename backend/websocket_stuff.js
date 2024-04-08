@@ -2,7 +2,7 @@ import { createHash } from 'crypto'
 import { WebSocketServer } from 'ws'
 
 import * as ws_factory from './websocket_factory.js'
-import { GAME_MESSAGE, GAME_END, Instructions as I, Game, Scope } from './shared/constants.js'
+import { GAME_MESSAGE, GAME_END, Instruction as I, Game, Scope } from './shared/constants.js'
 import { ChessGame, CheckersGame, NullGame } from './game.js'
 import { user_info } from './utils.js'
 

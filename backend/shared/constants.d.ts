@@ -7,7 +7,7 @@ export const EndState: { SURRENDER: string, CHECKMATE: string }
 export const Game: { CHECKERS: string, CHESS: string }
 export const Scope: { PRIVATE: number, DIRECT: number, GAME: number, UNIVERSE: number }
 
-export const Instructions: {
+export const Instruction: {
 	ACLNG: string;
 	AUTH: string;
 	BUSY: string;
@@ -29,6 +29,6 @@ export const Instructions: {
 	XCLNG: string;
 }
 
-export const UserProfileFlags: {
+export const UserProfileFlag: {
 	VISIBLE_AS_ONLINE: number,
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Instructions as I, Scope as S } from 'shared/constants';
+import { Instruction as I, Scope as S } from 'shared/constants';
 import { ChatMessage } from 'models/chat-message';
 import { UserInfo } from 'models/user-info';
 class WsPacketEvent extends Event {data: any};

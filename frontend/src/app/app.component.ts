@@ -9,7 +9,7 @@ import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 
 import { CHALLENGE_MESSAGE } from 'constants/standard-messages';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
-import { Instructions as I } from 'shared/constants';
+import { Instruction as I } from 'shared/constants';
 import { UserInfo } from 'models/user-info';
 import { UserService } from 'services/user.service';
 

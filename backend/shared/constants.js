@@ -7,7 +7,7 @@ export const EndState = { SURRENDER: 'surrender', CHECKMATE: 'checkmate' }
 export const Game = { CHECKERS: 'checkers', CHESS: 'chess' }
 export const Scope = { PRIVATE: 1, DIRECT: 2, GAME: 3, UNIVERSE: -1 }
 
-export const Instructions = {
+export const Instruction = {
 	ACLNG: 'accept_challenge',
 	AUTH: 'authenticate',
 	BUSY: 'player_busy',
@@ -29,6 +29,6 @@ export const Instructions = {
 	XCLNG: 'deny_challenge',
 }
 
-export const UserProfileFlags = {
+export const UserProfileFlag = {
 	VISIBLE_AS_ONLINE: (true<<0),
 }

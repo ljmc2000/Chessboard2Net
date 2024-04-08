@@ -1,5 +1,5 @@
 import EventEmitter from 'node:events'
-import { GAME_MESSAGE, EndState, Instructions as I } from './shared/constants.js'
+import { GAME_MESSAGE, EndState, Instruction as I } from './shared/constants.js'
 
 class Game extends EventEmitter {
 	gamestate=" ".repeat(64)
