@@ -2,10 +2,8 @@ import { createHash } from 'crypto'
 import { WebSocketServer } from 'ws'
 
 import * as ws_factory from './websocket_factory.js'
-import * as I from './shared/instructions.js'
-import * as GAME from './shared/games.js'
-import * as SCOPE from './shared/scope.js'
-import { GAME_MESSAGE, GAME_END, ChessGame, CheckersGame, NullGame } from './game.js'
+import { GAME_MESSAGE, GAME_END, Instructions as I, Game, Scope } from './shared/constants.js'
+import { ChessGame, CheckersGame, NullGame } from './game.js'
 import { user_info } from './utils.js'
 
 function gen_gameId(p1,p2) {
@@ -101,10 +99,10 @@ export default (app, http_server, db) => {
 		var game = games[user.current_gameid]
 		if(!game) {
 			switch(user.current_gametype) {
-				case GAME.CHECKERS:
+				case Game.CHECKERS:
 					game=new CheckersGame()
 					break
-				case GAME.CHESS:
+				case Game.CHESS:
 					game=new ChessGame()
 					break
 			}
@@ -266,19 +264,19 @@ export default (app, http_server, db) => {
 					var data = JSON.parse(buffer)
 
 					switch(data.scope) {
-						case SCOPE.PRIVATE:
+						case Scope.PRIVATE:
 							await handle_private_packet(data, ws)
 							break
-						case SCOPE.DIRECT:
+						case Scope.DIRECT:
 							var target_ws = ws_factory.get_user_ws_by_username(data.target)
 							if(target_ws)
 								await handle_direct_packet(data, ws, target_ws)
 								else
 									ws.send(JSON.stringify({instr: I.NOPLR, target: data.target}))
-						case SCOPE.GAME:
+						case Scope.GAME:
 							await ws.game.onmessage(data, ws)
 							break
-						case SCOPE.UNIVERSE:
+						case Scope.UNIVERSE:
 							app.universe.emit(data.instr, data, ws)
 							break
 						default:

@@ -1,9 +1,5 @@
 import EventEmitter from 'node:events'
-import * as ENDSTATE from './shared/endstate.js'
-import * as I from './shared/instructions.js'
-
-export const GAME_MESSAGE='game_message'
-export const GAME_END='game_end'
+import { GAME_MESSAGE, EndState, Instructions as I } from './shared/constants.js'
 
 class Game extends EventEmitter {
 	gamestate=" ".repeat(64)
@@ -21,7 +17,7 @@ class Game extends EventEmitter {
 	async onmessage(data, ws) {
 		switch(data.instr) {
 			case I.SRNDR:
-				await this.onend(ENDSTATE.SURRENDER, this.gamestate)
+				await this.onend(EndState.SURRENDER, this.gamestate)
 				break
 			default:
 				ws.send(JSON.stringify({instr: I.ERR}))

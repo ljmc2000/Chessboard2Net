@@ -7,8 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { GameState } from 'models/gamestate'
 import { PlayerInfo } from 'models/playerinfo'
-import * as S from 'shared/chess-sets'
-import * as I from 'shared/instructions';
+import { ChessSet as S, Instructions as I } from 'shared/constants'
 import { parse_colour, set_for } from 'utils';
 
 @Component({
@@ -28,6 +27,7 @@ export abstract class GameComponent {
   move_number: number;
   gamestate: string='';
   selected_square: number=-1;
+  targets: number[]=[];
 
   icon_map: any={};
   player1_set: string='doodles';

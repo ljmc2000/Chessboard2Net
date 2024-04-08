@@ -1,4 +1,4 @@
-import * as chess_set from './shared/chess-sets.js'
+import { ChessSet } from './shared/constants.js'
 
 export function create_login_expiry()
 {
@@ -6,14 +6,14 @@ export function create_login_expiry()
 }
 
 export async function unlocked_sets(user, db) {
-	var sets=[chess_set.DOODLES]
+	var sets=[ChessSet.DOODLES]
 
 	if(false) {
-		sets.push(chess_set.GOBLINS)
+		sets.push(ChessSet.GOBLINS)
 	}
 
 	if(false) {
-		sets.push(chess_set.TEATIME)
+		sets.push(ChessSet.TEATIME)
 	}
 
 	return sets

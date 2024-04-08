@@ -1,4 +1,4 @@
-import * as S from 'shared/chess-sets'
+import { ChessSet as S } from 'shared/constants'
 
 export function parse_colour(colour: number): string {
   return '#'+colour.toString(16).padStart(6,'0')

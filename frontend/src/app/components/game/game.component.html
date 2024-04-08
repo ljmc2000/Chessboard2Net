@@ -3,7 +3,7 @@
     class="square"
     *ngFor="let piece of gamestate.split(''); index as i"
     [svgIcon]="icon_map[piece]"
-    [ngClass]="{'odd_square': (i%2==1) != (i%16>=8), 'selected_square': i==selected_square, 'player1': IS_PLAYER1.exec(piece), 'player2': IS_PLAYER2.exec(piece)}"
+    [ngClass]="{'odd_square': (i%2==1) != (i%16>=8), 'selected_square': i==selected_square, 'lit_square': targets.includes(i), 'player1': IS_PLAYER1.exec(piece), 'player2': IS_PLAYER2.exec(piece)}"
     [ngStyle]="{'onload': afterUpdateGamestate()}"
     (click)="onClickSquare(i, piece)" />
 </span>

@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
-import * as I from 'shared/instructions';
+import { Instructions as I } from 'shared/constants';
 import { ChatMessage } from 'models/chat-message';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { CommandInterpreterService } from 'services/command-interpreter.service';

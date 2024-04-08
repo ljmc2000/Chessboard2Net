@@ -2,8 +2,7 @@ import base85 from 'base85'
 import bcrypt from 'bcrypt'
 import { randomBytes } from 'crypto'
 
-import * as c from './constants.js'
-import * as I from './shared/instructions.js'
+import { Instructions as I } from './shared/constants.js'
 import { create_login_expiry, unlocked_sets, user_info } from './utils.js'
 
 function set_login_token(resp) {

@@ -1,3 +1,0 @@
-export const VISIBLE_AS_ONLINE_FLAG=0;
-
-export const VISIBLE_AS_ONLINE=(true<<VISIBLE_AS_ONLINE_FLAG);

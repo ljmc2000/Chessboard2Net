@@ -12,8 +12,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { parse_colour, set_for } from 'utils';
 import { UserInfo } from 'models/user-info';
 import { UserService } from 'services/user.service';
-import * as S from 'shared/chess-sets';
-import * as U from 'shared/user-profile-flags';
+import { ChessSet as S, UserProfileFlags as U } from 'shared/constants';
 
 @Component({
   selector: 'app-settings',
@@ -57,7 +56,7 @@ export class SettingsComponent implements UserInfo {
 
   onChangeFlags() {
     this.profile_flags = (
-      Number(this.visibleAsOnline)<<U.VISIBLE_AS_ONLINE_FLAG
+      this.visibleAsOnline?U.VISIBLE_AS_ONLINE:0
     );
     this.http.post('/api/update_prefs',{profile_flags: this.profile_flags})
     .subscribe(this.parseFlags)
