@@ -25,6 +25,7 @@ export class SettingsComponent implements UserInfo {
 
   profile_flags: number=0;
   favourite_colour: number=0;
+  prefered_set: number;
   unlocked_sets: number[]=[];
 
   favouriteColourRed: number=0;
@@ -66,6 +67,10 @@ export class SettingsComponent implements UserInfo {
     this.visibleAsOnline=(this.profile_flags&U.VISIBLE_AS_ONLINE)!=0;
   }
 
+  pieceFor(piece: string) {
+    return set_for(this.prefered_set)+'/'+piece
+  }
+
   saveColour() {
     this.http.post('/api/update_prefs',{favourite_colour: this.favourite_colour})
     .subscribe()
@@ -73,7 +78,7 @@ export class SettingsComponent implements UserInfo {
 
   setFavoriteSet(set_id: number) {
     this.http.post('/api/update_prefered_set',{prefered_set: set_id})
-    .subscribe()
+    .subscribe(()=>this.prefered_set=set_id)
   }
 
   setFor(id: number) {

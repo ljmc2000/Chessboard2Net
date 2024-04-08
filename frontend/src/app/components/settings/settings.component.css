@@ -8,10 +8,16 @@
 .set_icon {
   height: 128px;
   width: 128px;
+  padding:10px;
 }
 
 .opponent_colour {
   fill: red;
+}
+
+.selected-set {
+  border: solid;
+  border-width: 1px;
 }
 
 mat-slider {
