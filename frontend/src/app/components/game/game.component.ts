@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { GameState } from 'models/gamestate'
 import { PlayerInfo } from 'models/playerinfo'
-import { ChessSet as S, Instruction as I } from 'shared/constants'
+import { Instruction as I } from 'shared/constants'
 import { parse_colour, set_for } from 'utils';
 
 @Component({

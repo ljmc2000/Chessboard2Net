@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Instruction as I, Scope as S } from 'shared/constants';
+import { Instruction as I, Scope } from 'shared/constants';
 import { ChatMessage } from 'models/chat-message';
 import { UserInfo } from 'models/user-info';
 class WsPacketEvent extends Event {data: any};
@@ -19,31 +19,31 @@ export class ChessWebsocketHandlerService extends EventTarget {
   }
 
   public acceptChallenge(player: string) {
-    this.jsend({instr: I.ACLNG, scope: S.DIRECT, target: player});
+    this.jsend({instr: I.ACLNG, scope: Scope.DIRECT, target: player});
   }
 
   public challenge(player: string, game: string) {
-    this.jsend({instr: I.CLNG, scope: S.DIRECT, target: player, game: game});
+    this.jsend({instr: I.CLNG, scope: Scope.DIRECT, target: player, game: game});
   }
 
   public countOnlinePlayers() {
-    this.jsend({instr: I.OUCNT, scope: S.PRIVATE});
+    this.jsend({instr: I.OUCNT, scope: Scope.PRIVATE});
   }
 
   public rejectChallenge(player: string) {
-    this.jsend({instr: I.XCLNG, scope: S.DIRECT, target: player});
+    this.jsend({instr: I.XCLNG, scope: Scope.DIRECT, target: player});
   }
 
   public refreshSelfInfo() {
-    this.jsend({instr: I.SINF, scope: S.PRIVATE});
+    this.jsend({instr: I.SINF, scope: Scope.PRIVATE});
   }
 
   public sendChatMessage(content: string) {
-    this.jsend({instr: I.TELL, scope: S.UNIVERSE, content: content});
+    this.jsend({instr: I.TELL, scope: Scope.UNIVERSE, content: content});
   }
 
   public sendWhisperMessage(content: string, target: string) {
-    this.jsend({instr: I.TELL, scope: S.DIRECT, content: content, target: target});
+    this.jsend({instr: I.TELL, scope: Scope.DIRECT, content: content, target: target});
   }
 
   public setupConnection() {
@@ -54,15 +54,15 @@ export class ChessWebsocketHandlerService extends EventTarget {
   }
 
   public sinf() {
-    this.jsend({instr: I.SINF, scope: S.PRIVATE});
+    this.jsend({instr: I.SINF, scope: Scope.PRIVATE});
   }
 
   public surrender() {
-    this.jsend({instr: I.SRNDR, scope: S.GAME});
+    this.jsend({instr: I.SRNDR, scope: Scope.GAME});
   }
 
   public subscribeToPublicChat() {
-    this.jsend({instr: I.SUB, callback: I.TELL, scope: S.PRIVATE});
+    this.jsend({instr: I.SUB, callback: I.TELL, scope: Scope.PRIVATE});
   }
 
   public subscribeToSinf(reciever: UserInfo, callback: Function) {
