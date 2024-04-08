@@ -41,8 +41,15 @@ export class GameComponent {
     ws.on(I.PINF, (msg: PlayerInfo)=>this.onPlayerInfo(msg));
   }
 
+  canMove(piece: string): boolean {
+    if(this.move_number%2==0)
+      return this.is_player1 && this.IS_PLAYER1.exec(piece)!=null
+    else
+      return !this.is_player1 && this.IS_PLAYER2.exec(piece)!=null
+  }
+
   onClickSquare(square: number, piece: string) {
-    if(this.selected_square==-1) {
+    if(this.selected_square==-1 && this.canMove(piece)) {
       this.selected_square=square;
     }
     else {
