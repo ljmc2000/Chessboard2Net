@@ -33,6 +33,18 @@
   background-color: #4900BA;
 }
 
+.lit_square {
+  background-color: #5D5D5D;
+}
+
+.lit_square .odd_square {
+  background-color: #30007A;
+}
+
+.selected_square {
+  background-color: #BA4900;
+}
+
 #surrender_button {
   float: right;
   margin-left: 32px;

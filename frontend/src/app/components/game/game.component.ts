@@ -27,8 +27,9 @@ export class GameComponent {
   is_player1: boolean=true;
   move_number: number;
   gamestate: string='';
-  icon_map: any={};
+  selected_square: number=-1;
 
+  icon_map: any={};
   player1_set: string='doodles';
   player2_set: string='doodles';
   player1_colour: string='white';
@@ -38,6 +39,15 @@ export class GameComponent {
     ws.on(I.GOVER, ()=>this.in_game=false);
     ws.on(I.GST, (msg: GameState)=>this.updateGamestate(msg));
     ws.on(I.PINF, (msg: PlayerInfo)=>this.onPlayerInfo(msg));
+  }
+
+  onClickSquare(square: number, piece: string) {
+    if(this.selected_square==-1) {
+      this.selected_square=square;
+    }
+    else {
+      this.selected_square=-1;
+    }
   }
 
   onPlayerInfo(msg: PlayerInfo) {
