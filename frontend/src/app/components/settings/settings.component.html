@@ -12,6 +12,10 @@
 
 <h2>Favourite Colour</h2>
 <div class="colour_input">
+  <mat-form-field>
+    <input [(ngModel)]="favouriteColourString" (input)="onChangeColourString()" matInput/>
+    <button matSuffix mat-raised-button color="primary" (click)="saveColour()">Save</button>
+  </mat-form-field>
   <mat-slider min=0 max=255>
     <input [(ngModel)]="favouriteColourRed" (input)="onChangeColour()" matSliderThumb>
   </mat-slider>
@@ -21,7 +25,6 @@
   <mat-slider min=0 max=255>
     <input [(ngModel)]="favouriteColourBlue" (input)="onChangeColour()" matSliderThumb>
   </mat-slider>
-  <button matSuffix mat-raised-button color="primary" (click)="saveColour()">Save</button>
 </div>
 
 <span *ngFor="let piece of ['pawn','rook','knight','bishop','queen','king']; index as i">
