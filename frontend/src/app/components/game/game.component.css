@@ -15,7 +15,7 @@
   width:12.5%;
   height:12.5%;
   font-size: 0px;
-  background-color: #4900BA;
+  background-color: #CCCCCC;
 }
 
 .my_turn {
@@ -30,7 +30,7 @@
 }
 
 .odd_square {
-  background-color: #CCCCCC;
+  background-color: #4900BA;
 }
 
 #surrender_button {

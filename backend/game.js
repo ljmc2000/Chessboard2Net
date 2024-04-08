@@ -53,14 +53,14 @@ export class ChessGame extends Game {
 	constructor() {
 		super()
 		this.gamestate=
-			`cnbjqbnc`+
+			`cnbqjbnc`+
 			`ffffffff`+
 			`        `+
 			`        `+
 			`        `+
 			`        `+
 			`FFFFFFFF`+
-			`CNBJQBNC`
+			`CNBQJBNC`
 	}
 }
 
