@@ -5,6 +5,19 @@
   border: 1px solid black;
 }
 
+.icon_pair {
+  display: inline-grid;
+  padding:10px;
+  border: solid;
+  border-width: 1px;
+  margin-left: -1px;
+  margin-top: -1px;
+}
+
+.icon_table {
+  display: inline-block;
+}
+
 .set_icon {
   height: 128px;
   width: 128px;

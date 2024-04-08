@@ -27,10 +27,13 @@
   </mat-slider>
 </div>
 
-<span *ngFor="let piece of ['pawn','rook','knight','bishop','queen','king']; index as i">
-  <mat-icon
-    class="set_icon"
-    *ngFor="let suffix of ['','_back']; index as j"
-    [svgIcon]="pieceFor(piece)+suffix"
-    [ngStyle]="{'onload': updateSetColours()}" />
+<span class="icon_table">
+  <div class="icon_pair" *ngFor="let piece of ['king','queen','bishop','knight','rook','pawn']; index as i">
+    <h3>{{piece}}</h3>
+    <mat-icon
+      class="set_icon"
+      *ngFor="let suffix of ['','_back']; index as j"
+      [svgIcon]="pieceFor(piece)+suffix"
+      [ngStyle]="{'onload': updateSetColours()}" />
+  </div>
 </span>
