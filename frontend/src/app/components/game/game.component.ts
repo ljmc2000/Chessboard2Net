@@ -58,16 +58,15 @@ export abstract class GameComponent {
   }
 
   onPlayerInfo(msg: PlayerInfo) {
+    var c_set=set_for(msg.prefered_set);
     if(msg.is_player1) {
       this.player1_colour=parse_colour(msg.favourite_colour)
-      this.player1_set=set_for(msg.prefered_set);
+      this.player1_set=c_set;
     }
     else {
       this.player2_colour=parse_colour(msg.favourite_colour)
-      this.player2_set=set_for(msg.prefered_set);
+      this.player2_set=c_set;
     }
-
-    var c_set=set_for(msg.prefered_set);
 
     if(this.is_player1) {
       if(msg.is_player1) {
