@@ -9,14 +9,14 @@ class WsPacketEvent extends Event {data: any};
 @Injectable({
   providedIn: 'root'
 })
-export class ChessWebsocketHandlerService extends WebSocket {
+export class ChessWebsocketHandlerService extends EventTarget {
+
+  private _ws: WebSocket;
+  public reconnectionTimeout?: number;
 
   constructor() {
-    super(`ws://${window.location.host}/api`)
-    this.onmessage=this.onMessage;
-    this.onerror=this.onError;
-    this.onclose=this.onClose;
-    this.setupDefaultEventListeners();
+    super();
+    this.setupConnection();
   }
 
   public acceptChallenge(player: string) {
@@ -45,6 +45,13 @@ export class ChessWebsocketHandlerService extends WebSocket {
 
   public sendWhisperMessage(content: string, target: string) {
     this.jsend({instr: I.TELL, scope: S.DIRECT, content: content, target: target});
+  }
+
+  public setupConnection() {
+    this._ws=new WebSocket(`ws://${window.location.host}/api`);
+    this._ws.onmessage = (msg)=>this.onMessage(msg);
+    this._ws.onerror = (err)=>this.onError(err);
+    this._ws.onclose = ()=>this.onClose();
   }
 
   public sinf() {
@@ -87,6 +94,16 @@ export class ChessWebsocketHandlerService extends WebSocket {
   }
 
   onClose() {
+    var reconnectionTimeoutEnd=new Date().valueOf()+15000;
+    var interval = setInterval(()=> {
+      this.reconnectionTimeout=Math.floor((reconnectionTimeoutEnd-new Date().valueOf())/1000);
+      if(this.reconnectionTimeout<0) {
+        clearInterval(interval);
+        delete this.reconnectionTimeout;
+        this.setupConnection();
+      }
+    }
+    ,500);
   }
 
   on(instr: string, callback: Function) {
@@ -94,9 +111,6 @@ export class ChessWebsocketHandlerService extends WebSocket {
   }
 
   jsend(data: any) {
-    this.send(JSON.stringify(data));
-  }
-
-  setupDefaultEventListeners() {
+    this._ws.send(JSON.stringify(data));
   }
 }
