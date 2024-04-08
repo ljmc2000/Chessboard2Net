@@ -94,6 +94,7 @@ export class ChessWebsocketHandlerService extends EventTarget {
   }
 
   onClose() {
+    this.dispatchEvent(new Event('close'));
     var reconnectionTimeoutEnd=new Date().valueOf()+15000;
     var interval = setInterval(()=> {
       this.reconnectionTimeout=Math.floor((reconnectionTimeoutEnd-new Date().valueOf())/1000);
