@@ -10,13 +10,13 @@
 <button id="surrender_button" matSuffix mat-raised-button color="primary" (click)="ws.surrender()" *ngIf="in_game">Surrender</button>
 
 <mat-icon
-    class="player_icon"
+    class="player_icon player2"
     [svgIcon]="player2_set+'/pawn'"
     [ngClass]="{'my_turn': move_number%2==1}"
     [ngStyle]="{'onload':afterUpdateGamestate()}" />
 
 <mat-icon
-    class="player_icon"
+    class="player_icon player1"
     [svgIcon]="player1_set+'/pawn'"
     [ngClass]="{'my_turn': move_number%2==0}"
     [ngStyle]="{'onload':afterUpdateGamestate()}" />
