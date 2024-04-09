@@ -1,4 +1,6 @@
 import EventEmitter from 'node:events'
+import { CHESS_DEFAULT_GAMESTATE } from './shared/chess-rules.js'
+import { CHECKERS_DEFAULT_GAMESTATE } from './shared/checkers-rules.js'
 import { GAME_MESSAGE, EndState, Instruction as I } from './shared/constants.js'
 
 class Game extends EventEmitter {
@@ -46,34 +48,11 @@ class Game extends EventEmitter {
 }
 
 export class ChessGame extends Game {
-	constructor() {
-		super()
-		this.gamestate=
-			`cnbqjbnc`+
-			`ffffffff`+
-			`        `+
-			`        `+
-			`        `+
-			`        `+
-			`FFFFFFFF`+
-			`CNBQJBNC`
-	}
+	gamestate=CHESS_DEFAULT_GAMESTATE
 }
 
 export class CheckersGame extends Game {
-
-	constructor() {
-		super()
-		this.gamestate=
-			` p p p p`+
-			`p p p p `+
-			` p p p p`+
-			`        `+
-			`        `+
-			`P P P P `+
-			` P P P P`+
-			`P P P P `
-	}
+	gamestate=CHECKERS_DEFAULT_GAMESTATE
 }
 
 export const NullGame = {
