@@ -65,14 +65,14 @@ export class CheckersGame extends Game {
 	constructor() {
 		super()
 		this.gamestate=
-			`p p p p `+
 			` p p p p`+
 			`p p p p `+
+			` p p p p`+
 			`        `+
 			`        `+
-			` P P P P`+
 			`P P P P `+
-			` P P P P`
+			` P P P P`+
+			`P P P P `
 	}
 }
 
