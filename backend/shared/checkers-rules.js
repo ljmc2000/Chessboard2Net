@@ -37,16 +37,16 @@ export function getValidCheckersMoves(gamestate, position, player_number) {
 				secondary_target=position+18
 				if(!wraps_left(position,target) && gamestate[target]==' ')
 					moves.push(target)
-					else if(!wraps_left(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
-						moves.push(secondary_target)
+				else if(!wraps_left(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
+					moves.push(secondary_target)
 
 				target=position+7
 				secondary_target=position+14
 				if(!wraps_right(position,target) && gamestate[target]==' ')
 					moves.push(target)
-					else if(!wraps_right(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
-						moves.push(secondary_target)
-						break
+				else if(!wraps_right(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
+					moves.push(secondary_target)
+					break
 		}
 	}
 
