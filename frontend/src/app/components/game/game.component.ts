@@ -1,3 +1,4 @@
+import { ActivatedRoute } from "@angular/router";
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -7,7 +8,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { GameState } from 'models/gamestate'
 import { PlayerInfo } from 'models/playerinfo'
-import { Instruction as I } from 'shared/constants'
+import { Instruction as I, Game } from 'shared/constants'
+import { getValidChessMoves } from 'shared/chess-rules';
+import { getValidCheckersMoves } from 'shared/checkers-rules';
 import { parse_colour, set_for } from 'utils';
 
 @Component({
@@ -17,7 +20,7 @@ import { parse_colour, set_for } from 'utils';
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
-export abstract class GameComponent {
+export class GameComponent {
 
   IS_PLAYER1=/[A-Z]/
   IS_PLAYER2=/[a-z]/
@@ -35,11 +38,15 @@ export abstract class GameComponent {
   player1_colour: string='white';
   player2_colour: string='black';
 
-  constructor(public ws: ChessWebsocketHandlerService) {
+  constructor(public ws: ChessWebsocketHandlerService, routes: ActivatedRoute) {
     ws.on(I.GOVER, ()=>this.in_game=false);
     ws.on(I.GST, (msg: GameState)=>this.updateGamestate(msg));
     ws.on(I.PINF, (msg: PlayerInfo)=>this.onPlayerInfo(msg));
+
+    routes.params.subscribe(params=>this.setRules(params['game']));
   }
+
+  getValidMoves=(square: number)=>{return []};
 
   canMove(piece: string): boolean {
     if(this.move_number%2==0)
@@ -51,9 +58,11 @@ export abstract class GameComponent {
   onClickSquare(square: number, piece: string) {
     if(this.selected_square==-1 && this.canMove(piece)) {
       this.selected_square=square;
+      this.targets=this.getValidMoves(square);
     }
     else {
       this.selected_square=-1;
+      this.targets=[];
     }
   }
 
@@ -119,6 +128,17 @@ export abstract class GameComponent {
         this.icon_map['c']=c_set+'/rook_back'
         this.icon_map['j']=c_set+'/king_back'
       }
+    }
+  }
+
+  setRules(ruleset: string) {
+    switch(ruleset) {
+      case Game.CHECKERS:
+        this.getValidMoves=(square: number)=>getValidCheckersMoves(this.gamestate, square);
+        break;
+      case Game.CHESS:
+        this.getValidMoves=(square: number)=>getValidChessMoves(this.gamestate, square);
+        break;
     }
   }
 
