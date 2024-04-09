@@ -134,10 +134,10 @@ export class GameComponent {
   setRules(ruleset: string) {
     switch(ruleset) {
       case Game.CHECKERS:
-        this.getValidMoves=(square: number)=>getValidCheckersMoves(this.gamestate, square);
+        this.getValidMoves=(square: number)=>getValidCheckersMoves(this.gamestate, square, this.is_player1);
         break;
       case Game.CHESS:
-        this.getValidMoves=(square: number)=>getValidChessMoves(this.gamestate, square);
+        this.getValidMoves=(square: number)=>getValidChessMoves(this.gamestate, square, this.is_player1);
         break;
     }
   }
