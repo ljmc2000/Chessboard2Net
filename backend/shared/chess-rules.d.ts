@@ -1,1 +1,1 @@
-export function getValidChessMoves(boardstate: string, position: number, is_player1: boolean);
+export function getValidChessMoves(gamestate: string, position: number, player_number: number);

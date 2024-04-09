@@ -8,7 +8,11 @@ export const CHECKERS_DEFAULT_GAMESTATE=
 	` P P P P`+
 	`P P P P `
 
-export function getValidCheckersMoves(boardstate, position, is_player1) {
+export function getValidCheckersMoves(gamestate, position, player_number) {
 	var moves=[]
 	return moves
+}
+
+export function doChekcersMove(move, board) {
+
 }

@@ -1,7 +1,7 @@
 import EventEmitter from 'node:events'
 import { CHESS_DEFAULT_GAMESTATE } from './shared/chess-rules.js'
 import { CHECKERS_DEFAULT_GAMESTATE } from './shared/checkers-rules.js'
-import { GAME_MESSAGE, EndState, Instruction as I } from './shared/constants.js'
+import { GAME_MESSAGE, EndState, Instruction as I, PlayerNumber } from './shared/constants.js'
 
 class Game extends EventEmitter {
 	gamestate=" ".repeat(64)
@@ -16,6 +16,15 @@ class Game extends EventEmitter {
 		}
 	}
 
+	getPlayerNumber(user_id) {
+		if(this.player1.user_id==user_id)
+			return PlayerNumber.ONE
+		if(this.player2.user_id==user_id)
+			return PlayerNumber.TWO
+		else
+			return PlayerNumber.INVALID
+	}
+
 	async onmessage(data, ws) {
 		switch(data.instr) {
 			case I.SRNDR:
@@ -27,7 +36,7 @@ class Game extends EventEmitter {
 	}
 
 	async onjoin(ws) {
-		ws.send(JSON.stringify({instr: I.GST, gamestate: this.gamestate, move_number: this.moveNumber, is_player1: this.player1.user_id==ws.user.user_id}))
+		ws.send(JSON.stringify({instr: I.GST, gamestate: this.gamestate, move_number: this.moveNumber, player_number: this.getPlayerNumber(ws.user.user_id)}))
 	}
 
 	register(ws) {
@@ -41,9 +50,9 @@ class Game extends EventEmitter {
 
 	async onready() {
 		if(this.player1.user_id)
-			this.emit(GAME_MESSAGE, {instr: I.PINF, username: this.player1.username, favourite_colour: this.player1.favourite_colour, prefered_set: this.player1.prefered_set, is_player1: true})
+			this.emit(GAME_MESSAGE, {instr: I.PINF, username: this.player1.username, favourite_colour: this.player1.favourite_colour, prefered_set: this.player1.prefered_set, player_number: PlayerNumber.ONE})
 		if(this.player2.user_id)
-			this.emit(GAME_MESSAGE, {instr: I.PINF, username: this.player2.username, favourite_colour: this.player2.favourite_colour, prefered_set: this.player2.prefered_set, is_player1: false})
+			this.emit(GAME_MESSAGE, {instr: I.PINF, username: this.player2.username, favourite_colour: this.player2.favourite_colour, prefered_set: this.player2.prefered_set, player_number: PlayerNumber.TWO})
 	}
 }
 

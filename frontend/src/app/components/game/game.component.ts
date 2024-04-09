@@ -7,13 +7,14 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { IconMapTemplate } from 'constants/iconmap-template';
-import { GameState } from 'models/gamestate'
+import { GameState } from 'models/gamestate';
 import { PlayerInfo } from 'models/playerinfo'
 import { parse_colour, set_for } from 'utils';
 
-import { Instruction as I, Game } from 'shared/constants'
 import { getValidChessMoves } from 'shared/chess-rules';
 import { getValidCheckersMoves } from 'shared/checkers-rules';
+import { Instruction as I, Game, PlayerNumber } from 'shared/constants';
+import { owner } from 'shared/utils';
 
 @Component({
   selector: 'app-game',
@@ -24,11 +25,7 @@ import { getValidCheckersMoves } from 'shared/checkers-rules';
 })
 export class GameComponent {
 
-  IS_PLAYER1=/[A-Z]/
-  IS_PLAYER2=/[a-z]/
-
   in_game: boolean=false;
-  is_player1: boolean=true;
   move_number: number;
   gamestate: string='';
   selected_square: number=-1;
@@ -39,6 +36,7 @@ export class GameComponent {
   player2_set: string='doodles';
   player1_colour: string='white';
   player2_colour: string='black';
+  player_number: number;
 
   constructor(public ws: ChessWebsocketHandlerService, routes: ActivatedRoute) {
     ws.on(I.GOVER, ()=>this.in_game=false);
@@ -51,10 +49,11 @@ export class GameComponent {
   getValidMoves=(square: number)=>{return []};
 
   canMove(piece: string): boolean {
-    if(this.move_number%2==0)
-      return this.is_player1 && this.IS_PLAYER1.exec(piece)!=null
-    else
-      return !this.is_player1 && this.IS_PLAYER2.exec(piece)!=null
+    return this.player_number==this.move_number%2 && this.player_number==owner(piece)
+  }
+
+  is_player1(piece: string): boolean {
+    return owner(piece)==PlayerNumber.ONE;
   }
 
   onClickSquare(square: number, piece: string) {
@@ -69,18 +68,22 @@ export class GameComponent {
   }
 
   onPlayerInfo(msg: PlayerInfo) {
-    var c_set=set_for(msg.prefered_set);
-    if(msg.is_player1) {
+    var mod, c_set=set_for(msg.prefered_set);
+    if(msg.player_number==PlayerNumber.ONE) {
       this.player1_colour=parse_colour(msg.favourite_colour)
       this.player1_set=c_set;
+      mod=(a: string)=>a.toUpperCase()
     }
-    else {
+    else if (msg.player_number==PlayerNumber.TWO) {
       this.player2_colour=parse_colour(msg.favourite_colour)
       this.player2_set=c_set;
+      mod=(a: string)=>a.toLowerCase()
+    }
+    else {
+      return;
     }
 
-    var mod = msg.is_player1?(a: string)=>a.toUpperCase():(a: string)=>a.toLowerCase();
-    var suffix = this.is_player1==msg.is_player1?'_back':'';
+    var suffix = this.player_number==msg.player_number?'_back':'';
     for(var key in IconMapTemplate)
       this.icon_map[mod(key)]=`${c_set}/${IconMapTemplate[key]}${suffix}`;
   }
@@ -88,19 +91,19 @@ export class GameComponent {
   setRules(ruleset: string) {
     switch(ruleset) {
       case Game.CHECKERS:
-        this.getValidMoves=(square: number)=>getValidCheckersMoves(this.gamestate, square, this.is_player1);
+        this.getValidMoves=(square: number)=>getValidCheckersMoves(this.gamestate, square, this.player_number);
         break;
       case Game.CHESS:
-        this.getValidMoves=(square: number)=>getValidChessMoves(this.gamestate, square, this.is_player1);
+        this.getValidMoves=(square: number)=>getValidChessMoves(this.gamestate, square, this.player_number);
         break;
     }
   }
 
   updateGamestate(msg: GameState) {
     this.in_game=true;
-    this.is_player1=msg.is_player1;
+    this.player_number=msg.player_number;
     this.move_number=msg.move_number;
-    if(this.is_player1)
+    if(this.player_number==PlayerNumber.ONE)
       this.gamestate=msg.gamestate;
     else
       this.gamestate=msg.gamestate.split('').reverse().join('')
