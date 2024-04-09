@@ -6,12 +6,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
+import { IconMapTemplate } from 'constants/iconmap-template';
 import { GameState } from 'models/gamestate'
 import { PlayerInfo } from 'models/playerinfo'
+import { parse_colour, set_for } from 'utils';
+
 import { Instruction as I, Game } from 'shared/constants'
 import { getValidChessMoves } from 'shared/chess-rules';
 import { getValidCheckersMoves } from 'shared/checkers-rules';
-import { parse_colour, set_for } from 'utils';
 
 @Component({
   selector: 'app-game',
@@ -77,58 +79,10 @@ export class GameComponent {
       this.player2_set=c_set;
     }
 
-    if(this.is_player1) {
-      if(msg.is_player1) {
-        this.icon_map['P']=c_set+'/pawn_back'
-        this.icon_map['R']=c_set+'/rook_back'
-        this.icon_map['N']=c_set+'/knight_back'
-        this.icon_map['B']=c_set+'/bishop_back'
-        this.icon_map['Q']=c_set+'/queen_back'
-        this.icon_map['K']=c_set+'/king_back'
-
-        this.icon_map['F']=c_set+'/pawn_back'
-        this.icon_map['C']=c_set+'/rook_back'
-        this.icon_map['J']=c_set+'/king_back'
-      }
-      else {
-        this.icon_map['p']=c_set+'/pawn'
-        this.icon_map['r']=c_set+'/rook'
-        this.icon_map['n']=c_set+'/knight'
-        this.icon_map['b']=c_set+'/bishop'
-        this.icon_map['q']=c_set+'/queen'
-        this.icon_map['k']=c_set+'/king'
-
-        this.icon_map['f']=c_set+'/pawn'
-        this.icon_map['c']=c_set+'/rook'
-        this.icon_map['j']=c_set+'/king'
-      }
-    }
-    else {
-      if(msg.is_player1) {
-        this.icon_map['P']=c_set+'/pawn'
-        this.icon_map['R']=c_set+'/rook'
-        this.icon_map['N']=c_set+'/knight'
-        this.icon_map['B']=c_set+'/bishop'
-        this.icon_map['Q']=c_set+'/queen'
-        this.icon_map['K']=c_set+'/king'
-
-        this.icon_map['F']=c_set+'/pawn'
-        this.icon_map['C']=c_set+'/rook'
-        this.icon_map['J']=c_set+'/king'
-      }
-      else {
-        this.icon_map['p']=c_set+'/pawn_back'
-        this.icon_map['r']=c_set+'/rook_back'
-        this.icon_map['n']=c_set+'/knight_back'
-        this.icon_map['b']=c_set+'/bishop_back'
-        this.icon_map['q']=c_set+'/queen_back'
-        this.icon_map['k']=c_set+'/king_back'
-
-        this.icon_map['f']=c_set+'/pawn_back'
-        this.icon_map['c']=c_set+'/rook_back'
-        this.icon_map['j']=c_set+'/king_back'
-      }
-    }
+    var mod = msg.is_player1?(a: string)=>a.toUpperCase():(a: string)=>a.toLowerCase();
+    var suffix = this.is_player1==msg.is_player1?'_back':'';
+    for(var key in IconMapTemplate)
+      this.icon_map[mod(key)]=`${c_set}/${IconMapTemplate[key]}${suffix}`;
   }
 
   setRules(ruleset: string) {
