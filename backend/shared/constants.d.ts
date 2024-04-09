@@ -20,6 +20,7 @@ export const Instruction: {
 	NOPLR: string;
 	NOSCP: string;
 	READY: string;
+	SETPN: string;
 	SINF: string;
 	SUB: string;
 	SRNDR: string;

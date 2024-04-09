@@ -42,6 +42,7 @@ export class GameComponent {
     ws.on(I.GOVER, ()=>this.in_game=false);
     ws.on(I.GST, (msg: GameState)=>this.updateGamestate(msg));
     ws.on(I.PINF, (msg: PlayerInfo)=>this.onPlayerInfo(msg));
+    ws.on(I.SETPN, (msg: any)=>this.player_number=msg.player_number);
 
     routes.params.subscribe(params=>this.setRules(params['game']));
   }
@@ -99,7 +100,6 @@ export class GameComponent {
 
   updateGamestate(msg: GameState) {
     this.in_game=true;
-    this.player_number=msg.player_number;
     this.move_number=msg.move_number;
     if(this.player_number==PlayerNumber.ONE)
       this.gamestate=msg.gamestate;

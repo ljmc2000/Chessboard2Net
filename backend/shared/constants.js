@@ -20,6 +20,7 @@ export const Instruction = {
 	NOPLR: 'no_player',
 	NOSCP: 'no_scope',
 	READY: 'ready',
+	SETPN: 'set_player_number',
 	SINF: 'self_info',
 	SUB: 'subscribe_universe_callback',
 	SRNDR: 'surrender',
