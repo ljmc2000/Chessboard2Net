@@ -29,7 +29,7 @@ export class GameComponent {
   move_number: number;
   gamestate: string='';
   selected_square: number=-1;
-  targets: number[]=[];
+  valid_moves: number[]=[];
 
   icon_map: any={};
   player1_set: string='doodles';
@@ -48,22 +48,20 @@ export class GameComponent {
 
   getValidMoves=(square: number)=>{return []};
 
-  canMove(piece: string): boolean {
-    return this.player_number==this.move_number%2 && this.player_number==owner(piece)
-  }
-
   is_player1(piece: string): boolean {
     return owner(piece)==PlayerNumber.ONE;
   }
 
   onClickSquare(square: number, piece: string) {
-    if(this.selected_square==-1 && this.canMove(piece)) {
-      this.selected_square=square;
-      this.targets=this.getValidMoves(square);
+    if(this.selected_square==-1) {
+      this.valid_moves=this.getValidMoves(square);
+      if(this.valid_moves.length>0) {
+        this.selected_square=square;
+      }
     }
     else {
       this.selected_square=-1;
-      this.targets=[];
+      this.valid_moves=[];
     }
   }
 

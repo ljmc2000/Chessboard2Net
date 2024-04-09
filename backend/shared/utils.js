@@ -11,3 +11,10 @@ export function owner(piece) {
 	else
 		return PlayerNumber.INVALID
 }
+
+export function wraps_left(position, target) {
+	return (position%8)<(target%8)
+}
+export function wraps_right(position, target) {
+	return (position%8)>(target%8)
+}

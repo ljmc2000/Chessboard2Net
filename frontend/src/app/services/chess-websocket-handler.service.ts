@@ -30,6 +30,10 @@ export class ChessWebsocketHandlerService extends EventTarget {
     this.jsend({instr: I.OUCNT, scope: Scope.PRIVATE});
   }
 
+  public move(move: string) {
+    this.jsend({instr: I.MOVE, scope: Scope.GAME});
+  }
+
   public rejectChallenge(player: string) {
     this.jsend({instr: I.XCLNG, scope: Scope.DIRECT, target: player});
   }
