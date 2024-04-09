@@ -2,13 +2,13 @@ import base85 from 'base85'
 import bcrypt from 'bcrypt'
 import { randomBytes } from 'crypto'
 
-import { Instruction as I } from './shared/constants.js'
+import { Instruction as I, LOGIN_TOKEN } from './shared/constants.js'
 import { create_login_expiry, unlocked_sets, user_info } from './utils.js'
 
 function set_login_token(resp) {
 	var expires = create_login_expiry()
 	var token=base85.encode(randomBytes(40)).substring(0,48)
-	resp.cookie(c.LOGIN_TOKEN,token, {httpOnly: true, secure: true, expires: expires}) //30 days
+	resp.cookie(LOGIN_TOKEN,token, {httpOnly: true, secure: true, expires: expires}) //30 days
 	return {token: token, expires: expires}
 }
 
