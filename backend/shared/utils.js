@@ -5,13 +5,18 @@ const IS_PLAYER2=/[a-z]/
 
 export function generate_algerbraic_names() {
 	const x_names="ABCDEFGH"
-	var rainbow_table = []
-	for(var y=8; y>=0; y--) {
+	var encoder = []
+	var decoder = new Map()
+	var algerbraic, num, i=0
+	for(var y=8; y>0; y--) {
 		for(var x=0; x<8; x++) {
-			rainbow_table.push(`${x_names[x]}${y}`)
+			algerbraic=`${x_names[x]}${y}`
+			encoder.push(algerbraic)
+			decoder[algerbraic]=i
+			i++
 		}
 	}
-	return rainbow_table
+	return {encoder: encoder, decoder: decoder}
 }
 
 export function owner(piece) {
