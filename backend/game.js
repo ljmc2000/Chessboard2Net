@@ -29,9 +29,10 @@ class Game extends EventEmitter {
 		var player_number=this.getPlayerNumber(ws.user.user_id)
 		switch(data.instr) {
 			case I.MOVE:
-				this.validateMove(data.move, player_number)
-				this.doMove(data.move, player_number)
-				this.emit(GAME_MESSAGE, this.gamestateMessage())
+				if(this.validateMove(data.move, player_number)) {
+					this.doMove(data.move, player_number)
+					this.emit(GAME_MESSAGE, this.gamestateMessage())
+				}
 				break
 			case I.SRNDR:
 				await this.onend(EndState.SURRENDER, this.gamestate)
@@ -63,6 +64,7 @@ class Game extends EventEmitter {
 	}
 
 	validateMove(move) {
+		return true
 	}
 }
 
