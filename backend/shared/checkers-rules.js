@@ -1,4 +1,6 @@
-import { owner, wraps_left, wraps_right } from './utils.js'
+import { generate_algerbraic_names, owner, wraps_left, wraps_right } from './utils.js'
+
+const ALGERBRAIC_NAMES=generate_algerbraic_names()
 
 export const CHECKERS_DEFAULT_GAMESTATE=
 	` p p p p`+
@@ -53,5 +55,31 @@ export function getValidCheckersMoves(gamestate, position, player_number) {
 	return moves
 }
 
-export function doCheckersMove(move, board) {
+export function doCheckersMove(game, move, player_number) {
+	var new_gamestate=game.gamestate.split('')
+	var origin, target
+
+	for(var i=0; i<=move.length-4; i+=4) {
+		origin=ALGERBRAIC_NAMES.decoder[move.substring(i,i+2)]
+		target=ALGERBRAIC_NAMES.decoder[move.substring(i+2,i+4)]
+		new_gamestate[target]=new_gamestate[origin]
+		new_gamestate[origin]=' '
+		switch(target-origin) {
+			case 14:
+				new_gamestate[origin+7]=' '
+				break
+			case -14:
+				new_gamestate[origin-7]=' '
+				break
+			case 18:
+				new_gamestate[origin+9]=' '
+				break
+			case -18:
+				new_gamestate[origin-9]=' '
+				break
+		}
+	}
+
+	game.gamestate=new_gamestate.join('')
+	game.moveNumber++
 }

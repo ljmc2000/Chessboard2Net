@@ -14,7 +14,9 @@ import { parse_colour, set_for } from 'utils';
 import { getValidChessMoves } from 'shared/chess-rules';
 import { getValidCheckersMoves } from 'shared/checkers-rules';
 import { Instruction as I, Game, PlayerNumber } from 'shared/constants';
-import { owner } from 'shared/utils';
+import { owner, generate_algerbraic_names } from 'shared/utils';
+
+const ALGERBRAIC_NAMES = generate_algerbraic_names();
 
 @Component({
   selector: 'app-game',
@@ -28,7 +30,7 @@ export class GameComponent {
   in_game: boolean=false;
   move_number: number;
   gamestate: string='';
-  selected_square: number=-1;
+  selected_origin: number=-1;
   valid_moves: number[]=[];
 
   icon_map: any={};
@@ -54,14 +56,18 @@ export class GameComponent {
   }
 
   onClickSquare(square: number, piece: string) {
-    if(this.selected_square==-1) {
+    if(this.selected_origin==-1) {
       this.valid_moves=this.getValidMoves(square);
       if(this.valid_moves.length>0) {
-        this.selected_square=square;
+        this.selected_origin=square;
       }
     }
     else {
-      this.selected_square=-1;
+      if(this.valid_moves.includes(square)) {
+        this.ws.move(ALGERBRAIC_NAMES.encoder[this.selected_origin]+ALGERBRAIC_NAMES.encoder[square])
+      }
+
+      this.selected_origin=-1;
       this.valid_moves=[];
     }
   }
