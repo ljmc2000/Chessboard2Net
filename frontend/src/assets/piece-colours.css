@@ -1,9 +1,9 @@
 .player1 .custom_colour {
-  fill: none;
+  fill: white !important;
 }
 
 .player2 .custom_colour {
-  fill: none;
+  fill: black !important;
 }
 
 .set_icon .custom_colour {

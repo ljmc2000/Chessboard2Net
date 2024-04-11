@@ -35,8 +35,8 @@ export class GameComponent {
   valid_moves: number[]=[];
 
   icon_map: any={};
-  player1_set: string;
-  player2_set: string;
+  player1_set: string="doodles";
+  player2_set: string="doodles";
   player_number: number;
 
   constructor(
