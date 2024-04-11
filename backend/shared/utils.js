@@ -3,6 +3,25 @@ import { PlayerNumber } from './constants.js'
 const IS_PLAYER1=/[A-Z]/
 const IS_PLAYER2=/[a-z]/
 
+export class AlgerbraicNameTable {
+	constructor(encoder, decoder) {
+		this.encoder=encoder
+		this.decoder=decoder
+	}
+
+	push(array, ...values) {
+		var out=""
+		for(var v of values) {
+			if(0>v || v>63)
+				return
+
+			out+=this.encoder[v];
+		}
+
+		array.push(out)
+	}
+}
+
 export function generate_algerbraic_names() {
 	const x_names="ABCDEFGH"
 	var encoder = []
@@ -16,7 +35,8 @@ export function generate_algerbraic_names() {
 			i++
 		}
 	}
-	return {encoder: encoder, decoder: decoder}
+
+	return new AlgerbraicNameTable(encoder, decoder)
 }
 
 export function owner(piece) {
