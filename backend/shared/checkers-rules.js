@@ -12,12 +12,12 @@ export const CHECKERS_DEFAULT_GAMESTATE=
 	` P P P P`+
 	`P P P P `
 
-export function getValidCheckersMoves(gamestate, position, player_number) {
+export function getValidCheckersMoves(gamestate, position, player_number, turn) {
 	var moves=[]
 	var piece = gamestate[position]
 	var target, secondary_target
 
-	if(owner(piece)==player_number) {
+	if(owner(piece)==player_number && turn%2==player_number) {
 		switch(piece) {
 			case 'P':
 				target=position-9

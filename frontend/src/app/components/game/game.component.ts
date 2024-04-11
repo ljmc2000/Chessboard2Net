@@ -96,10 +96,10 @@ export class GameComponent {
   setRules(ruleset: string) {
     switch(ruleset) {
       case Game.CHECKERS:
-        this.getValidMoves=(square: number)=>getValidCheckersMoves(this.gamestate, square, this.player_number);
+        this.getValidMoves=(square: number)=>getValidCheckersMoves(this.gamestate, square, this.player_number, this.move_number);
         break;
       case Game.CHESS:
-        this.getValidMoves=(square: number)=>getValidChessMoves(this.gamestate, square, this.player_number);
+        this.getValidMoves=(square: number)=>getValidChessMoves(this.gamestate, square, this.player_number, this.move_number);
         break;
     }
   }
@@ -111,6 +111,7 @@ export class GameComponent {
       this.gamestate=msg.gamestate;
     else
       this.gamestate=msg.gamestate.split('').reverse().join('')
+
   }
 
   afterUpdateGamestate() {
