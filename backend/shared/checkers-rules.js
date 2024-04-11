@@ -1,3 +1,4 @@
+import { PlayerNumber } from './constants.js'
 import { generate_algerbraic_names, owner, wraps_left, wraps_right } from './utils.js'
 
 const ALGERBRAIC_NAMES=generate_algerbraic_names()
@@ -76,6 +77,16 @@ export function doCheckersMove(game, move, player_number) {
 				break
 			case -18:
 				new_gamestate[origin-9]=' '
+				break
+		}
+		switch(Math.floor(target/8)) {
+			case 0:
+				if(player_number==PlayerNumber.ONE)
+					new_gamestate[target]='K'
+				break
+			case 7:
+				if(player_number==PlayerNumber.TWO)
+					new_gamestate[target]='k'
 				break
 		}
 	}
