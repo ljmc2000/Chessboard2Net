@@ -14,7 +14,7 @@ import { CommandInterpreterService } from 'services/command-interpreter.service'
 import * as M from 'constants/standard-messages';
 
 @Component({
-  selector: 'app-main',
+  selector: 'app-chat',
   standalone: true,
   imports: [CommonModule, FormsModule,  MatButtonModule, MatInputModule, MatFormFieldModule],
   templateUrl: './chat.component.html',
