@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { IconMapTemplate } from 'constants/iconmap-template';
 import { GameState } from 'models/gamestate';
+import { PieceColourService } from 'services/piece-colour.service';
 import { PlayerInfo } from 'models/playerinfo'
 import { parse_colour, set_for } from 'utils';
 
@@ -34,13 +35,15 @@ export class GameComponent {
   valid_moves: number[]=[];
 
   icon_map: any={};
-  player1_set: string='doodles';
-  player2_set: string='doodles';
-  player1_colour: string='white';
-  player2_colour: string='black';
+  player1_set: string;
+  player2_set: string;
   player_number: number;
 
-  constructor(public ws: ChessWebsocketHandlerService, routes: ActivatedRoute) {
+  constructor(
+    public ws: ChessWebsocketHandlerService,
+    public colourService: PieceColourService,
+    routes: ActivatedRoute,
+  ) {
     ws.on(I.GOVER, ()=>this.in_game=false);
     ws.on(I.GST, (msg: GameState)=>this.updateGamestate(msg));
     ws.on(I.PINF, (msg: PlayerInfo)=>this.onPlayerInfo(msg));
@@ -75,12 +78,12 @@ export class GameComponent {
   onPlayerInfo(msg: PlayerInfo) {
     var mod, c_set=set_for(msg.prefered_set);
     if(msg.player_number==PlayerNumber.ONE) {
-      this.player1_colour=parse_colour(msg.favourite_colour)
+      this.colourService.setColour('player1', 'custom_colour', parse_colour(msg.favourite_colour));
       this.player1_set=c_set;
       mod=(a: string)=>a.toUpperCase()
     }
     else if (msg.player_number==PlayerNumber.TWO) {
-      this.player2_colour=parse_colour(msg.favourite_colour)
+      this.colourService.setColour('player2', 'custom_colour', parse_colour(msg.favourite_colour));
       this.player2_set=c_set;
       mod=(a: string)=>a.toLowerCase()
     }
@@ -108,17 +111,5 @@ export class GameComponent {
     this.in_game=true;
     this.move_number=msg.move_number;
     this.gamestate=msg.gamestate;
-  }
-
-  afterUpdateGamestate() {
-    document.querySelectorAll<SVGElement>('.player1 .custom_colour')
-    .forEach((area)=>{
-      area.style.fill=this.player1_colour
-    });
-
-    document.querySelectorAll<SVGElement>('.player2 .custom_colour')
-    .forEach((area)=>{
-    area.style.fill=this.player2_colour
-    });
   }
 }

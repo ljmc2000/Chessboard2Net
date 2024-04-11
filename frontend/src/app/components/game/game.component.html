@@ -4,7 +4,6 @@
     *ngFor="let piece of gamestate.split(''); index as i"
     [svgIcon]="icon_map[piece]"
     [ngClass]="{'odd_square': (i%2==1) != (i%16>=8), 'selected_square': i==selected_origin, 'lit_square': valid_moves.includes(i), 'player1': is_player1(piece), 'player2': !is_player1(piece)}"
-    [ngStyle]="{'onload': afterUpdateGamestate()}"
     (click)="onClickSquare(i, piece)" />
 </span>
 
@@ -15,7 +14,6 @@
       *ngFor="let piece of gamestate.split('').reverse(); index as i"
       [svgIcon]="icon_map[piece]"
       [ngClass]="{'odd_square': (i%2==1) != (i%16>=8), 'selected_square': 63-i==selected_origin, 'lit_square': valid_moves.includes(63-i), 'player1': is_player1(piece), 'player2': !is_player1(piece)}"
-      [ngStyle]="{'onload': afterUpdateGamestate()}"
       (click)="onClickSquare(63-i, piece)" />
   </span>
 </ng-template>
@@ -25,11 +23,9 @@
 <mat-icon
     class="player_icon player2"
     [svgIcon]="player2_set+'/pawn'"
-    [ngClass]="{'my_turn': move_number%2==1}"
-    [ngStyle]="{'onload':afterUpdateGamestate()}" />
+    [ngClass]="{'my_turn': move_number%2==1}" />
 
 <mat-icon
     class="player_icon player1"
     [svgIcon]="player1_set+'/pawn'"
-    [ngClass]="{'my_turn': move_number%2==0}"
-    [ngStyle]="{'onload':afterUpdateGamestate()}" />
+    [ngClass]="{'my_turn': move_number%2==0}" />
