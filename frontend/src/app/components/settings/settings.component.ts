@@ -11,6 +11,7 @@ import { MatSliderModule } from '@angular/material/slider';
 
 import { parse_colour, set_for } from 'utils';
 import { UserInfo } from 'models/user-info';
+import { PieceColourService } from 'services/piece-colour.service';
 import { UserService } from 'services/user.service';
 import { UserProfileFlag } from 'shared/constants';
 
@@ -34,19 +35,23 @@ export class SettingsComponent implements UserInfo {
   favouriteColourString: string='#ffffff';
   visibleAsOnline: boolean;
 
-  constructor(public userService: UserService, private http: HttpClient) {
+  constructor(
+    public userService: UserService,
+    private http: HttpClient,
+    private colourService: PieceColourService
+  ) {
     this.userService.getUserInfo(this)
     .then(()=>this.parseFlags())
     .then(()=>this.parseColour())
-    .then(()=>this.favouriteColourString=parse_colour(this.favourite_colour));
-
+    .then(()=>this.favouriteColourString=parse_colour(this.favourite_colour))
+    .then(()=>this.colourService.setColour('set_icon','custom_colour',this.favouriteColourString));
   }
 
   onChangeColour() {
     this.favourite_colour=(this.favouriteColourRed<<16)+(this.favouriteColourGreen<<8)+(this.favouriteColourBlue)
 
     this.favouriteColourString=parse_colour(this.favourite_colour);
-    this.updateSetColours()
+    this.colourService.setColour('set_icon','custom_colour',this.favouriteColourString)
   }
 
   onChangeColourString() {
@@ -88,13 +93,5 @@ export class SettingsComponent implements UserInfo {
 
   setFor(id: number) {
     return this.unlocked_sets.includes(id)?set_for(id)+'/pawn':'locked';
-  }
-
-  updateSetColours() {
-    var color = parse_colour(this.favourite_colour)
-    var icons_list = document.querySelectorAll<SVGElement>('.set_icon .custom_colour')
-    icons_list.forEach((icon: SVGElement, key, parent)=>{
-      icon.style.fill=color
-    })
   }
 }

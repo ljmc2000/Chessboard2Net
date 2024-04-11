@@ -7,7 +7,6 @@
   *ngFor="let s of [1,2,4]; index as i"
   [svgIcon]="setFor(s)"
   [ngClass]="{'selected-set': prefered_set==s}"
-  [ngStyle]="{'onload': updateSetColours()}"
   (click)="setFavoriteSet(s)" />
 
 <h2>Favourite Colour</h2>
@@ -33,7 +32,6 @@
     <mat-icon
       class="set_icon"
       *ngFor="let suffix of ['','_back']; index as j"
-      [svgIcon]="pieceFor(piece)+suffix"
-      [ngStyle]="{'onload': updateSetColours()}" />
+      [svgIcon]="pieceFor(piece)+suffix" />
   </div>
 </span>
