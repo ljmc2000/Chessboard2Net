@@ -30,7 +30,7 @@ export class GameComponent {
 
   in_game: boolean=false;
   move_number: number;
-  gamestate: string='';
+  gamestate: string=' '.repeat(64);
   selected_origin: number=-1;
   valid_moves: number[]=[];
 
@@ -50,6 +50,11 @@ export class GameComponent {
     ws.on(I.SETPN, (msg: any)=>this.player_number=msg.player_number);
 
     routes.params.subscribe(params=>this.setRules(params['game']));
+
+    for(var key in IconMapTemplate) {
+      this.icon_map[key.toUpperCase()]=`doodles/${IconMapTemplate[key]}`
+      this.icon_map[key.toLowerCase()]=`doodles/${IconMapTemplate[key]}`
+    }
   }
 
   getValidMoves=(square: number)=>{return []};
