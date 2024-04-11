@@ -19,37 +19,36 @@ export function getValidCheckersMoves(gamestate, position, player_number, turn) 
 	var target, secondary_target
 
 	if(owner(piece)==player_number && turn%2==player_number) {
-		switch(piece) {
-			case 'P':
-				target=position-9
-				secondary_target=position-18
-				if(!wraps_left(position,target) && gamestate[target]==' ')
-					moves.push(target)
-				else if(!wraps_left(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
-					moves.push(secondary_target)
+		if(['P','K','k'].includes(piece)) {
+			target=position-9
+			secondary_target=position-18
+			if(!wraps_left(position,target) && gamestate[target]==' ')
+				moves.push(target)
+			else if(!wraps_left(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
+				moves.push(secondary_target)
 
-				target=position-7
-				secondary_target=position-14
-				if(!wraps_right(position,target) && gamestate[target]==' ')
-					moves.push(target)
-				else if(!wraps_right(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
-					moves.push(secondary_target)
-				break
-			case 'p':
-				target=position+9
-				secondary_target=position+18
-				if(!wraps_right(position,target) && gamestate[target]==' ')
-					moves.push(target)
-				else if(!wraps_right(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
-					moves.push(secondary_target)
+			target=position-7
+			secondary_target=position-14
+			if(!wraps_right(position,target) && gamestate[target]==' ')
+				moves.push(target)
+			else if(!wraps_right(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
+				moves.push(secondary_target)
+		}
 
-				target=position+7
-				secondary_target=position+14
-				if(!wraps_left(position,target) && gamestate[target]==' ')
-					moves.push(target)
-				else if(!wraps_left(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
-					moves.push(secondary_target)
-					break
+		if(['p','K','k'].includes(piece)) {
+			target=position+9
+			secondary_target=position+18
+			if(!wraps_right(position,target) && gamestate[target]==' ')
+				moves.push(target)
+			else if(!wraps_right(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
+				moves.push(secondary_target)
+
+			target=position+7
+			secondary_target=position+14
+			if(!wraps_left(position,target) && gamestate[target]==' ')
+				moves.push(target)
+			else if(!wraps_left(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
+				moves.push(secondary_target)
 		}
 	}
 
