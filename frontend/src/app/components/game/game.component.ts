@@ -107,11 +107,7 @@ export class GameComponent {
   updateGamestate(msg: GameState) {
     this.in_game=true;
     this.move_number=msg.move_number;
-    if(this.player_number==PlayerNumber.ONE)
-      this.gamestate=msg.gamestate;
-    else
-      this.gamestate=msg.gamestate.split('').reverse().join('')
-
+    this.gamestate=msg.gamestate;
   }
 
   afterUpdateGamestate() {

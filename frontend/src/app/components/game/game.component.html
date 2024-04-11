@@ -1,4 +1,4 @@
-<span id="board" #board>
+<span class="board" *ngIf="player_number==0; else p2">
   <mat-icon
     class="square"
     *ngFor="let piece of gamestate.split(''); index as i"
@@ -7,6 +7,18 @@
     [ngStyle]="{'onload': afterUpdateGamestate()}"
     (click)="onClickSquare(i, piece)" />
 </span>
+
+<ng-template #p2>
+  <span class="board">
+    <mat-icon
+      class="square"
+      *ngFor="let piece of gamestate.split('').reverse(); index as i"
+      [svgIcon]="icon_map[piece]"
+      [ngClass]="{'odd_square': (i%2==1) != (i%16>=8), 'selected_square': 63-i==selected_origin, 'lit_square': valid_moves.includes(63-i), 'player1': is_player1(piece), 'player2': !is_player1(piece)}"
+      [ngStyle]="{'onload': afterUpdateGamestate()}"
+      (click)="onClickSquare(63-i, piece)" />
+  </span>
+</ng-template>
 
 <button id="surrender_button" matSuffix mat-raised-button color="primary" (click)="ws.surrender()" *ngIf="in_game">Surrender</button>
 
