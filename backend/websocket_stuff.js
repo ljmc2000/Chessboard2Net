@@ -273,6 +273,7 @@ export default (app, http_server, db) => {
 								await handle_direct_packet(data, ws, target_ws)
 								else
 									ws.send(JSON.stringify({instr: I.NOPLR, target: data.target}))
+							break
 						case Scope.GAME:
 							await ws.game.onmessage(data, ws)
 							break
