@@ -9,7 +9,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { Instruction as I } from 'shared/constants';
 import { ChatMessage } from 'models/chat-message';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
-import { CommandInterpreterService } from 'services/command-interpreter.service';
+import { CommandInterpreter } from 'models/command-interpreter.service';
+import { GeneralCommandInterpreter } from 'services/general-command-interpreter.service';
+import { IngameCommandInterpreter } from 'services/ingame-command-interpreter.service';
 
 import * as M from 'constants/standard-messages';
 
@@ -22,14 +24,15 @@ import * as M from 'constants/standard-messages';
 })
 export class ChatComponent {
   chatMessageContent: string='';
-  chatLog: ChatMessage[] = [M.ON_JOIN_MESSAGE, M.CHAT_CONNECTING_MESSAGE];
+  chatLog: ChatMessage[] = [];
   @ViewChild('chat_parent') chatParent: ElementRef;
   @ViewChild('chat') chat: ElementRef;
 
   @Input() public private_context: boolean=false;
+  cli: CommandInterpreter;
   sendMessage: Function;
 
-  constructor(private ws: ChessWebsocketHandlerService, private cli: CommandInterpreterService) {
+  constructor(private ws: ChessWebsocketHandlerService) {
     ws.on(I.ACLNG, (data: any)=>this.chatLog.push(M.CHALLENGE_ACCEPT_MESSAGE(data.sender.username)));
     ws.on(I.BUSY, (data: any)=>this.chatLog.push(M.BUSY_MESSAGE(data.target.username)));
     ws.on(I.NOPLR, (data: any)=>this.chatLog.push(M.ON_NO_PLAYER_MESSAGE(data.target)));
@@ -47,10 +50,14 @@ export class ChatComponent {
     observer.observe(this.chat.nativeElement)
 
     if(this.private_context) {
-      this.sendMessage=()=>this.ws.sendInGameMessage(this.chatMessageContent)
+      this.sendMessage=()=>this.ws.sendInGameMessage(this.chatMessageContent);
+      this.chatLog.push(M.ON_JOIN_GAME_MESSAGE, M.CHAT_CONNECTING_MESSAGE);
+      this.cli=new IngameCommandInterpreter(this.ws);
     }
     else {
-      this.sendMessage=()=>this.ws.sendChatMessage(this.chatMessageContent)
+      this.sendMessage=()=>this.ws.sendChatMessage(this.chatMessageContent);
+      this.chatLog.push(M.ON_JOIN_MESSAGE, M.CHAT_CONNECTING_MESSAGE);
+      this.cli=new GeneralCommandInterpreter(this.ws);
     }
   }
 

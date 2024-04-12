@@ -1,36 +1,29 @@
 import { Injectable } from '@angular/core';
 
-import { HELP_MESSAGE, SANTAX_ERROR_MESSAGE } from 'constants/standard-messages';
+import { GENERAL_HELP_MESSAGE, SANTAX_ERROR_MESSAGE } from 'constants/standard-messages';
 import { ChatMessage } from 'models/chat-message';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
+import * as CLI from 'models/command-interpreter.service';
 
-const ChallengePattern = /\\c(?:hallenge)? ([^ ]+) (chess|checkers)/i
-const HelpPattern = /\\h(?:elp)?$/i
-const OnlinePattern = /\\o(?:nline)?$/i
-const WhisperPattern = /\\w(?:hisper)? ([^ ]+) (.+)/i
-
-@Injectable({
-  providedIn: 'root'
-})
-export class CommandInterpreterService {
+export class GeneralCommandInterpreter implements CLI.CommandInterpreter {
 
   constructor(private ws: ChessWebsocketHandlerService) { }
 
   interpretCommand(command: string, log: ChatMessage[]): boolean {
     var match;
-    if(match=ChallengePattern.exec(command)) {
+    if(match=CLI.ChallengePattern.exec(command)) {
       this.ws.challenge(match[1],match[2]);
       return false;
     }
-    else if (match=HelpPattern.exec(command)) {
-      log.push(HELP_MESSAGE);
+    else if (match=CLI.HelpPattern.exec(command)) {
+      log.push(GENERAL_HELP_MESSAGE);
       return false;
     }
-    else if(match=OnlinePattern.exec(command)) {
+    else if(match=CLI.OnlinePattern.exec(command)) {
       this.ws.countOnlinePlayers();
       return false;
     }
-    else if(match=WhisperPattern.exec(command)) {
+    else if(match=CLI.WhisperPattern.exec(command)) {
       this.ws.sendWhisperMessage(match[2], match[1]);
       return false;
     }

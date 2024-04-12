@@ -19,11 +19,18 @@ export const CHAT_CONNECTED_MESSAGE = {content: "Connected to chat"} as ChatMess
 
 export const DISCONNECTION_MESSAGE = {system_message: true, content: "Disconnected from the server!"} as ChatMessage;
 
-export const HELP_MESSAGE = {system_message: true, content: `
+export const GENERAL_HELP_MESSAGE = {system_message: true, content: `
 type \\h(elp) to display this message.
 type \\o(nline) to see how many players are online.
 type \\w(hisper) [player] [message] to send a private message.
 `} as ChatMessage;
+
+export const INGAME_HELP_MESSAGE = {system_message: true, content: `
+  type \\h(elp) to display this message.
+  type \\w(hisper) [player] [message] to send a private message, including to players outside this game.
+  `} as ChatMessage;
+
+export const ON_JOIN_GAME_MESSAGE = {content: "Type \\h for a list of commands"} as ChatMessage;
 
 export const ON_JOIN_MESSAGE = {content: "Welcome to Chessboard2Net. Type \\h for a list of commands or say hello and see if someone challenges you to a chess game."} as ChatMessage;
 
