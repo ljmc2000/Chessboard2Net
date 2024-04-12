@@ -27,6 +27,7 @@ type \\w(hisper) [player] [message] to send a private message.
 
 export const INGAME_HELP_MESSAGE = {system_message: true, content: `
   type \\h(elp) to display this message.
+  type \\m(ove) [move in algerbraic notation] to perform a move
   type \\w(hisper) [player] [message] to send a private message, including to players outside this game.
   `} as ChatMessage;
 

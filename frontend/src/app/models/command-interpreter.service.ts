@@ -1,6 +1,7 @@
 import { ChatMessage } from 'models/chat-message';
 
 export const ChallengePattern = /\\c(?:hallenge)? ([^ ]+) (chess|checkers)/i
+export const MovePattern = /\\m(?:ove)? ((?:[a-z]\d)+)/i
 export const HelpPattern = /\\h(?:elp)?$/i
 export const OnlinePattern = /\\o(?:nline)?$/i
 export const WhisperPattern = /\\w(?:hisper)? ([^ ]+) (.+)/i

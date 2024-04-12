@@ -15,6 +15,10 @@ export class IngameCommandInterpreter implements CLI.CommandInterpreter {
       log.push(INGAME_HELP_MESSAGE);
       return false;
     }
+    else if(match=CLI.MovePattern.exec(command)) {
+      this.ws.move(match[1]);
+      return true;
+    }
     else if(match=CLI.WhisperPattern.exec(command)) {
       this.ws.sendWhisperMessage(match[2], match[1]);
       return false;
