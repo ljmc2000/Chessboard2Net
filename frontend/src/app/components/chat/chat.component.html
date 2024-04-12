@@ -1,5 +1,5 @@
-<div #chat_parent id="chat_parent">
-  <div #chat id="chat">
+<div #chat_parent class="chat_parent" [ngClass]="{'embeded_chat': private_context}">
+  <div #chat class="chat">
     <div *ngFor="let message of chatLog; index as i" [ngClass]="message.secret_message?'secret_message':'message'">
       <span class="message_sender_name" *ngIf="message.sender!=null">
         {{message.sender.username}}<span *ngIf="message.secret_message"> -> {{message.target.username}}</span>:
@@ -14,9 +14,9 @@
   </div>
 </div>
 
-<div id="chat_input_parent">
+<div class="chat_input_parent">
   <form #messageForm="ngForm" (ngSubmit)="sendChatMessage()">
-    <mat-form-field id="chat_input">
+    <mat-form-field class="chat_input">
       <input matInput name="chat_message" [(ngModel)]="chatMessageContent" required>
       <button matSuffix mat-raised-button color="primary" [disabled]="chatMessageContent.length==0">Send</button>
     </mat-form-field>
