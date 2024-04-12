@@ -52,6 +52,7 @@ export class GameComponent {
 
     routes.params.subscribe(params=>this.setRules(params['game']));
 
+    this.icon_map[' ']=`blank`
     for(var key in IconMapTemplate) {
       this.icon_map[key.toUpperCase()]=`doodles/${IconMapTemplate[key]}`
       this.icon_map[key.toLowerCase()]=`doodles/${IconMapTemplate[key]}`

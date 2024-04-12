@@ -62,6 +62,7 @@ export class AppComponent implements UserInfo {
   }
 
   registerIcons() {
+    this.iconRegistry.addSvgIcon('blank',this.sanitizer.bypassSecurityTrustResourceUrl('/assets/blank.svg'));
     for(var _set of ['doodles', 'goblins', 'teatime'])
     {
       for(var piece of ['king','queen','bishop','knight','rook','pawn']) {
