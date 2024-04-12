@@ -37,6 +37,9 @@ class Game extends EventEmitter {
 			case I.SRNDR:
 				await this.onend(EndState.SURRENDER, this.gamestate)
 				break
+			case I.TELL:
+				this.emit(GAME_MESSAGE, {instr: I.TELL, sender: ws.user, content:data.content})
+				break
 			default:
 				ws.send(JSON.stringify({instr: I.ERR}))
 		}

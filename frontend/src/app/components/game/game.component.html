@@ -30,7 +30,7 @@
           [svgIcon]="player2_set+'/pawn'"
           [ngClass]="{'my_turn': move_number%2==1}" />
       <button id="surrender_button" matSuffix mat-raised-button color="primary" (click)="ws.surrender()" *ngIf="in_game">Surrender</button>
-      <app-chat></app-chat>
+      <app-chat [private_context]="true"></app-chat>
     </div>
   </span>
 </div>

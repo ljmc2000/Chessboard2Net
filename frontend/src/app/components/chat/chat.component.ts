@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -26,11 +26,14 @@ export class ChatComponent {
   @ViewChild('chat_parent') chatParent: ElementRef;
   @ViewChild('chat') chat: ElementRef;
 
+  @Input() public private_context: boolean=false;
+  sendMessage: Function;
+
   constructor(private ws: ChessWebsocketHandlerService, private cli: CommandInterpreterService) {
     ws.on(I.ACLNG, (data: any)=>this.chatLog.push(M.CHALLENGE_ACCEPT_MESSAGE(data.sender.username)));
     ws.on(I.BUSY, (data: any)=>this.chatLog.push(M.BUSY_MESSAGE(data.target.username)));
     ws.on(I.NOPLR, (data: any)=>this.chatLog.push(M.ON_NO_PLAYER_MESSAGE(data.target)));
-    ws.on(I.READY, (data: any)=>this.ws.subscribeToPublicChat());
+    ws.on(I.READY, (data: any)=>this.subscribeToChat());
     ws.on(I.SUB, (data: any)=>this.onSub(data.callback));
     ws.on(I.TELL, (data: ChatMessage)=>this.chatLog.push(data));
     ws.on(I.OUCNT, (data: any)=>this.chatLog.push(M.ONLINE_PLAYER_COUNT_MESSAGE(data.count)));
@@ -42,6 +45,13 @@ export class ChatComponent {
   ngAfterViewInit() {
     var observer = new ResizeObserver((ev) => this.chatParent.nativeElement.scrollTop=this.chatParent.nativeElement.scrollHeight);
     observer.observe(this.chat.nativeElement)
+
+    if(this.private_context) {
+      this.sendMessage=()=>this.ws.sendInGameMessage(this.chatMessageContent)
+    }
+    else {
+      this.sendMessage=()=>this.ws.sendChatMessage(this.chatMessageContent)
+    }
   }
 
   onSub(callback: string) {
@@ -58,8 +68,14 @@ export class ChatComponent {
       if(!problem) this.chatMessageContent='';
     }
     else {
-      this.ws.sendChatMessage(this.chatMessageContent);
+      this.sendMessage();
       this.chatMessageContent='';
+    }
+  }
+
+  subscribeToChat() {
+    if(!this.private_context) {
+      this.ws.subscribeToPublicChat()
     }
   }
 }

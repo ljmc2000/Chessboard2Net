@@ -46,6 +46,10 @@ export class ChessWebsocketHandlerService extends EventTarget {
     this.jsend({instr: I.TELL, scope: Scope.UNIVERSE, content: content});
   }
 
+  public sendInGameMessage(content: string) {
+    this.jsend({instr: I.TELL, scope: Scope.GAME, content: content});
+  }
+
   public sendWhisperMessage(content: string, target: string) {
     this.jsend({instr: I.TELL, scope: Scope.DIRECT, content: content, target: target});
   }
