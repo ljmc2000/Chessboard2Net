@@ -12,6 +12,7 @@ import { PieceColourService } from 'services/piece-colour.service';
 import { PlayerInfo } from 'models/playerinfo'
 import { parse_colour, set_for } from 'utils';
 
+import { ChatComponent } from 'components/chat/chat.component';
 import { getValidChessMoves } from 'shared/chess-rules';
 import { getValidCheckersMoves } from 'shared/checkers-rules';
 import { Instruction as I, Game, PlayerNumber } from 'shared/constants';
@@ -22,7 +23,7 @@ const ALGERBRAIC_NAMES = generate_algerbraic_names();
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, ChatComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
