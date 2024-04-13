@@ -1,6 +1,6 @@
 import EventEmitter from 'node:events'
 import { CHESS_DEFAULT_GAMESTATE } from './shared/chess-rules.js'
-import { CHECKERS_DEFAULT_GAMESTATE, doCheckersMove } from './shared/checkers-rules.js'
+import { CHECKERS_DEFAULT_GAMESTATE, getValidCheckersMoves, doCheckersMove } from './shared/checkers-rules.js'
 import { GAME_MESSAGE, EndState, Instruction as I, PlayerNumber } from './shared/constants.js'
 
 class Game extends EventEmitter {
@@ -29,7 +29,7 @@ class Game extends EventEmitter {
 		var player_number=this.getPlayerNumber(ws.user.user_id)
 		switch(data.instr) {
 			case I.MOVE:
-				if(this.validateMove(data.move, player_number)) {
+				if((player_number==this.moveNumber%2) && this.validateMove(data.move, player_number)) {
 					this.doMove(data.move, player_number)
 					this.emit(GAME_MESSAGE, this.gamestateMessage())
 				}
@@ -66,8 +66,8 @@ class Game extends EventEmitter {
 			this.emit(GAME_MESSAGE, {instr: I.PINF, username: this.player2.username, favourite_colour: this.player2.favourite_colour, prefered_set: this.player2.prefered_set, player_number: PlayerNumber.TWO})
 	}
 
-	validateMove(move) {
-		return true
+	validateMove(move, player_number) {
+		return false
 	}
 }
 
@@ -79,7 +79,12 @@ export class CheckersGame extends Game {
 	gamestate=CHECKERS_DEFAULT_GAMESTATE
 
 	doMove(move, player_number) {
-		doCheckersMove(this, move, player_number)
+		this.gamestate=doCheckersMove(this.gamestate, move, player_number)
+		this.moveNumber++
+	}
+
+	validateMove(move, player_number) {
+		return getValidCheckersMoves(this.gamestate, player_number, this.moveNumber).includes(`*${move}*`)
 	}
 }
 

@@ -13,50 +13,54 @@ export const CHECKERS_DEFAULT_GAMESTATE=
 	` P P P P`+
 	`P P P P `
 
-export function getValidCheckersMoves(gamestate, position, player_number, turn) {
-	var moves=[]
+function getsMovesForPosition(gamestate, position, player_number, prefix) {
+	if(position<0 || position>=64)
+		return ''
+
+	function _check(target, secondary_target, prefix, wraps) {
+		if(!wraps(position, target) && gamestate[target]==' ') {
+			return `${(prefix+ALGERBRAIC_NAMES.encoder[target])}*`
+		}
+		else if(!wraps(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ') {
+			var move=`${(prefix+ALGERBRAIC_NAMES.encoder[secondary_target])}*`
+			return move+getsMovesForPosition(doCheckersMove(gamestate), secondary_position, player_number, move)
+		}
+		else {
+			return ''
+		}
+	}
+
+	var moves=''
 	var piece = gamestate[position]
-	var target, secondary_target
+	var piece, target, secondary_target, tmp_gamestate
 
-	if(owner(piece)==player_number && turn%2==player_number) {
+	if(owner(piece)==player_number) {
 		if(['P','K','k'].includes(piece)) {
-			target=position-9
-			secondary_target=position-18
-			if(!wraps_left(position,target) && gamestate[target]==' ')
-				moves.push(target)
-			else if(!wraps_left(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
-				moves.push(secondary_target)
-
-			target=position-7
-			secondary_target=position-14
-			if(!wraps_right(position,target) && gamestate[target]==' ')
-				moves.push(target)
-			else if(!wraps_right(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
-				moves.push(secondary_target)
+			moves+=_check(position-9, position-18, prefix, wraps_left)
+			moves+=_check(position-7, position-14, prefix, wraps_right)
 		}
 
 		if(['p','K','k'].includes(piece)) {
-			target=position+9
-			secondary_target=position+18
-			if(!wraps_right(position,target) && gamestate[target]==' ')
-				moves.push(target)
-			else if(!wraps_right(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
-				moves.push(secondary_target)
-
-			target=position+7
-			secondary_target=position+14
-			if(!wraps_left(position,target) && gamestate[target]==' ')
-				moves.push(target)
-			else if(!wraps_left(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ')
-				moves.push(secondary_target)
+			moves+=_check(position+9, position+18, prefix, wraps_right)
+			moves+=_check(position+7, position+14, prefix, wraps_left)
 		}
 	}
 
 	return moves
 }
 
-export function doCheckersMove(game, move, player_number) {
-	var new_gamestate=game.gamestate.split('')
+export function getValidCheckersMoves(gamestate, player_number, turn) {
+	var moves = '*'
+
+	for(var origin=0; origin<gamestate.length; origin++) {
+		moves+=getsMovesForPosition(gamestate, origin, player_number, ALGERBRAIC_NAMES.encoder[origin])
+	}
+
+	return moves
+}
+
+export function doCheckersMove(gamestate, move, player_number) {
+	var new_gamestate=gamestate.split('')
 	var origin, target
 
 	for(var i=0; i<=move.length-4; i+=2) {
@@ -90,6 +94,5 @@ export function doCheckersMove(game, move, player_number) {
 		}
 	}
 
-	game.gamestate=new_gamestate.join('')
-	game.moveNumber++
+	return new_gamestate.join('')
 }

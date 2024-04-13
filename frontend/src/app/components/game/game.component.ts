@@ -36,7 +36,7 @@ export class GameComponent {
   gamestate: string=' '.repeat(64);
   selected_origin: number=-1;
   show_guide: boolean=true;
-  valid_moves: number[]=[];
+  valid_moves: string;
 
   icon_map: any={};
   player1_set: string="doodles";
@@ -62,7 +62,7 @@ export class GameComponent {
     }
   }
 
-  getValidMoves=(square: number)=>{return []};
+  getValidMoves=()=>{return '*'};
 
   is_player1(piece: string): boolean {
     return owner(piece)==PlayerNumber.ONE;
@@ -70,18 +70,8 @@ export class GameComponent {
 
   onClickSquare(square: number, piece: string) {
     if(this.selected_origin==-1) {
-      this.valid_moves=this.getValidMoves(square);
-      if(this.valid_moves.length>0) {
-        this.selected_origin=square;
-      }
     }
     else {
-      if(this.valid_moves.includes(square)) {
-        this.ws.move(ALGERBRAIC_NAMES.encoder[this.selected_origin]+ALGERBRAIC_NAMES.encoder[square])
-      }
-
-      this.selected_origin=-1;
-      this.valid_moves=[];
     }
   }
 
@@ -109,10 +99,10 @@ export class GameComponent {
   setRules(ruleset: string) {
     switch(ruleset) {
       case Game.CHECKERS:
-        this.getValidMoves=(square: number)=>getValidCheckersMoves(this.gamestate, square, this.player_number, this.move_number);
+        this.getValidMoves=()=>getValidCheckersMoves(this.gamestate, this.player_number, this.move_number);
         break;
       case Game.CHESS:
-        this.getValidMoves=(square: number)=>getValidChessMoves(this.gamestate, square, this.player_number, this.move_number);
+        this.getValidMoves=()=>getValidChessMoves(this.gamestate, this.player_number, this.move_number);
         break;
     }
   }
@@ -121,5 +111,6 @@ export class GameComponent {
     this.in_game=true;
     this.move_number=msg.move_number;
     this.gamestate=msg.gamestate;
+    this.valid_moves=this.getValidMoves();
   }
 }
