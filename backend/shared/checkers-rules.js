@@ -59,7 +59,7 @@ export function doCheckersMove(game, move, player_number) {
 	var new_gamestate=game.gamestate.split('')
 	var origin, target
 
-	for(var i=0; i<=move.length-4; i+=4) {
+	for(var i=0; i<=move.length-4; i+=2) {
 		origin=ALGERBRAIC_NAMES.decoder[move.substring(i,i+2)]
 		target=ALGERBRAIC_NAMES.decoder[move.substring(i+2,i+4)]
 		new_gamestate[target]=new_gamestate[origin]
