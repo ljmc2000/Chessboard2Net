@@ -1,8 +1,10 @@
 import { ActivatedRoute } from "@angular/router";
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
@@ -23,7 +25,7 @@ const ALGERBRAIC_NAMES = generate_algerbraic_names();
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, ChatComponent],
+  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatIconModule, ChatComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
@@ -33,6 +35,7 @@ export class GameComponent {
   move_number: number;
   gamestate: string=' '.repeat(64);
   selected_origin: number=-1;
+  show_guide: boolean=true;
   valid_moves: number[]=[];
 
   icon_map: any={};

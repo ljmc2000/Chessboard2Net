@@ -1,5 +1,5 @@
 <div id="gamescreen">
-  <span id="board" [ngClass]="{'upside_down': player_number==1}">
+  <span id="board" [ngClass]="{'upside_down': player_number==1, 'board_show_guide': show_guide}">
     <mat-icon
       class="square"
       *ngFor="let piece of gamestate.split(''); index as i"
@@ -23,7 +23,8 @@
           class="player_icon player2"
           [svgIcon]="player2_set+'/pawn'"
           [ngClass]="{'my_turn': move_number%2==1}" />
-      <button id="surrender_button" matSuffix mat-raised-button color="primary" (click)="ws.surrender()" *ngIf="in_game">Surrender</button>
+      <button class="game_control" matSuffix mat-raised-button color="primary" (click)="ws.surrender()" *ngIf="in_game">Surrender</button>
+      <mat-checkbox class="game_control" [(ngModel)]="show_guide">Show Guide</mat-checkbox>
       <app-chat [private_context]="true"></app-chat>
     </div>
   </span>
