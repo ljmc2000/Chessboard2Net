@@ -14,17 +14,17 @@ export const CHECKERS_DEFAULT_GAMESTATE=
 	` P P P P`+
 	`P P P P `
 
-function getsMovesForPosition(gamestate, position, player_number, prefix) {
+function getMovesForPosition(gamestate, position, player_number, prefix, following=false) {
 	if(position<0 || position>=64)
 		return ''
 
 	function _check(target, secondary_target, prefix, wraps) {
 		if(!wraps(position, target) && gamestate[target]==' ') {
-			return `${(prefix+ALGERBRAIC_NAMES.encoder[target])}*`
+			return following?'':`${(prefix+ALGERBRAIC_NAMES.encoder[target])}*`
 		}
 		else if(!wraps(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ') {
 			var move=`${(prefix+ALGERBRAIC_NAMES.encoder[secondary_target])}`
-			return move+'*'+getsMovesForPosition(doCheckersMove(gamestate, move, player_number), secondary_target, player_number, move)
+			return move+'*'+getMovesForPosition(doCheckersMove(gamestate, move, player_number), secondary_target, player_number, move, true)
 		}
 		else {
 			return ''
@@ -54,7 +54,7 @@ export function getValidCheckersMoves(gamestate, player_number, turn) {
 	var moves = '*'
 
 	for(var origin=0; origin<gamestate.length; origin++) {
-		moves+=getsMovesForPosition(gamestate, origin, player_number, ALGERBRAIC_NAMES.encoder[origin])
+		moves+=getMovesForPosition(gamestate, origin, player_number, ALGERBRAIC_NAMES.encoder[origin])
 	}
 	return moves
 }
