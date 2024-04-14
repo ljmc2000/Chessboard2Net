@@ -3,6 +3,7 @@ import { generate_algerbraic_names, owner, wraps_left, wraps_right } from './uti
 
 const ALGERBRAIC_NAMES=generate_algerbraic_names()
 
+
 export const CHECKERS_DEFAULT_GAMESTATE=
 	` p p p p`+
 	`p p p p `+
@@ -22,8 +23,8 @@ function getsMovesForPosition(gamestate, position, player_number, prefix) {
 			return `${(prefix+ALGERBRAIC_NAMES.encoder[target])}*`
 		}
 		else if(!wraps(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ') {
-			var move=`${(prefix+ALGERBRAIC_NAMES.encoder[secondary_target])}*`
-			return move+getsMovesForPosition(doCheckersMove(gamestate, move, player_number), secondary_target, player_number, move)
+			var move=`${(prefix+ALGERBRAIC_NAMES.encoder[secondary_target])}`
+			return move+'*'+getsMovesForPosition(doCheckersMove(gamestate, move, player_number), secondary_target, player_number, move)
 		}
 		else {
 			return ''
@@ -55,7 +56,6 @@ export function getValidCheckersMoves(gamestate, player_number, turn) {
 	for(var origin=0; origin<gamestate.length; origin++) {
 		moves+=getsMovesForPosition(gamestate, origin, player_number, ALGERBRAIC_NAMES.encoder[origin])
 	}
-
 	return moves
 }
 
