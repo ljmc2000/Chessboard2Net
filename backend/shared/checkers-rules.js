@@ -23,7 +23,7 @@ function getsMovesForPosition(gamestate, position, player_number, prefix) {
 		}
 		else if(!wraps(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ') {
 			var move=`${(prefix+ALGERBRAIC_NAMES.encoder[secondary_target])}*`
-			return move+getsMovesForPosition(doCheckersMove(gamestate), secondary_position, player_number, move)
+			return move+getsMovesForPosition(doCheckersMove(gamestate, move, player_number), secondary_target, player_number, move)
 		}
 		else {
 			return ''
