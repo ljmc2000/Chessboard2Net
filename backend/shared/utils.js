@@ -25,7 +25,7 @@ export class AlgerbraicNameTable {
 export function generate_algerbraic_names() {
 	const x_names="ABCDEFGH"
 	var encoder = []
-	var decoder = new Map()
+	var decoder = {}
 	var algerbraic, num, i=0
 	for(var y=8; y>0; y--) {
 		for(var x=0; x<8; x++) {

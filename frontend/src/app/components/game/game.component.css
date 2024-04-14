@@ -34,6 +34,11 @@
   margin-left: 32px;
 }
 
+.game_control_left {
+  margin-left: 32px;
+  vertical-align: top;
+}
+
 .square {
   width:12.5%;
   height:12.5%;

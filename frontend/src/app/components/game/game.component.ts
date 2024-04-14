@@ -20,8 +20,6 @@ import { getValidCheckersMoves } from 'shared/checkers-rules';
 import { Instruction as I, Game, PlayerNumber } from 'shared/constants';
 import { owner, generate_algerbraic_names } from 'shared/utils';
 
-const ALGERBRAIC_NAMES = generate_algerbraic_names();
-
 @Component({
   selector: 'app-game',
   standalone: true,
@@ -31,13 +29,15 @@ const ALGERBRAIC_NAMES = generate_algerbraic_names();
 })
 export class GameComponent {
 
+  autocomplete: number[]=[]
+  current_move: string='';
+  gamestate: string=' '.repeat(64);
   in_game: boolean=false;
   move_number: number;
-  gamestate: string=' '.repeat(64);
-  selected_origin: number=-1;
   show_guide: boolean=true;
-  valid_moves: string;
+  valid_moves: string='*';
 
+  ALGERBRAIC_NAMES = generate_algerbraic_names();
   icon_map: any={};
   player1_set: string="doodles";
   player2_set: string="doodles";
@@ -68,10 +68,27 @@ export class GameComponent {
     return owner(piece)==PlayerNumber.ONE;
   }
 
-  onClickSquare(square: number, piece: string) {
-    if(this.selected_origin==-1) {
+  finishMove() {
+    this.ws.move(this.current_move);
+    this.current_move='';
+    this.autocomplete=[];
+  }
+
+  onClickSquare(square: number) {
+    this.current_move=this.current_move+this.ALGERBRAIC_NAMES.encoder[square];
+    this.autocomplete=[];
+    const current_move_autocomplete = RegExp(`\\*${this.current_move}([A-H]\\d)`,'g');
+
+    for(var move of this.valid_moves.matchAll(current_move_autocomplete)) {
+      this.autocomplete.push(this.ALGERBRAIC_NAMES.decoder[move[1]]);
     }
-    else {
+
+    if(this.autocomplete.length==0 && this.current_move.length>2) {
+      this.ws.move(this.current_move);
+      this.current_move='';
+    }
+    else if(!this.valid_moves.includes(this.current_move)) {
+      this.current_move='';
     }
   }
 
@@ -111,6 +128,6 @@ export class GameComponent {
     this.in_game=true;
     this.move_number=msg.move_number;
     this.gamestate=msg.gamestate;
-    this.valid_moves=this.getValidMoves();
+    this.valid_moves=this.move_number%2==this.player_number?this.getValidMoves():'*';
   }
 }

@@ -5,11 +5,12 @@
       *ngFor="let piece of gamestate.split(''); index as i"
       [svgIcon]="icon_map[piece]"
       [ngClass]="{'odd_square': (i%2==1) != (i%16>=8),
-                  'selected_square': i==selected_origin,
+                  'selected_square': current_move.includes(ALGERBRAIC_NAMES.encoder[i]),
+                  'lit_square': autocomplete.includes(i),
                   'player1': is_player1(piece),
                   'player2': !is_player1(piece),
                   'upside_down': player_number==1}"
-      (click)="onClickSquare(i, piece)" />
+      (click)="onClickSquare(i)" />
   </span>
 
   <span id="gamescreen_stuff">
@@ -22,6 +23,7 @@
           class="player_icon player2"
           [svgIcon]="player2_set+'/pawn'"
           [ngClass]="{'my_turn': move_number%2==1}" />
+      <button class="game_control_left" matSuffix mat-raised-button color="primary" (click)="finishMove()" *ngIf="current_move.length>=4">Finish move</button>
       <button class="game_control" matSuffix mat-raised-button color="primary" (click)="ws.surrender()" *ngIf="in_game">Surrender</button>
       <mat-checkbox class="game_control" [(ngModel)]="show_guide">Show Guide</mat-checkbox>
       <app-chat [private_context]="true"></app-chat>
