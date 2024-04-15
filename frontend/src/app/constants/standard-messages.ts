@@ -1,17 +1,21 @@
 import { ChatMessage } from 'models/chat-message';
 
 export function BUSY_MESSAGE(username: string): ChatMessage {
-  return {system_message: true, content: `${username} is not available right now`} as ChatMessage
+  return {system_message: true, content: `${username} is not available right now`} as ChatMessage;
+}
+
+export function BAD_MOVE_MESSAGE(move: string): ChatMessage {
+  return {system_message: true, content: `Move ${move} is invalid` } as ChatMessage;
 }
 
 export function CHALLENGE_ACCEPT_MESSAGE(username: string): ChatMessage {
-  return {system_message: true, content: `${username} has accepted your challenge, but actual games aren't implemented yet`} as ChatMessage
+  return {system_message: true, content: `${username} has accepted your challenge, but actual games aren't implemented yet`} as ChatMessage;
 }
 export function CHALLENGE_MESSAGE(username: string, game: string): string {
-  return `${username} would like to play ${game}`
+  return `${username} would like to play ${game}`;
 }
 export function CHALLENGE_REJECTION_MESSAGE(username: string): ChatMessage {
-  return {system_message: true, content: `${username} has rejected your challenge`} as ChatMessage
+  return {system_message: true, content: `${username} has rejected your challenge`} as ChatMessage;
 }
 
 export const CHAT_CONNECTING_MESSAGE = {content: "Connecting to chat…"} as ChatMessage;
@@ -44,3 +48,5 @@ export function ONLINE_PLAYER_COUNT_MESSAGE(count: number): ChatMessage {
 }
 
 export const SANTAX_ERROR_MESSAGE = {system_message: true, content: "Santax Error"} as ChatMessage;
+
+export const WAIT_YOUR_TURN_MESSAGE = {system_message: true, content: "Wait your turn"} as ChatMessage;

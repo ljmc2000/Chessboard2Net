@@ -34,12 +34,14 @@ export class ChatComponent {
 
   constructor(private ws: ChessWebsocketHandlerService) {
     ws.on(I.ACLNG, (data: any)=>this.chatLog.push(M.CHALLENGE_ACCEPT_MESSAGE(data.sender.username)));
+    ws.on(I.BADMV, (data: any)=> this.chatLog.push(M.BAD_MOVE_MESSAGE(data.move)));
     ws.on(I.BUSY, (data: any)=>this.chatLog.push(M.BUSY_MESSAGE(data.target.username)));
     ws.on(I.NOPLR, (data: any)=>this.chatLog.push(M.ON_NO_PLAYER_MESSAGE(data.target)));
     ws.on(I.READY, (data: any)=>this.subscribeToChat());
     ws.on(I.SUB, (data: any)=>this.onSub(data.callback));
     ws.on(I.TELL, (data: ChatMessage)=>this.chatLog.push(data));
     ws.on(I.OUCNT, (data: any)=>this.chatLog.push(M.ONLINE_PLAYER_COUNT_MESSAGE(data.count)));
+    ws.on(I.WAIT, (data: any)=> this.chatLog.push(M.WAIT_YOUR_TURN_MESSAGE));
     ws.on(I.XCLNG, (data: any)=>this.chatLog.push(M.CHALLENGE_REJECTION_MESSAGE(data.sender.username)));
 
     ws.addEventListener('close',()=>this.chatLog.push(M.DISCONNECTION_MESSAGE));
