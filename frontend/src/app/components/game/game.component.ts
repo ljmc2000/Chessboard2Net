@@ -1,4 +1,3 @@
-import { ActivatedRoute } from "@angular/router";
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,8 +14,6 @@ import { PlayerInfo } from 'models/playerinfo'
 import { parse_colour, set_for } from 'utils';
 
 import { ChatComponent } from 'components/chat/chat.component';
-import { getValidChessMoves } from 'shared/chess-rules';
-import { getValidCheckersMoves } from 'shared/checkers-rules';
 import { Instruction as I, Game, PlayerNumber } from 'shared/constants';
 import { owner, generate_algerbraic_names } from 'shared/utils';
 
@@ -46,14 +43,11 @@ export class GameComponent {
   constructor(
     public ws: ChessWebsocketHandlerService,
     public colourService: PieceColourService,
-    routes: ActivatedRoute,
   ) {
     ws.on(I.GOVER, ()=>this.in_game=false);
     ws.on(I.GST, (msg: GameState)=>this.updateGamestate(msg));
     ws.on(I.PINF, (msg: PlayerInfo)=>this.onPlayerInfo(msg));
     ws.on(I.SETPN, (msg: any)=>this.player_number=msg.player_number);
-
-    routes.params.subscribe(params=>this.setRules(params['game']));
 
     this.icon_map[' ']=`blank`
     for(var key in IconMapTemplate) {
@@ -61,8 +55,6 @@ export class GameComponent {
       this.icon_map[key.toLowerCase()]=`doodles/${IconMapTemplate[key]}`
     }
   }
-
-  getValidMoves=()=>{return '*'};
 
   is_player1(piece: string): boolean {
     return owner(piece)==PlayerNumber.ONE;
@@ -112,21 +104,10 @@ export class GameComponent {
       this.icon_map[mod(key)]=`${c_set}/${IconMapTemplate[key]}${suffix}`;
   }
 
-  setRules(ruleset: string) {
-    switch(ruleset) {
-      case Game.CHECKERS:
-        this.getValidMoves=()=>getValidCheckersMoves(this.gamestate, this.player_number);
-        break;
-      case Game.CHESS:
-        this.getValidMoves=()=>getValidChessMoves(this.gamestate, this.player_number);
-        break;
-    }
-  }
-
   updateGamestate(msg: GameState) {
     this.in_game=true;
     this.move_number=msg.move_number;
     this.gamestate=msg.gamestate;
-    this.valid_moves=this.move_number%2==this.player_number?this.getValidMoves():'*';
+    this.valid_moves=this.move_number%2==this.player_number?msg.valid_moves:'*';
   }
 }

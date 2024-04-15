@@ -6,7 +6,7 @@ import { SettingsComponent } from 'components/settings/settings.component';
 
 export const routes: Routes = [
   { path: 'chat', component: ChatComponent },
-  { path: 'game/:game/:game_id', component: GameComponent },
+  { path: 'game', component: GameComponent },
   { path: 'login', component: LoginComponent },
   { path: 'settings', component: SettingsComponent },
   { path: '**', component: ChatComponent },

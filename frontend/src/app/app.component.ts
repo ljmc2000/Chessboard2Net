@@ -58,7 +58,7 @@ export class AppComponent implements UserInfo {
 
   onsinf() {
     if(this.current_gameid && !window.location.pathname.startsWith('/game'))
-      window.location.pathname=`/game/${this.current_gametype}/${this.current_gameid}`;
+      window.location.pathname=`/game`;
   }
 
   registerIcons() {

@@ -13,7 +13,7 @@ class Game extends EventEmitter {
 	}
 
 	gamestateMessage() {
-		return {instr: I.GST, gamestate: this.gamestate, move_number: this.moveNumber}
+		return {instr: I.GST, gamestate: this.gamestate, move_number: this.moveNumber, valid_moves: this.validMoves}
 	}
 
 	getPlayerNumber(user_id) {
