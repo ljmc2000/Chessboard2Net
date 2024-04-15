@@ -35,13 +35,16 @@ class Game extends EventEmitter {
 				else if(this.validMoves.includes(`*${data.move}*`)) {
 					this.doMove(data.move, player_number)
 					this.emit(GAME_MESSAGE, this.gamestateMessage())
+					if(this.validMoves=='*') {
+						await this.onend(EndState.CHECKMATE, ws.user)
+					}
 				}
 				else {
 					ws.send(JSON.stringify({instr: I.BADMV, move: data.move}))
 				}
 				break
 			case I.SRNDR:
-				await this.onend(EndState.SURRENDER, this.gamestate)
+				await this.onend(EndState.SURRENDER, ws.user)
 				break
 			case I.TELL:
 				this.emit(GAME_MESSAGE, {instr: I.TELL, sender: ws.user, content:data.content})

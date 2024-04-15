@@ -109,10 +109,10 @@ export default (app, http_server, db) => {
 
 			game.game_id=user.current_gameid
 
-			game.onend=async function() {
+			game.onend=async function(endstate, player) {
 				var result = await db.pool.query("update users set current_gameid=null, current_gametype=null where current_gameid=$1", [this.game_id])
 
-				this.emit(GAME_END)
+				this.emit(GAME_END, endstate, player)
 			}
 
 			games[user.current_gameid]=game
@@ -128,12 +128,12 @@ export default (app, http_server, db) => {
 					ws.send(JSON.stringify(message))
 				}
 			case GAME_END:
-				return async function(endstate) {
+				return async function(endstate, player) {
 					delete ws.user.current_gameid
 					delete ws.user.current_gametype
-					subscribe_game(ws)
+					await subscribe_game(ws)
 					ws.send(JSON.stringify({instr: I.SINF, ...await user_info(ws.user)}))
-					ws.send(JSON.stringify({instr: I.GOVER, endstate: endstate}))
+					ws.send(JSON.stringify({instr: I.GOVER, reason: endstate, player: player}))
 				}
 		}
 	}
