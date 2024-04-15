@@ -29,9 +29,15 @@ class Game extends EventEmitter {
 		var player_number=this.getPlayerNumber(ws.user.user_id)
 		switch(data.instr) {
 			case I.MOVE:
-				if((player_number==this.moveNumber%2) && this.validMoves.includes(`*${data.move}*`)) {
+				if(player_number!=this.moveNumber%2) {
+					ws.send(JSON.stringify({instr: I.WAIT}))
+				}
+				else if(this.validMoves.includes(`*${data.move}*`)) {
 					this.doMove(data.move, player_number)
 					this.emit(GAME_MESSAGE, this.gamestateMessage())
+				}
+				else {
+					ws.send(JSON.stringify({instr: I.BADMV, move: data.move}))
 				}
 				break
 			case I.SRNDR:

@@ -11,6 +11,7 @@ export const Scope: { PRIVATE: number, DIRECT: number, GAME: number, UNIVERSE: n
 export const Instruction: {
 	ACLNG: string;
 	AUTH: string;
+	BADMV: string;
 	BUSY: string;
 	CLNG: string;
 	ERR: string;
@@ -28,6 +29,7 @@ export const Instruction: {
 	PINF: string;
 	OUCNT: string;
 	UNSUB: string;
+	WAIT: string;
 	XCLNG: string;
 }
 

@@ -11,6 +11,7 @@ export const Scope = { PRIVATE: 1, DIRECT: 2, GAME: 3, UNIVERSE: -1 }
 export const Instruction = {
 	ACLNG: 'accept_challenge',
 	AUTH: 'authenticate',
+	BADMV: 'bad_move',
 	BUSY: 'player_busy',
 	CLNG: 'challenge',
 	ERR: 'protocol_error',
@@ -28,6 +29,7 @@ export const Instruction = {
 	PINF: 'player_info',
 	OUCNT: 'count_online_users',
 	UNSUB: 'unsubscribe_universe_callback',
+	WAIT: 'wait_your_turn',
 	XCLNG: 'deny_challenge',
 }
 
