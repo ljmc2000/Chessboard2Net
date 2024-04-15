@@ -29,7 +29,7 @@ class Game extends EventEmitter {
 		var player_number=this.getPlayerNumber(ws.user.user_id)
 		switch(data.instr) {
 			case I.MOVE:
-				if((player_number==this.moveNumber%2) && this.validateMove(data.move, player_number)) {
+				if((player_number==this.moveNumber%2) && this.validMoves.includes(`*${data.move}*`)) {
 					this.doMove(data.move, player_number)
 					this.emit(GAME_MESSAGE, this.gamestateMessage())
 				}
@@ -65,10 +65,6 @@ class Game extends EventEmitter {
 		if(this.player2.user_id)
 			this.emit(GAME_MESSAGE, {instr: I.PINF, username: this.player2.username, favourite_colour: this.player2.favourite_colour, prefered_set: this.player2.prefered_set, player_number: PlayerNumber.TWO})
 	}
-
-	validateMove(move, player_number) {
-		return false
-	}
 }
 
 export class ChessGame extends Game {
@@ -76,15 +72,17 @@ export class ChessGame extends Game {
 }
 
 export class CheckersGame extends Game {
-	gamestate=CHECKERS_DEFAULT_GAMESTATE
+
+	constructor() {
+		super()
+		this.gamestate=CHECKERS_DEFAULT_GAMESTATE
+		this.validMoves=getValidCheckersMoves(this.gamestate, 0)
+	}
 
 	doMove(move, player_number) {
 		this.gamestate=doCheckersMove(this.gamestate, move, player_number)
 		this.moveNumber++
-	}
-
-	validateMove(move, player_number) {
-		return getValidCheckersMoves(this.gamestate, player_number, this.moveNumber).includes(`*${move}*`)
+		this.validMoves=getValidCheckersMoves(this.gamestate, this.moveNumber%2)
 	}
 }
 

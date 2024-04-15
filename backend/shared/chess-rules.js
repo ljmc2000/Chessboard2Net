@@ -8,7 +8,7 @@ export const CHESS_DEFAULT_GAMESTATE=
 	`FFFFFFFF`+
 	`CNBQJBNC`
 
-export function getValidChessMoves(gamestate, player_number, turn) {
+export function getValidChessMoves(gamestate, player_number) {
 	var moves=[]
 	return moves
 }

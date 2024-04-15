@@ -49,7 +49,7 @@ function getMovesForPosition(gamestate, position, player_number, prefix, followi
 	return moves
 }
 
-export function getValidCheckersMoves(gamestate, player_number, turn) {
+export function getValidCheckersMoves(gamestate, player_number) {
 	var moves = '*'
 
 	for(var origin=0; origin<gamestate.length; origin++) {

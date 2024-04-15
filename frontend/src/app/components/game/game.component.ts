@@ -116,10 +116,10 @@ export class GameComponent {
   setRules(ruleset: string) {
     switch(ruleset) {
       case Game.CHECKERS:
-        this.getValidMoves=()=>getValidCheckersMoves(this.gamestate, this.player_number, this.move_number);
+        this.getValidMoves=()=>getValidCheckersMoves(this.gamestate, this.player_number);
         break;
       case Game.CHESS:
-        this.getValidMoves=()=>getValidChessMoves(this.gamestate, this.player_number, this.move_number);
+        this.getValidMoves=()=>getValidChessMoves(this.gamestate, this.player_number);
         break;
     }
   }
