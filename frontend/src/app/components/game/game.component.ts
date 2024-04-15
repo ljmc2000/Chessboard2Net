@@ -34,7 +34,7 @@ export class GameComponent {
   gamestate: string=' '.repeat(64);
   in_game: boolean=false;
   move_number: number;
-  show_guide: boolean=true;
+  show_guide: boolean;
   valid_moves: string='*';
 
   ALGERBRAIC_NAMES = generate_algerbraic_names();
