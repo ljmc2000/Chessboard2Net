@@ -75,8 +75,8 @@ export class GameComponent {
       this.autocomplete.push(this.ALGERBRAIC_NAMES.decoder[move[1]]);
     }
 
-    if(this.autocomplete.length==0 && this.current_move.length>2) {
-      if(this.valid_moves.includes(this.current_move))
+    if(this.autocomplete.length==0) {
+      if(this.current_move.length>2 && this.valid_moves.includes(this.current_move))
         this.ws.move(this.current_move);
 
       this.current_move='';
