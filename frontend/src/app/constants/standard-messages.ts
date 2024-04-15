@@ -1,4 +1,9 @@
+import { ChallengeMessage } from 'models/challenge-message';
 import { ChatMessage } from 'models/chat-message';
+
+export function ACK_CHALLENGE_MESSAGE(challenge: ChallengeMessage): ChatMessage {
+  return {system_message: true, content: `You challenged ${challenge.target.username} to ${challenge.game}`} as ChatMessage;
+}
 
 export function BUSY_MESSAGE(username: string): ChatMessage {
   return {system_message: true, content: `${username} is not available right now`} as ChatMessage;
@@ -11,8 +16,8 @@ export function BAD_MOVE_MESSAGE(move: string): ChatMessage {
 export function CHALLENGE_ACCEPT_MESSAGE(username: string): ChatMessage {
   return {system_message: true, content: `${username} has accepted your challenge, but actual games aren't implemented yet`} as ChatMessage;
 }
-export function CHALLENGE_MESSAGE(username: string, game: string): string {
-  return `${username} would like to play ${game}`;
+export function CHALLENGE_MESSAGE(challenge: ChallengeMessage): string {
+  return `${challenge.sender.username} would like to play ${challenge.game}`;
 }
 export function CHALLENGE_REJECTION_MESSAGE(username: string): ChatMessage {
   return {system_message: true, content: `${username} has rejected your challenge`} as ChatMessage;
@@ -21,7 +26,7 @@ export function CHALLENGE_REJECTION_MESSAGE(username: string): ChatMessage {
 export const CHAT_CONNECTING_MESSAGE = {content: "Connecting to chat…"} as ChatMessage;
 export const CHAT_CONNECTED_MESSAGE = {content: "Connected to chat"} as ChatMessage;
 
-export function CHECKMATE_MESSAGE(username?: string): ChatMessage {
+export function CHECKMATE_MESSAGE(username: string): ChatMessage {
   return {system_message: true, content: `${username} wins`} as ChatMessage;
 }
 
@@ -53,7 +58,7 @@ export function ONLINE_PLAYER_COUNT_MESSAGE(count: number): ChatMessage {
 
 export const SANTAX_ERROR_MESSAGE = {system_message: true, content: "Santax Error"} as ChatMessage;
 
-export function SURRENDER_MESSAGE(username?: string): ChatMessage {
+export function SURRENDER_MESSAGE(username: string): ChatMessage {
   return {system_message: true, content: `${username} has surrendered`} as ChatMessage;
 }
 

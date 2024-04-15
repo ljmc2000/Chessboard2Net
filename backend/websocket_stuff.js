@@ -212,6 +212,7 @@ export default (app, http_server, db) => {
 					var game=data.game.toLowerCase()
 					sender_ws.user.challenge={user_id: target_ws.user.user_id, game: game}
 					target_ws.send(JSON.stringify({instr: I.CLNG, sender: sender_ws.user, game: game}))
+					sender_ws.send(JSON.stringify({instr: I.NCLNG, target: target_ws.user, game: game}))
 				}
 				else {
 					sender_ws.send(JSON.stringify({instr: I.BUSY, target: target}))

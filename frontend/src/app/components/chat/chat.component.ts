@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { Instruction as I, EndState } from 'shared/constants';
+import { ChallengeMessage } from 'models/challenge-message';
 import { ChatMessage } from 'models/chat-message';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { CommandInterpreter } from 'models/command-interpreter.service';
@@ -38,6 +39,7 @@ export class ChatComponent {
     ws.on(I.BADMV, (data: any)=> this.chatLog.push(M.BAD_MOVE_MESSAGE(data.move)));
     ws.on(I.BUSY, (data: any)=>this.chatLog.push(M.BUSY_MESSAGE(data.target.username)));
     ws.on(I.GOVER, (data: GameOverMessage)=>this.onGameOver(data));
+    ws.on(I.NCLNG, (data: ChallengeMessage)=>this.chatLog.push(M.ACK_CHALLENGE_MESSAGE(data)));
     ws.on(I.NOPLR, (data: any)=>this.chatLog.push(M.ON_NO_PLAYER_MESSAGE(data.target)));
     ws.on(I.READY, (data: any)=>this.subscribeToChat());
     ws.on(I.SUB, (data: any)=>this.onSub(data.callback));

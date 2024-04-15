@@ -24,6 +24,8 @@ import { UserProfileFlag } from 'shared/constants';
 })
 export class SettingsComponent implements UserInfo {
 
+  user_id: string;
+  username: string;
   profile_flags: number=0;
   favourite_colour: number=0;
   prefered_set: number;

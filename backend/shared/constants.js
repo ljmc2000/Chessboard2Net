@@ -18,6 +18,7 @@ export const Instruction = {
 	GOVER: 'game_over',
 	GST: 'gamestate',
 	MOVE: 'move',
+	NCLNG: 'acknowledge_challenge',
 	NOPLR: 'no_player',
 	NOSCP: 'no_scope',
 	READY: 'ready',

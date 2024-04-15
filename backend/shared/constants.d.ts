@@ -18,6 +18,7 @@ export const Instruction: {
 	GOVER: string;
 	GST: string;
 	MOVE: string;
+	NCLNG: string;
 	NOPLR: string;
 	NOSCP: string;
 	READY: string;
