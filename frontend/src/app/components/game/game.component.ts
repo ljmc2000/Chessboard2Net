@@ -84,10 +84,9 @@ export class GameComponent {
     }
 
     if(this.autocomplete.length==0 && this.current_move.length>2) {
-      this.ws.move(this.current_move);
-      this.current_move='';
-    }
-    else if(!this.valid_moves.includes(this.current_move)) {
+      if(this.valid_moves.includes(this.current_move))
+        this.ws.move(this.current_move);
+
       this.current_move='';
     }
   }
