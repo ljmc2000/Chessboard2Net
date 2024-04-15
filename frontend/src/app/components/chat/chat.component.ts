@@ -6,10 +6,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
-import { Instruction as I } from 'shared/constants';
+import { Instruction as I, EndState } from 'shared/constants';
 import { ChatMessage } from 'models/chat-message';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { CommandInterpreter } from 'models/command-interpreter.service';
+import { GameOverMessage } from 'models/game-over-message';
 import { GeneralCommandInterpreter } from 'services/general-command-interpreter.service';
 import { IngameCommandInterpreter } from 'services/ingame-command-interpreter.service';
 
@@ -36,6 +37,7 @@ export class ChatComponent {
     ws.on(I.ACLNG, (data: any)=>this.chatLog.push(M.CHALLENGE_ACCEPT_MESSAGE(data.sender.username)));
     ws.on(I.BADMV, (data: any)=> this.chatLog.push(M.BAD_MOVE_MESSAGE(data.move)));
     ws.on(I.BUSY, (data: any)=>this.chatLog.push(M.BUSY_MESSAGE(data.target.username)));
+    ws.on(I.GOVER, (data: GameOverMessage)=>this.onGameOver(data));
     ws.on(I.NOPLR, (data: any)=>this.chatLog.push(M.ON_NO_PLAYER_MESSAGE(data.target)));
     ws.on(I.READY, (data: any)=>this.subscribeToChat());
     ws.on(I.SUB, (data: any)=>this.onSub(data.callback));
@@ -60,6 +62,16 @@ export class ChatComponent {
       this.sendMessage=()=>this.ws.sendChatMessage(this.chatMessageContent);
       this.chatLog.push(M.ON_JOIN_MESSAGE, M.CHAT_CONNECTING_MESSAGE);
       this.cli=new GeneralCommandInterpreter(this.ws);
+    }
+  }
+
+  onGameOver(message: GameOverMessage) {
+    switch(message.reason) {
+      case EndState.CHECKMATE:
+        this.chatLog.push(M.CHECKMATE_MESSAGE(message.player.username));
+        break;
+      case EndState.SURRENDER:
+        this.chatLog.push(M.SURRENDER_MESSAGE(message.player.username));
     }
   }
 

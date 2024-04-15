@@ -21,6 +21,10 @@ export function CHALLENGE_REJECTION_MESSAGE(username: string): ChatMessage {
 export const CHAT_CONNECTING_MESSAGE = {content: "Connecting to chat…"} as ChatMessage;
 export const CHAT_CONNECTED_MESSAGE = {content: "Connected to chat"} as ChatMessage;
 
+export function CHECKMATE_MESSAGE(username?: string): ChatMessage {
+  return {system_message: true, content: `${username} wins`} as ChatMessage;
+}
+
 export const DISCONNECTION_MESSAGE = {system_message: true, content: "Disconnected from the server!"} as ChatMessage;
 
 export const GENERAL_HELP_MESSAGE = {system_message: true, content: `
@@ -48,5 +52,9 @@ export function ONLINE_PLAYER_COUNT_MESSAGE(count: number): ChatMessage {
 }
 
 export const SANTAX_ERROR_MESSAGE = {system_message: true, content: "Santax Error"} as ChatMessage;
+
+export function SURRENDER_MESSAGE(username?: string): ChatMessage {
+  return {system_message: true, content: `${username} has surrendered`} as ChatMessage;
+}
 
 export const WAIT_YOUR_TURN_MESSAGE = {system_message: true, content: "Wait your turn"} as ChatMessage;
