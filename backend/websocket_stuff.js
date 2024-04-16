@@ -46,7 +46,7 @@ function parse_cookies(request) {
 	return cookies
 }
 
-function callback_for(ws, callback) {
+function callback_for(ws, callback, universe) {
 	switch(callback)
 	{
 		case I.TELL:
@@ -55,6 +55,8 @@ function callback_for(ws, callback) {
 			}
 		case I.SINF:
 			return async (user) => {
+				if((ws.user.profile_flags & UserProfileFlag.VISIBLE_AS_ONLINE) && 0==(user.profile_flags & UserProfileFlag.VISIBLE_AS_ONLINE))
+					universe.emit(I.UENV, UserEvent.DCONN, user)
 				if(user)
 					ws.user=user
 				ws.send(JSON.stringify({instr: I.SINF, ...await user_info(user)}))
@@ -155,7 +157,7 @@ export default (app, http_server, db) => {
 	function subscribe_universe(ws, callback) {
 		if(!ws.callbacks[callback])
 		{
-			var func = callback_for(ws, callback)
+			var func = callback_for(ws, callback, app.universe)
 			app.universe.on(callback, func)
 			ws.callbacks[callback]=func
 			ws.send(JSON.stringify({instr: I.SUB, callback: callback}))
@@ -165,7 +167,7 @@ export default (app, http_server, db) => {
 	function subscribe_universe_private(ws, callback, user_id) {
 		if(!ws.callbacks[callback])
 		{
-			var func = callback_for(ws, callback)
+			var func = callback_for(ws, callback, app.universe)
 			var callback_name = `${callback} ${user_id}`
 			app.universe.on(callback_name, func)
 			ws.callbacks[callback_name]=func
