@@ -19,20 +19,20 @@ export function get_user_ws_by_username(username) {
 	var ws = user_wss_by_username[username]
 	if(!ws)
 		return null
-		else if(ws.readyState!=WebSocket.OPEN)
-			return null
-			else
-				return ws
+	else if(ws.readyState!=WebSocket.OPEN)
+		return null
+	else
+		return ws
 }
 
 export function get_user_ws_by_id(user_id) {
 	var ws = user_wss_by_id[user_id]
 	if(!ws)
 		return null
-		else if(ws.readyState!=WebSocket.OPEN)
-			return null
-			else
-				return ws
+	else if(ws.readyState!=WebSocket.OPEN)
+		return null
+	else
+		return ws
 }
 
 export function register_user_ws(ws) {
