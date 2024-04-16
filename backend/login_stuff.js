@@ -2,7 +2,7 @@ import base85 from 'base85'
 import bcrypt from 'bcrypt'
 import { randomBytes } from 'crypto'
 
-import { Instruction as I, LOGIN_TOKEN } from './shared/constants.js'
+import { Instruction as I, UserProfileFlag, LOGIN_TOKEN } from './shared/constants.js'
 import { create_login_expiry, unlocked_sets, user_info } from './utils.js'
 
 function set_login_token(resp) {
@@ -13,6 +13,16 @@ function set_login_token(resp) {
 }
 
 export default function (app, db) {
+
+	app.get('/api/list_users/:page', async (req, resp, on_error) => {
+		try {
+			var users = await db.pool.query(`select user_id, username, prefered_set, favourite_colour, current_gameid, current_gametype from users where (profile_flags & ${UserProfileFlag.VISIBLE_AS_ONLINE})!=0 limit 50 offset $1`,[req.params.page])
+			resp.json(users.rows)
+		}
+		catch(err) {
+			on_error(err)
+		}
+	})
 
 	app.get('/api/selfinfo', async (req, resp, on_error) => {
 		try {
@@ -31,7 +41,7 @@ export default function (app, db) {
 
 	app.get('/api/user/:username', async (req, resp, on_error) => {
 		try {
-			var result = await db.pool.query("select username, prefered_set, favourite_colour from users where username=$1",[req.params.username])
+			var result = await db.pool.query(`select user_id, username, prefered_set, favourite_colour, current_gameid, current_gametype from users where (profile_flags & ${UserProfileFlag.VISIBLE_AS_ONLINE})!=0 and username=$1`,[req.params.username])
 			if(result.rowCount!=0) {
 				resp.json(result.rows[0])
 			}
