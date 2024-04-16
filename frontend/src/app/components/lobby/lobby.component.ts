@@ -22,13 +22,11 @@ export class LobbyComponent {
   }
 
   onUserEvent(ev: string, user: UserInfo) {
-    switch(ev) {
-      case UserEvent.CONN:
-        this.online_users.set(user.user_id, user);
-        break
-      case UserEvent.DCONN:
-        this.online_users.delete(user.user_id);
-        break
+    if(ev==UserEvent.DCONN) {
+      this.online_users.delete(user.user_id);
+    }
+    else {
+      this.online_users.set(user.user_id, user);
     }
   }
 }

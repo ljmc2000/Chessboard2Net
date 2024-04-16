@@ -57,6 +57,8 @@ function callback_for(ws, callback, universe) {
 			return async (user) => {
 				if((ws.user.profile_flags & UserProfileFlag.VISIBLE_AS_ONLINE) && 0==(user.profile_flags & UserProfileFlag.VISIBLE_AS_ONLINE))
 					universe.emit(I.UENV, UserEvent.DCONN, user)
+				if(ws.user.current_gameid!=user.current_gameid)
+					universe.emit(I.UENV, user.current_gameid==null?UserEvent.SGAME:UserEvent.EGAME, user)
 				if(user)
 					ws.user=user
 				ws.send(JSON.stringify({instr: I.SINF, ...await user_info(user)}))
