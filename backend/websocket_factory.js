@@ -1,4 +1,5 @@
 import { WebSocket } from 'ws'
+import { UserProfileFlag } from './shared/constants.js'
 
 const user_wss_by_id = {}
 const user_wss_by_username = {}
@@ -13,6 +14,18 @@ export function count_online_users() {
 	}
 
 	return count
+}
+
+export function get_online_users() {
+	var users = []
+	for(var user in user_wss_by_id) {
+		if(user_wss_by_id[user].readyState==WebSocket.OPEN
+			&& 0!=(user_wss_by_id[user].user.profile_flags&UserProfileFlag.VISIBLE_AS_ONLINE))
+		{
+			users.push(user_wss_by_id[user].user)
+		}
+	}
+	return users
 }
 
 export function get_user_ws_by_username(username) {

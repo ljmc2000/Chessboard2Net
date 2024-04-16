@@ -2,7 +2,7 @@ import { createHash } from 'crypto'
 import { WebSocketServer } from 'ws'
 
 import * as ws_factory from './websocket_factory.js'
-import { GAME_MESSAGE, GAME_END, Instruction as I, Game, Scope } from './shared/constants.js'
+import { GAME_MESSAGE, GAME_END, Instruction as I, Game, Scope, UserEvent, UserProfileFlag } from './shared/constants.js'
 import { ChessGame, CheckersGame, NullGame } from './game.js'
 import { user_info } from './utils.js'
 
@@ -58,6 +58,10 @@ function callback_for(ws, callback) {
 				if(user)
 					ws.user=user
 				ws.send(JSON.stringify({instr: I.SINF, ...await user_info(user)}))
+			}
+		case I.UENV:
+			return async (ev, sender) => {
+				ws.send(JSON.stringify({instr: I.UENV, sender: await user_info(sender), ev: ev}))
 			}
 	}
 }
@@ -186,6 +190,15 @@ export default (app, http_server, db) => {
 				break
 			case I.SUB:
 				subscribe_universe(ws, data.callback)
+				switch(data.callback) {
+					case I.UENV:
+						for(var user of ws_factory.get_online_users()) {
+							ws.send(JSON.stringify({instr: I.UENV, sender: await user_info(user), ev: UserEvent.CONN}))
+							if(user.current_gameid)
+								ws.send(JSON.stringify({instr: I.UENV, sender: await user_info(user), ev: UserEvent.SGAME}))
+						}
+						break
+				}
 				break
 			case I.OUCNT:
 				ws.send(JSON.stringify({instr: I.OUCNT, count: ws_factory.count_online_users()}))
@@ -305,8 +318,13 @@ export default (app, http_server, db) => {
 				unsubscribe_game(ws)
 				for(var cb in ws.callbacks)
 					app.universe.removeListener(cb, ws.callbacks[cb])
+
+				if(ws.user.profile_flags & UserProfileFlag.VISIBLE_AS_ONLINE)
+					app.universe.emit(I.UENV, UserEvent.DCONN, ws.user)
 			})
 
+			if(ws.user.profile_flags & UserProfileFlag.VISIBLE_AS_ONLINE)
+				app.universe.emit(I.UENV, UserEvent.CONN, ws.user)
 			ws.send(JSON.stringify({instr: I.READY}))
 		}
 	})

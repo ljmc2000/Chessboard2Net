@@ -89,6 +89,10 @@ export class ChessWebsocketHandlerService extends EventTarget {
     })
   }
 
+  public subscribeToUserEvents() {
+    this.jsend({instr: I.SUB, callback: I.UENV, scope: Scope.PRIVATE});
+  }
+
   onMessage(message: MessageEvent) {
     var data = JSON.parse(message.data);
     var ev = new WsPacketEvent(data.instr);

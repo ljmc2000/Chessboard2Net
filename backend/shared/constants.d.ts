@@ -21,17 +21,25 @@ export const Instruction: {
 	NCLNG: string;
 	NOPLR: string;
 	NOSCP: string;
+	PINF: string;
 	READY: string;
 	SETPN: string;
 	SINF: string;
 	SUB: string;
 	SRNDR: string;
 	TELL: string;
-	PINF: string;
 	OUCNT: string;
+	UENV: string;
 	UNSUB: string;
 	WAIT: string;
 	XCLNG: string;
+}
+
+export const UserEvent: {
+	CONN: string;
+	DCONN: string;
+	END_GAME: string;
+	START_GAME: string;
 }
 
 export const UserProfileFlag: {

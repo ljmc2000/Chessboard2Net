@@ -29,9 +29,17 @@ export const Instruction = {
 	TELL: 'tell',
 	PINF: 'player_info',
 	OUCNT: 'count_online_users',
+	UENV: 'user_event',
 	UNSUB: 'unsubscribe_universe_callback',
 	WAIT: 'wait_your_turn',
 	XCLNG: 'deny_challenge',
+}
+
+export const UserEvent = {
+	CONN: 'connect',
+	DCONN: 'disconnect',
+	EGAME: 'end_game',
+	SGAME: 'start_game',
 }
 
 export const UserProfileFlag = {
