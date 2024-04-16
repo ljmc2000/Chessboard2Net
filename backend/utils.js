@@ -1,4 +1,4 @@
-import { ChessSet } from './shared/constants.js'
+import { ChessSet, UserProfileFlag } from './shared/constants.js'
 
 export function create_login_expiry()
 {
@@ -29,6 +29,7 @@ export async function user_info(user, db) {
 		unlocked_sets: await unlocked_sets(user, db),
 		current_gameid: user.current_gameid,
 		current_gametype: user.current_gametype,
+		hidden_profile: 0!=(user.profile_flags & UserProfileFlag.VISIBLE_AS_ONLINE),
 		logged_in: true,
 	}
 }

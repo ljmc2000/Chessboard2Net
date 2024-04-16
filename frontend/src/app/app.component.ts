@@ -28,6 +28,7 @@ export class AppComponent implements UserInfo {
   public username: string;
   public current_gameid: string;
   public current_gametype: string;
+  public hidden_profile: boolean;
   public logged_in: boolean;
 
   constructor(

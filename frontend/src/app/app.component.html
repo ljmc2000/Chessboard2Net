@@ -6,7 +6,7 @@
 
     <span *ngIf="logged_in && !current_gameid">
       <a href="/chat" mat-button>Chat</a>
-      <a href="/lobby" mat-button>Lobby</a>
+      <a href="/lobby" mat-button *ngIf="hidden_profile">Lobby</a>
       <a href="/settings" mat-button>Settings</a>
       <button (click)="userService.logout()" mat-button>Logout</button>
     </span>

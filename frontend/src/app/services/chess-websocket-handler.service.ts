@@ -83,6 +83,7 @@ export class ChessWebsocketHandlerService extends EventTarget {
       reciever.favourite_colour=data.favourite_colour;
       reciever.current_gameid=data.current_gameid;
       reciever.current_gametype=data.current_gametype;
+      reciever.hidden_profile=data.hidden_profile;
       reciever.logged_in=data.logged_in
 
       callback()
