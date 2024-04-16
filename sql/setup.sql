@@ -1,3 +1,4 @@
+create type endstate as enum ('checkmate', 'stalemate', 'surrender');
 create type gametype as enum ('chess', 'checkers');
 
 create table users (
@@ -17,6 +18,20 @@ create table users (
 	constraint no_spaces_in_usernames check (username !~ '\s')
 );
 
+create table game_logs (
+	game_id character(38) primary key,
+	game gametype,
+
+	player1 character(32),
+	player2 character(32),
+	movelog varchar(18)[],
+	conclusion endstate,
+
+	foreign key (player1) references users(user_id),
+	foreign key (player2) references users(user_id)
+);
+
 create unique index case_insensitive_usernames on users (upper(username));
 
 --grant select,insert,update on users
+--grant select,insert on game_logs
