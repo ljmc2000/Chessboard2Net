@@ -5,7 +5,7 @@ import { GAME_MESSAGE, EndState, Instruction as I, PlayerNumber } from './shared
 
 class Game extends EventEmitter {
 	gamestate=" ".repeat(64)
-	moveNumber=0
+	moveLog=[]
 	player1={user_id: null}
 	player2={user_id: null}
 
@@ -13,7 +13,7 @@ class Game extends EventEmitter {
 	}
 
 	gamestateMessage() {
-		return {instr: I.GST, gamestate: this.gamestate, move_number: this.moveNumber, valid_moves: this.validMoves}
+		return {instr: I.GST, gamestate: this.gamestate, move_number: this.moveLog.length, valid_moves: this.validMoves}
 	}
 
 	getPlayerNumber(user_id) {
@@ -29,7 +29,7 @@ class Game extends EventEmitter {
 		var player_number=this.getPlayerNumber(ws.user.user_id)
 		switch(data.instr) {
 			case I.MOVE:
-				if(player_number!=this.moveNumber%2) {
+				if(player_number!=this.moveLog.length%2) {
 					ws.send(JSON.stringify({instr: I.WAIT}))
 				}
 				else if(this.validMoves.includes(`*${data.move}*`)) {
@@ -94,8 +94,8 @@ export class CheckersGame extends Game {
 
 	doMove(move, player_number) {
 		this.gamestate=doCheckersMove(this.gamestate, move, player_number)
-		this.moveNumber++
-		this.validMoves=getValidCheckersMoves(this.gamestate, this.moveNumber%2)
+		this.moveLog.push(move)
+		this.validMoves=getValidCheckersMoves(this.gamestate, this.moveLog.length%2)
 	}
 }
 
