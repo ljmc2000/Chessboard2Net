@@ -26,7 +26,7 @@
       <button class="game_control_left" matSuffix mat-raised-button color="primary" (click)="finishMove()" *ngIf="current_move.length>=4">Finish move</button>
       <button class="game_control" matSuffix mat-raised-button color="primary" (click)="ws.surrender()" *ngIf="in_game">Surrender</button>
       <mat-checkbox class="game_control" [(ngModel)]="show_guide">Show Guide</mat-checkbox>
-      <app-chat [private_context]="true"></app-chat>
+      <app-chat [in_game_chat]="true"></app-chat>
     </div>
   </span>
 </div>

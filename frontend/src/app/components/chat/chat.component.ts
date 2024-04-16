@@ -30,7 +30,7 @@ export class ChatComponent {
   @ViewChild('chat_parent') chatParent: ElementRef;
   @ViewChild('chat') chat: ElementRef;
 
-  @Input() public private_context: boolean=false;
+  @Input() public in_game_chat: boolean=false;
   cli: CommandInterpreter;
   sendMessage: Function;
 
@@ -55,7 +55,7 @@ export class ChatComponent {
     var observer = new ResizeObserver((ev) => this.chatParent.nativeElement.scrollTop=this.chatParent.nativeElement.scrollHeight);
     observer.observe(this.chat.nativeElement)
 
-    if(this.private_context) {
+    if(this.in_game_chat) {
       this.sendMessage=()=>this.ws.sendInGameMessage(this.chatMessageContent);
       this.chatLog.push(M.ON_JOIN_GAME_MESSAGE, M.CHAT_CONNECTING_MESSAGE);
       this.cli=new IngameCommandInterpreter(this.ws);
@@ -97,7 +97,7 @@ export class ChatComponent {
   }
 
   subscribeToChat() {
-    if(!this.private_context) {
+    if(!this.in_game_chat) {
       this.ws.subscribeToPublicChat()
     }
   }
