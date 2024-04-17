@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -22,7 +23,7 @@ import { UserProfileFlag } from 'shared/constants';
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css'
 })
-export class SettingsComponent implements UserInfo {
+export class SettingsComponent {
 
   user_id: string;
   username: string;
@@ -42,11 +43,20 @@ export class SettingsComponent implements UserInfo {
     private http: HttpClient,
     private colourService: PieceColourService
   ) {
-    this.userService.getUserInfo(this)
-    .then(()=>this.parseFlags())
-    .then(()=>this.parseColour())
-    .then(()=>this.favouriteColourString=parse_colour(this.favourite_colour))
-    .then(()=>this.colourService.setColour('set_icon','custom_colour',this.favouriteColourString));
+    this.userService.getUserInfo()
+    .subscribe((userinfo: UserInfo)=> {
+      this.user_id=userinfo.user_id;
+      this.username=userinfo.username;
+      this.profile_flags=userinfo.profile_flags;
+      this.favourite_colour=userinfo.favourite_colour;
+      this.prefered_set=userinfo.prefered_set;
+      this.unlocked_sets=userinfo.unlocked_sets;
+
+      this.parseFlags();
+      this.parseColour();
+      this.favouriteColourString=parse_colour(this.favourite_colour);
+      this.colourService.setColour('set_icon','custom_colour',this.favouriteColourString)
+    });
   }
 
   onChangeColour() {

@@ -22,14 +22,9 @@ import { UserService } from 'services/user.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent implements UserInfo {
+export class AppComponent {
   title = 'Chessboard2Net';
-  public user_id: string;
-  public username: string;
-  public current_gameid: string;
-  public current_gametype: string;
-  public hidden_profile: boolean;
-  public logged_in: boolean;
+  user: UserInfo={} as UserInfo;
 
   constructor(
     private iconRegistry: MatIconRegistry,
@@ -40,7 +35,7 @@ export class AppComponent implements UserInfo {
   ) {
     this.ws.on(I.AUTH,()=>this.onauth())
     this.ws.on(I.CLNG, (data: ChallengeMessage)=>this.onChallenge(data));
-    this.ws.subscribeToSinf(this,()=>this.onsinf())
+    this.ws.subscribeToSinf(this, ()=>this.onsinf())
     this.registerIcons();
   }
 
@@ -59,7 +54,7 @@ export class AppComponent implements UserInfo {
   }
 
   onsinf() {
-    if(this.current_gameid && !window.location.pathname.startsWith('/game'))
+    if(this.user.current_gameid && !window.location.pathname.startsWith('/game'))
       window.location.pathname=`/game`;
   }
 

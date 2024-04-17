@@ -73,19 +73,9 @@ export class ChessWebsocketHandlerService extends EventTarget {
     this.jsend({instr: I.SUB, callback: I.TELL, scope: Scope.PRIVATE});
   }
 
-  public subscribeToSinf(reciever: UserInfo, callback: Function) {
-    this.on(I.SINF, (data: UserInfo)=> {
-      reciever.user_id=data.user_id;
-      reciever.username=data.username;
-      reciever.unlocked_sets=data.unlocked_sets;
-      reciever.profile_flags=data.profile_flags;
-      reciever.prefered_set=data.prefered_set;
-      reciever.favourite_colour=data.favourite_colour;
-      reciever.current_gameid=data.current_gameid;
-      reciever.current_gametype=data.current_gametype;
-      reciever.hidden_profile=data.hidden_profile;
-      reciever.logged_in=data.logged_in
-
+  public subscribeToSinf(reciever: {user: UserInfo}, callback: Function) {
+    this.on(I.SINF, (user: UserInfo)=> {
+      reciever.user=user;
       callback()
     })
   }
