@@ -5,8 +5,7 @@
     <span class="flexExpand"></span>
 
     <span *ngIf="user.logged_in && !user.current_gameid">
-      <a href="/chat" mat-button>Chat</a>
-      <a href="/lobby" mat-button *ngIf="user.hidden_profile">Lobby</a>
+      <a href="/" mat-button>Lobby</a>
       <a href="/settings" mat-button>Settings</a>
       <button (click)="userService.logout()" mat-button>Logout</button>
     </span>

@@ -1,3 +1,7 @@
+app-chat {
+  float: right;
+}
+
 .user_badge {
   display: inline-flex;
   border: 1px solid black;

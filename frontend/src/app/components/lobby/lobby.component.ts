@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+import { ChatComponent } from 'components/chat/chat.component';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { Instruction as I, UserEvent } from 'shared/constants';
 import { PieceColourService } from 'services/piece-colour.service';
@@ -13,7 +14,7 @@ import { parse_colour, set_for } from 'utils';
 @Component({
   selector: 'app-lobby',
   standalone: true,
-  imports: [ CommonModule, MatButtonModule, MatIconModule ],
+  imports: [ CommonModule, MatButtonModule, MatIconModule, ChatComponent ],
   templateUrl: './lobby.component.html',
   styleUrl: './lobby.component.css'
 })
