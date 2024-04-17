@@ -3,5 +3,17 @@
     class="icon"
     [ngClass]="user.value.favourite_colour.toString(16)"
     [svgIcon]="iconFor(user.value.prefered_set)" />
-  <div class="details">{{user.value.username}}</div>
+  <div class="details">
+    <div class="username">{{user.value.username}}</div>
+    <div *ngIf="user.value.current_gameid; then in_game; else no_game"></div>
+  </div>
+
+  <ng-template #in_game>
+    In game: {{user.value.current_gametype}}
+  </ng-template>
+
+  <ng-template #no_game>
+    <button mat-fab color="primary">Chess</button>
+    <button mat-fab color="primary">Checkers</button>
+  </ng-template>
 </div>

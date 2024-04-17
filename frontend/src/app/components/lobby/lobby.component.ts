@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
@@ -12,24 +13,33 @@ import { parse_colour, set_for } from 'utils';
 @Component({
   selector: 'app-lobby',
   standalone: true,
-  imports: [ CommonModule, MatIconModule ],
+  imports: [ CommonModule, MatButtonModule, MatIconModule ],
   templateUrl: './lobby.component.html',
   styleUrl: './lobby.component.css'
 })
 export class LobbyComponent {
 
+  self: UserInfo={} as UserInfo;
   online_users: Map<string,UserInfo>=new Map();
 
   constructor(
     private ws: ChessWebsocketHandlerService,
     private colourService: PieceColourService,
   ) {
+    ws.on(I.SINF, (user: UserInfo)=>this.self=user);
     ws.on(I.READY, (data: any)=>this.ws.subscribeToUserEvents());
     ws.on(I.UENV,(message: any)=>this.onUserEvent(message.ev, message.sender));
   }
 
+  onSinf(user: UserInfo) {
+    this.self=user;
+    this.online_users.delete(user.user_id);
+  }
+
   onUserEvent(ev: string, user: UserInfo) {
-    if(ev==UserEvent.DCONN) {
+    if(user.user_id==this.self.user_id) {
+    }
+    else if(ev==UserEvent.DCONN) {
       this.online_users.delete(user.user_id);
     }
     else {
