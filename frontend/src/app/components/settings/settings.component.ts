@@ -36,6 +36,7 @@ export class SettingsComponent {
   favouriteColourGreen: number=0;
   favouriteColourBlue: number=0;
   favouriteColourString: string='#ffffff';
+  allowSpectators: boolean;
   visibleAsOnline: boolean;
 
   constructor(
@@ -73,7 +74,8 @@ export class SettingsComponent {
 
   onChangeFlags() {
     this.profile_flags = (
-      this.visibleAsOnline?UserProfileFlag.VISIBLE_AS_ONLINE:0
+      (this.visibleAsOnline?UserProfileFlag.VISIBLE_AS_ONLINE:0) +
+      (this.allowSpectators?UserProfileFlag.ALLOW_SPECTATORS:0)
     );
     this.http.post('/api/update_prefs',{profile_flags: this.profile_flags})
     .subscribe(this.parseFlags)
@@ -87,6 +89,7 @@ export class SettingsComponent {
 
   parseFlags() {
     this.visibleAsOnline=(this.profile_flags&UserProfileFlag.VISIBLE_AS_ONLINE)!=0;
+    this.allowSpectators=(this.profile_flags&UserProfileFlag.ALLOW_SPECTATORS)!=0;
   }
 
   pieceFor(piece: string) {

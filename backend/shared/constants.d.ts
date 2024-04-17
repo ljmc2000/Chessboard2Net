@@ -44,4 +44,5 @@ export const UserEvent: {
 
 export const UserProfileFlag: {
 	VISIBLE_AS_ONLINE: number,
+	ALLOW_SPECTATORS: number,
 }
