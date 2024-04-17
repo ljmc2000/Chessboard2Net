@@ -1,0 +1,16 @@
+.user_badge {
+  display: inline-flex;
+  border: 1px solid black;
+}
+
+.user_badge .icon {
+  width: 128px;
+  height: 128px;
+  float: left;
+}
+
+.user_badge .details {
+  font-size: large;
+  font-weight: bold;
+  margin: 16px;
+}

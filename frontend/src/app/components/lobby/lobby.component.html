@@ -1,1 +1,7 @@
-<div *ngFor="let user of online_users | keyvalue">{{user.value.username}}: {{user.value.current_gametype}}</div>
+<div *ngFor="let user of online_users | keyvalue" class="user_badge">
+  <mat-icon
+    class="icon"
+    [ngClass]="user.value.favourite_colour.toString(16)"
+    [svgIcon]="iconFor(user.value.prefered_set)" />
+  <div class="details">{{user.value.username}}</div>
+</div>
