@@ -13,7 +13,9 @@
   </ng-template>
 
   <ng-template #no_game>
-    <button mat-fab color="primary">Chess</button>
-    <button mat-fab color="primary">Checkers</button>
+    <button mat-fab color="primary"
+    *ngFor="let game of ['Chess','Checkers']"
+    (click)="ws.challenge(user.value.username, game)"
+    >{{game}}</button>
   </ng-template>
 </div>

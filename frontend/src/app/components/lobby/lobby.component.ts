@@ -23,7 +23,7 @@ export class LobbyComponent {
   online_users: Map<string,UserInfo>=new Map();
 
   constructor(
-    private ws: ChessWebsocketHandlerService,
+    public ws: ChessWebsocketHandlerService,
     private colourService: PieceColourService,
   ) {
     ws.on(I.SINF, (user: UserInfo)=>this.self=user);
