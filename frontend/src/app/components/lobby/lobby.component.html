@@ -9,11 +9,12 @@
   </div>
 
   <ng-template #in_game>
-    In game: {{user.value.current_gametype}}
+    <div>In game: {{user.value.current_gametype}}</div>
+    <div class="control"><button mat-raised-button color="primary">Spectate</button></div>
   </ng-template>
 
   <ng-template #no_game>
-    <button mat-fab color="primary"
+    <button class="control" mat-fab color="primary"
     *ngFor="let game of ['Chess','Checkers']"
     (click)="ws.challenge(user.value.username, game)"
     >{{game}}</button>

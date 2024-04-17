@@ -23,6 +23,6 @@ app-chat {
   margin-bottom: 5px;
 }
 
-.user_badge button {
+.user_badge .control {
   margin: 5px;
 }
