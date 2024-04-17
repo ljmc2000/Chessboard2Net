@@ -14,7 +14,7 @@
   </span>
 
   <span id="gamescreen_stuff">
-    <div>
+    <div id="game_control_bar">
       <mat-icon
           class="player_icon player1"
           [svgIcon]="player1_set+'/pawn'"
@@ -26,7 +26,7 @@
       <button class="game_control_left" matSuffix mat-raised-button color="primary" (click)="finishMove()" *ngIf="current_move.length>=4">Finish move</button>
       <button class="game_control" matSuffix mat-raised-button color="primary" (click)="ws.surrender()" *ngIf="in_game">Surrender</button>
       <mat-checkbox class="game_control" [(ngModel)]="show_guide">Show Guide</mat-checkbox>
-      <app-chat [in_game_chat]="true"></app-chat>
     </div>
+    <app-chat [in_game_chat]="true"></app-chat>
   </span>
 </div>

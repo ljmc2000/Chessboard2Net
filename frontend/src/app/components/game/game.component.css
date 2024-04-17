@@ -19,6 +19,11 @@
   padding: 16px;
 }
 
+#game_control_bar {
+  display: block;
+  overflow: auto;
+}
+
 .board_show_guide {
   max-height: 72vh !important;
   padding: 32px;
