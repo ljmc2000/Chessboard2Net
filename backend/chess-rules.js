@@ -16,70 +16,73 @@ function getMovesForPosition(gamestate, position, player_number) {
 	if(position<0 || position>=64)
 		return ''
 
-	const E = ALGERBRAIC_NAMES.encoder
+	function pawn_diagonal(target, offset, enemy_pawn, wraps) {
+		var collateral=target+offset
+
+		var condition1=owner(gamestate[target])!=player_number && gamestate[target]!=' '
+		var condition2=gamestate[collateral]==enemy_pawn
+
+		if(wraps(target)) {
+			return false
+		}
+		else {
+			return !wraps(target) && (condition1 || condition2)
+		}
+	}
+
 	var moves = ''
 	var piece = gamestate[position]
 	var p_name = ALGERBRAIC_NAMES.encoder[position]
 	var move = (target)=>`${p_name}${ALGERBRAIC_NAMES.encoder[target]}*`
-	var target, collateral
+	var target
 
 	if(owner(piece)==player_number) {
-		if('F'==piece) {
-			target=position-16
-			if(gamestate[target]==' ') {
-				moves+=move(target)
-			}
-		}
-
-		if('f'==piece) {
-			target=position+16
-			if(gamestate[target]==' ') {
-				moves+=move(target)
-			}
-		}
 
 		if('FPE'.includes(piece)) {
 			target=position-7
-			collateral=position+1
-			if(!wraps_right(target) && owner(gamestate[target])!=player_number
-				&& (gamestate[target]!=' ' || (owner(gamestate[collateral])!=player_number && gamestate[collateral]!=' '))
-			) {
+			if(pawn_diagonal(target, 8, 'e', wraps_right)) {
 				moves+=move(target)
 			}
 
 			target=position-8
 			if(gamestate[target]==' ') {
 				moves+=move(target)
+
+				if('F'==piece) {
+					target=position-16
+					if(gamestate[target]==' ') {
+						moves+=move(target)
+					}
+				}
 			}
 
 			target=position-9
-			collateral=position-1
-			if(!wraps_left(target) && owner(gamestate[target])!=player_number
-				&& (gamestate[target]!=' ' || (owner(gamestate[collateral])!=player_number && gamestate[collateral]!=' '))
-			) {
+			if(pawn_diagonal(target, 8, 'e', wraps_left)) {
 				moves+=move(target)
 			}
 		}
 
 		if('fpe'.includes(piece)) {
 			target=position+7
-			collateral=position-1
-			if(!wraps_left(target) && owner(gamestate[target])!=player_number
-				&& (gamestate[target]!=' ' || (owner(gamestate[collateral])!=player_number && gamestate[collateral]!=' '))
-			) {
+			if(pawn_diagonal(target, -8, 'E', wraps_left)) {
 				moves+=move(target)
 			}
 
 			target=position+8
 			if(gamestate[target]==' ') {
 				moves+=move(target)
+
+				if('f'==piece) {
+					target=position+16
+
+					if(gamestate[target]==' ') {
+						moves+=move(target)
+					}
+				}
 			}
 
 			target=position+9
-			collateral=position+1
-			if(!wraps_right(target) && owner(gamestate[target])!=player_number
-				&& (gamestate[target]!=' ' || (owner(gamestate[collateral])!=player_number && gamestate[collateral]!=' '))
-			) {
+			if(pawn_diagonal(target, -8, 'E', wraps_right)) {
 				moves+=move(target)
 			}
 		}
