@@ -32,7 +32,6 @@ function getMovesForPosition(gamestate, position, player_number, prefix, followi
 
 	var moves=''
 	var piece = gamestate[position]
-	var piece, target, secondary_target
 
 	if(owner(piece)==player_number) {
 		if(['P','K','k'].includes(piece)) {
