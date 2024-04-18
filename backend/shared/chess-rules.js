@@ -38,7 +38,7 @@ function getMovesForPosition(gamestate, position, player_number) {
 			}
 		}
 
-		if('FP'.includes(piece)) {
+		if('FPE'.includes(piece)) {
 			target=position-7
 			collateral=position+1
 			if(!wraps_right(target) && owner(gamestate[target])!=player_number
@@ -61,7 +61,7 @@ function getMovesForPosition(gamestate, position, player_number) {
 			}
 		}
 
-		if('fp'.includes(piece)) {
+		if('fpe'.includes(piece)) {
 			target=position+7
 			collateral=position-1
 			if(!wraps_left(target) && owner(gamestate[target])!=player_number
