@@ -42,7 +42,8 @@ export class LobbyComponent {
     });
 
     dialogRef.afterClosed().subscribe(game => {
-      this.ws.challenge(username, game);
+      if(game)
+        this.ws.challenge(username, game);
     });
   }
 
