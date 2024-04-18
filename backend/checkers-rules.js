@@ -1,5 +1,5 @@
-import { PlayerNumber } from './constants.js'
-import { generate_algerbraic_names, owner, wraps_left, wraps_right } from './utils.js'
+import { PlayerNumber } from './shared/constants.js'
+import { generate_algerbraic_names, owner, wraps_left, wraps_right } from './shared/utils.js'
 
 const ALGERBRAIC_NAMES=generate_algerbraic_names()
 

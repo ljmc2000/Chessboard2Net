@@ -1,6 +1,6 @@
 import EventEmitter from 'node:events'
-import { CHESS_DEFAULT_GAMESTATE, getValidChessMoves, doChessMove } from './shared/chess-rules.js'
-import { CHECKERS_DEFAULT_GAMESTATE, getValidCheckersMoves, doCheckersMove } from './shared/checkers-rules.js'
+import { CHESS_DEFAULT_GAMESTATE, getValidChessMoves, doChessMove } from './chess-rules.js'
+import { CHECKERS_DEFAULT_GAMESTATE, getValidCheckersMoves, doCheckersMove } from './checkers-rules.js'
 import { GAME_MESSAGE, EndState, Instruction as I, PlayerNumber } from './shared/constants.js'
 
 class Game extends EventEmitter {
