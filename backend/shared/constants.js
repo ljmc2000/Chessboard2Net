@@ -9,12 +9,17 @@ export const PlayerNumber = { ONE: 0, TWO: 1, INVALID: -1 }
 export const Scope = { PRIVATE: 1, DIRECT: 2, GAME: 3, UNIVERSE: -1 }
 
 export const ChessPiece = {
-	PAWN: 'pawn',
-	ROOK: 'rook',
-	KNIGHT: 'knight',
-	BISHOP: 'bishop',
-	QUEEN: 'queen',
-	KING: 'king',
+	PAWN: 'P',
+	ROOK: 'R',
+	KNIGHT: 'N',
+	BISHOP: 'B',
+	QUEEN: 'Q',
+	KING: 'K',
+
+	FIRST_MOVE_PAWN: 'F',
+	EN_PASSANT_PAWN: 'E',
+	FIRST_MOVE_ROOK: 'C',
+	FIRST_MOVE_KING: 'J',
 }
 
 export const Instruction = {

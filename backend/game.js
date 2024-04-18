@@ -99,7 +99,7 @@ export class ChessGame extends Game {
 	}
 
 	doMove(move, player_number) {
-		this.gamestate=doChessMove(this.gamestate, move, player_number)
+		this.gamestate=doChessMove(this.gamestate, move, player_number, {p1: this.player1_promotion_target, p2: this.player2_promotion_target})
 		this.moveLog.push(move)
 		this.validMoves=getValidChessMoves(this.gamestate, this.moveLog.length%2)
 	}

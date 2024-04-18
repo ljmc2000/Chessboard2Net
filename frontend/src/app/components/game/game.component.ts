@@ -80,6 +80,10 @@ class _GameCommon {
       this.icon_map[mod(key)]=`${c_set}/${IconMapTemplate[key]}${suffix}`;
   }
 
+  pieceNameFor(piece: string) {
+    return IconMapTemplate[piece];
+  }
+
   updateGamestate(msg: GameState) {
     this.move_number=msg.move_number;
     this.gamestate=msg.gamestate;

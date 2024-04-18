@@ -112,7 +112,7 @@ export function getValidChessMoves(gamestate, player_number) {
 	return moves
 }
 
-export function doChessMove(gamestate, move, player_number) {
+export function doChessMove(gamestate, move, player_number, promotion_target) {
 	var tmp_gst=(player_number==0)?gamestate.replaceAll('E','P'):gamestate.replaceAll('e','p')
 	var new_gamestate=tmp_gst.split('')
 	var origin=ALGERBRAIC_NAMES.decoder[move.substring(0,2)]
@@ -123,8 +123,16 @@ export function doChessMove(gamestate, move, player_number) {
 		new_gamestate[target]='E'
 		new_gamestate[origin]=' '
 	}
+	else if(new_gamestate[origin]=='P' && target<8) {
+		new_gamestate[target]=promotion_target.p1[0].toUpperCase()
+		new_gamestate[origin]=' '
+	}
 	else if(new_gamestate[origin]=='f' && target-origin==16) {
 		new_gamestate[target]='e'
+		new_gamestate[origin]=' '
+	}
+	else if(new_gamestate[origin]=='p' && target>=56) {
+		new_gamestate[target]=promotion_target.p2[0].toLowerCase()
 		new_gamestate[origin]=' '
 	}
 	else {
