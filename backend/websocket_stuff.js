@@ -88,8 +88,8 @@ export default (app, http_server, db) => {
 				ws.game.on(cb, ws.game_callbacks[cb])
 			}
 
-			await ws.game.onjoin(ws)
-			await ws.game.onready()
+			ws.game.onjoin(ws)
+			ws.game.onready()
 		}
 		else {
 			ws.send(JSON.stringify({instr: I.XWTCH}))
@@ -108,8 +108,8 @@ export default (app, http_server, db) => {
 			if(game_id==null) {
 				ws.game.register(ws)
 			}
-			await ws.game.onjoin(ws)
-			await ws.game.onready()
+			ws.game.onjoin(ws)
+			ws.game.onready()
 		}
 	}
 

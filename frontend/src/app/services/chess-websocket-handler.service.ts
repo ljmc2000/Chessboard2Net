@@ -61,6 +61,10 @@ export class ChessWebsocketHandlerService extends EventTarget {
     this._ws.onclose = ()=>this.onClose();
   }
 
+  public setPromotionTarget(target: string) {
+    this.jsend({instr: I.PROM, scope: Scope.GAME, promotion_target: target})
+  }
+
   public sinf() {
     this.jsend({instr: I.SINF, scope: Scope.PRIVATE});
   }

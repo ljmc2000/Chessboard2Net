@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
 import { IconMapTemplate } from 'constants/iconmap-template';
@@ -15,7 +16,7 @@ import { PlayerInfo } from 'models/playerinfo'
 import { parse_colour, set_for } from 'utils';
 
 import { ChatComponent } from 'components/chat/chat.component';
-import { Instruction as I, Game, PlayerNumber } from 'shared/constants';
+import { Instruction as I, Game, PlayerNumber, ValidPromotionTargets } from 'shared/constants';
 import { NO_GAME_MESSAGE, PRIVATE_GAME_MESSAGE } from 'constants/standard-messages';
 import { owner, generate_algerbraic_names } from 'shared/utils';
 
@@ -25,10 +26,12 @@ class _GameCommon {
   gamestate: string=' '.repeat(64);
   in_game: boolean=false;
   move_number: number;
+  promotion_target: string;
   show_guide: boolean;
   valid_moves: string='*';
 
   ALGERBRAIC_NAMES = generate_algerbraic_names();
+  VALID_PROMOTION_TARGETS = ValidPromotionTargets;
   icon_map: any={};
   player1_set: string="doodles";
   player2_set: string="doodles";
@@ -86,7 +89,7 @@ class _GameCommon {
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatIconModule, ChatComponent],
+  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatIconModule, MatSelectModule, ChatComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
@@ -98,6 +101,7 @@ export class GameComponent extends _GameCommon {
   ) {
     super(ws, colourService)
     ws.on(I.SETPN, (msg: any)=>this.player_number=msg.player_number);
+    ws.on(I.PROM, (msg: any)=>this.promotion_target=msg.promotion_target);
   }
 
   override finishMove() {
@@ -133,7 +137,7 @@ export class GameComponent extends _GameCommon {
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatIconModule, ChatComponent],
+  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatIconModule, MatSelectModule, ChatComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })

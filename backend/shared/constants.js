@@ -8,6 +8,15 @@ export const Game = { CHECKERS: 'checkers', CHESS: 'chess' }
 export const PlayerNumber = { ONE: 0, TWO: 1, INVALID: -1 }
 export const Scope = { PRIVATE: 1, DIRECT: 2, GAME: 3, UNIVERSE: -1 }
 
+export const ChessPiece = {
+	PAWN: 'pawn',
+	ROOK: 'rook',
+	KNIGHT: 'knight',
+	BISHOP: 'bishop',
+	QUEEN: 'queen',
+	KING: 'king',
+}
+
 export const Instruction = {
 	ACLNG: 'accept_challenge',
 	AUTH: 'authenticate',
@@ -29,6 +38,7 @@ export const Instruction = {
 	SRNDR: 'surrender',
 	TELL: 'tell',
 	PINF: 'player_info',
+	PROM: 'set_promotion_target',
 	OUCNT: 'count_online_users',
 	UENV: 'user_event',
 	UNSUB: 'unsubscribe_universe_callback',
@@ -49,3 +59,10 @@ export const UserProfileFlag = {
 	VISIBLE_AS_ONLINE: (true<<0),
 	ALLOW_SPECTATORS: (true<<1),
 }
+
+export const ValidPromotionTargets = [
+	ChessPiece.ROOK,
+	ChessPiece.KNIGHT,
+	ChessPiece.BISHOP,
+	ChessPiece.QUEEN,
+]

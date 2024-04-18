@@ -1,7 +1,7 @@
 import EventEmitter from 'node:events'
 import { CHESS_DEFAULT_GAMESTATE, getValidChessMoves, doChessMove } from './chess-rules.js'
 import { CHECKERS_DEFAULT_GAMESTATE, getValidCheckersMoves, doCheckersMove } from './checkers-rules.js'
-import { GAME_MESSAGE, EndState, Instruction as I, PlayerNumber } from './shared/constants.js'
+import { GAME_MESSAGE, ChessPiece, EndState, Instruction as I, PlayerNumber, ValidPromotionTargets } from './shared/constants.js'
 
 class Game extends EventEmitter {
 	gamestate=" ".repeat(64)
@@ -43,6 +43,19 @@ class Game extends EventEmitter {
 					ws.send(JSON.stringify({instr: I.BADMV, move: data.move}))
 				}
 				break
+			case I.PROM:
+				if(!ValidPromotionTargets.includes(data.promotion_target)){
+					ws.send(JSON.stringify({instr: I.ERROR}))
+				}
+				else if(player_number==PlayerNumber.ONE) {
+					this.player1_promotion_target=data.promotion_target
+					ws.send(JSON.stringify({instr: I.PROM, promotion_target: this.player1_promotion_target}))
+				}
+				else if(player_number==PlayerNumber.TWO) {
+					this.player2_promotion_target=data.promotion_target
+					ws.send(JSON.stringify({instr: I.PROM, promotion_target: this.player2_promotion_target}))
+				}
+				break
 			case I.SRNDR:
 				await this.onend(EndState.SURRENDER, ws.user)
 				break
@@ -54,7 +67,7 @@ class Game extends EventEmitter {
 		}
 	}
 
-	async onjoin(ws) {
+	onjoin(ws) {
 		ws.send(JSON.stringify({instr: I.SETPN, player_number: this.getPlayerNumber(ws.user.user_id)}))
 		ws.send(JSON.stringify(this.gamestateMessage()))
 	}
@@ -68,7 +81,7 @@ class Game extends EventEmitter {
 		}
 	}
 
-	async onready() {
+	onready() {
 		if(this.player1.user_id)
 			this.emit(GAME_MESSAGE, {instr: I.PINF, username: this.player1.username, favourite_colour: this.player1.favourite_colour, prefered_set: this.player1.prefered_set, player_number: PlayerNumber.ONE})
 		if(this.player2.user_id)
@@ -81,12 +94,26 @@ export class ChessGame extends Game {
 		super()
 		this.gamestate=CHESS_DEFAULT_GAMESTATE
 		this.validMoves=getValidChessMoves(this.gamestate, 0)
+		this.player1_promotion_target=ChessPiece.ROOK
+		this.player2_promotion_target=ChessPiece.ROOK
 	}
 
 	doMove(move, player_number) {
 		this.gamestate=doChessMove(this.gamestate, move, player_number)
 		this.moveLog.push(move)
 		this.validMoves=getValidChessMoves(this.gamestate, this.moveLog.length%2)
+	}
+
+	onjoin(ws) {
+		super.onjoin(ws)
+		switch(this.getPlayerNumber(ws.user.user_id)) {
+			case PlayerNumber.ONE:
+				ws.send(JSON.stringify({instr: I.PROM, promotion_target: this.player1_promotion_target}))
+				break
+			case PlayerNumber.TWO:
+				ws.send(JSON.stringify({instr: I.PROM, promotion_target: this.player2_promotion_target}))
+				break
+		}
 	}
 }
 

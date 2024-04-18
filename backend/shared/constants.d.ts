@@ -8,6 +8,15 @@ export const Game: { CHECKERS: string, CHESS: string }
 export const PlayerNumber: { ONE: number, TWO: number, INVALID: number }
 export const Scope: { PRIVATE: number, DIRECT: number, GAME: number, UNIVERSE: number }
 
+export const ChessPiece: {
+	PAWN: string;
+	ROOK: string;
+	KNIGHT: string;
+	BISHOP: string;
+	QUEEN: string;
+	KING: string;
+}
+
 export const Instruction: {
 	ACLNG: string;
 	AUTH: string;
@@ -23,6 +32,7 @@ export const Instruction: {
 	NOPLR: string;
 	NOSCP: string;
 	PINF: string;
+	PROM: string;
 	READY: string;
 	SETPN: string;
 	SINF: string;
@@ -49,3 +59,5 @@ export const UserProfileFlag: {
 	VISIBLE_AS_ONLINE: number,
 	ALLOW_SPECTATORS: number,
 }
+
+export const ValidPromotionTargets: string[]
