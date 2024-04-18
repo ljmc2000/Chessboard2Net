@@ -1,3 +1,4 @@
+import { ActivatedRoute } from '@angular/router'
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,15 +18,7 @@ import { ChatComponent } from 'components/chat/chat.component';
 import { Instruction as I, Game, PlayerNumber } from 'shared/constants';
 import { owner, generate_algerbraic_names } from 'shared/utils';
 
-@Component({
-  selector: 'app-game',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatIconModule, ChatComponent],
-  templateUrl: './game.component.html',
-  styleUrl: './game.component.css'
-})
-export class GameComponent {
-
+class _GameCommon {
   autocomplete: number[]=[]
   current_move: string='';
   gamestate: string=' '.repeat(64);
@@ -40,14 +33,13 @@ export class GameComponent {
   player2_set: string="doodles";
   player_number: number;
 
-  constructor(
+  constructor (
     public ws: ChessWebsocketHandlerService,
     public colourService: PieceColourService,
   ) {
     ws.on(I.GOVER, ()=>this.in_game=false);
     ws.on(I.GST, (msg: GameState)=>this.updateGamestate(msg));
     ws.on(I.PINF, (msg: PlayerInfo)=>this.onPlayerInfo(msg));
-    ws.on(I.SETPN, (msg: any)=>this.player_number=msg.player_number);
 
     this.icon_map[' ']=`blank`
     for(var key in IconMapTemplate) {
@@ -56,31 +48,11 @@ export class GameComponent {
     }
   }
 
+  finishMove(): void {};
+  onClickSquare(square: number): void {};
+
   is_player1(piece: string): boolean {
     return owner(piece)==PlayerNumber.ONE;
-  }
-
-  finishMove() {
-    this.ws.move(this.current_move);
-    this.current_move='';
-    this.autocomplete=[];
-  }
-
-  onClickSquare(square: number) {
-    this.current_move=this.current_move+this.ALGERBRAIC_NAMES.encoder[square];
-    this.autocomplete=[];
-    const current_move_autocomplete = RegExp(`\\*${this.current_move}([A-H]\\d)`,'g');
-
-    for(var move of this.valid_moves.matchAll(current_move_autocomplete)) {
-      this.autocomplete.push(this.ALGERBRAIC_NAMES.decoder[move[1]]);
-    }
-
-    if(this.autocomplete.length==0) {
-      if(this.current_move.length>2 && this.valid_moves.includes(this.current_move))
-        this.ws.move(this.current_move);
-
-      this.current_move='';
-    }
   }
 
   onPlayerInfo(msg: PlayerInfo) {
@@ -105,9 +77,77 @@ export class GameComponent {
   }
 
   updateGamestate(msg: GameState) {
-    this.in_game=true;
     this.move_number=msg.move_number;
     this.gamestate=msg.gamestate;
+  }
+}
+
+@Component({
+  selector: 'app-game',
+  standalone: true,
+  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatIconModule, ChatComponent],
+  templateUrl: './game.component.html',
+  styleUrl: './game.component.css'
+})
+export class GameComponent extends _GameCommon {
+
+  constructor(
+    ws: ChessWebsocketHandlerService,
+    colourService: PieceColourService,
+  ) {
+    super(ws, colourService)
+    ws.on(I.SETPN, (msg: any)=>this.player_number=msg.player_number);
+  }
+
+  override finishMove() {
+    this.ws.move(this.current_move);
+    this.current_move='';
+    this.autocomplete=[];
+  }
+
+  override onClickSquare(square: number) {
+    this.current_move=this.current_move+this.ALGERBRAIC_NAMES.encoder[square];
+    this.autocomplete=[];
+    const current_move_autocomplete = RegExp(`\\*${this.current_move}([A-H]\\d)`,'g');
+
+    for(var move of this.valid_moves.matchAll(current_move_autocomplete)) {
+      this.autocomplete.push(this.ALGERBRAIC_NAMES.decoder[move[1]]);
+    }
+
+    if(this.autocomplete.length==0) {
+      if(this.current_move.length>2 && this.valid_moves.includes(this.current_move))
+        this.ws.move(this.current_move);
+
+      this.current_move='';
+    }
+  }
+
+  override updateGamestate(msg: GameState) {
+    super.updateGamestate(msg);
+    this.in_game=true;
     this.valid_moves=this.move_number%2==this.player_number?msg.valid_moves:'*';
+  }
+}
+
+@Component({
+  selector: 'app-game',
+  standalone: true,
+  imports: [CommonModule, FormsModule, MatButtonModule, MatCheckboxModule, MatIconModule, ChatComponent],
+  templateUrl: './game.component.html',
+  styleUrl: './game.component.css'
+})
+export class SpectateComponent extends _GameCommon {
+
+  constructor(
+    ws: ChessWebsocketHandlerService,
+    colourService: PieceColourService,
+    route: ActivatedRoute,
+  ) {
+    super(ws, colourService)
+    route.paramMap.subscribe(params=> {
+      ws.on(I.READY, ()=>ws.spectate(params.get('game_id') || ''));
+    });
+
+    this.player_number=PlayerNumber.ONE;
   }
 }

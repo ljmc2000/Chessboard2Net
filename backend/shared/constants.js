@@ -32,6 +32,7 @@ export const Instruction = {
 	UENV: 'user_event',
 	UNSUB: 'unsubscribe_universe_callback',
 	WAIT: 'wait_your_turn',
+	WATCH: 'spectate_game',
 	XCLNG: 'deny_challenge',
 }
 

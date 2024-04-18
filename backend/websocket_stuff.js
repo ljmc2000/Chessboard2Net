@@ -72,18 +72,20 @@ function callback_for(ws, callback, universe) {
 
 export default (app, http_server, db) => {
 	const ws_server = new WebSocketServer({noServer: true})
-	const games = {}
+	const games = new Map()
 
-	async function subscribe_game(ws) {
+	async function subscribe_game(ws, game_id=null) {
 		unsubscribe_game(ws)
 
-		ws.game = get_game(ws.user)
+		ws.game = (game_id==null)?get_game(ws.user):(games.get(game_id) || NullGame)
 		if(!ws.game.NULL) {
 			for(var cb of [GAME_MESSAGE, GAME_END]) {
 				ws.game_callbacks[cb] = game_callback_for(ws, cb)
 				ws.game.on(cb, ws.game_callbacks[cb])
 			}
-			ws.game.register(ws)
+			if(game_id==null) {
+				ws.game.register(ws)
+			}
 			await ws.game.onjoin(ws)
 			await ws.game.onready()
 		}
@@ -104,7 +106,7 @@ export default (app, http_server, db) => {
 			return NullGame
 		}
 
-		var game = games[user.current_gameid]
+		var game = games.get(user.current_gameid)
 		if(!game) {
 			switch(user.current_gametype) {
 				case Game.CHECKERS:
@@ -133,7 +135,7 @@ export default (app, http_server, db) => {
 				this.emit(GAME_END, endstate, player)
 			}
 
-			games[user.current_gameid]=game
+			games.set(user.current_gameid, game)
 		}
 
 		return game
@@ -209,6 +211,11 @@ export default (app, http_server, db) => {
 				break
 			case I.UNSUB:
 				unsubscribe_universe(ws, data.callback)
+				break
+			case I.WATCH:
+				if(ws.user.current_gameid==null) {
+					subscribe_game(ws, data.game_id)
+				}
 				break
 			default:
 				ws.send(JSON.stringify({instr: I.ERR}))

@@ -10,7 +10,12 @@
 
   <ng-template #in_game>
     <div>In game: {{user.value.current_gametype}}</div>
-    <div class="control"><button mat-raised-button color="primary">Spectate</button></div>
+    <div class="control">
+      <a mat-raised-button color="primary"
+      [href]="'/spectate/'+user.value.current_gameid">
+        Spectate
+      </a>
+    </div>
   </ng-template>
 
   <ng-template #no_game>

@@ -65,6 +65,10 @@ export class ChessWebsocketHandlerService extends EventTarget {
     this.jsend({instr: I.SINF, scope: Scope.PRIVATE});
   }
 
+  public spectate(game_id: string) {
+    this.jsend({instr: I.WATCH, scope: Scope.PRIVATE, game_id: game_id})
+  }
+
   public surrender() {
     this.jsend({instr: I.SRNDR, scope: Scope.GAME});
   }

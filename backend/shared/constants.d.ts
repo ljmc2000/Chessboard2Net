@@ -32,6 +32,7 @@ export const Instruction: {
 	UENV: string;
 	UNSUB: string;
 	WAIT: string;
+	WATCH: string;
 	XCLNG: string;
 }
 
