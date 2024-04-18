@@ -1,6 +1,14 @@
 app-chat {
 }
 
+.challenge {
+  margin: 16px;
+}
+
+.challenge button {
+  margin: 8px;
+}
+
 .user_badge {
   display: inline-flex;
   border: 1px solid black;

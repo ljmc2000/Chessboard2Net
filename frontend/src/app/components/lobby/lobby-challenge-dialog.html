@@ -1,0 +1,10 @@
+<div class="challenge">
+  <h2 mat-dialog-title>Issue challenge to {{data.username}}</h2>
+  <div mat-dialog-actions>
+    <button mat-raised-button color="primary"
+      *ngFor="let game of ['Chess','Checkers']; index as i"
+      [mat-dialog-close]="game">
+      {{game}}
+    </button>
+  </div>
+</div>

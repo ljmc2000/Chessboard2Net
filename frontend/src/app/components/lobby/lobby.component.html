@@ -14,10 +14,10 @@
   </ng-template>
 
   <ng-template #no_game>
-    <button class="control" mat-fab color="primary"
-    *ngFor="let game of ['Chess','Checkers']"
-    (click)="ws.challenge(user.value.username, game)"
-    >{{game}}</button>
+    <div>Idle</div>
+    <div class="control">
+      <button mat-raised-button color="primary" (click)="challenge(user.value.username)">Challenge</button>
+    </div>
   </ng-template>
 </div>
 
