@@ -19,6 +19,7 @@ export const Instruction: {
 	GST: string;
 	MOVE: string;
 	NCLNG: string;
+	NOGME: string;
 	NOPLR: string;
 	NOSCP: string;
 	PINF: string;
@@ -34,6 +35,7 @@ export const Instruction: {
 	WAIT: string;
 	WATCH: string;
 	XCLNG: string;
+	XWTCH: string;
 }
 
 export const UserEvent: {

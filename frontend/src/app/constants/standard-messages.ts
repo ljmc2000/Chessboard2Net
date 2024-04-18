@@ -44,6 +44,8 @@ export const INGAME_HELP_MESSAGE = {system_message: true, content: `
   type \\w(hisper) [player] [message] to send a private message, including to players outside this game.
   `} as ChatMessage;
 
+export const NO_GAME_MESSAGE = "Could not find game. Maybe it's not ready. Maybe it's over";
+
 export const ON_JOIN_GAME_MESSAGE = {content: "Type \\h for a list of commands"} as ChatMessage;
 
 export const ON_JOIN_MESSAGE = {content: "Welcome to Chessboard2Net. Type \\h for a list of commands or say hello and see if someone challenges you to a chess game."} as ChatMessage;
@@ -55,6 +57,8 @@ export function ON_NO_PLAYER_MESSAGE(player: string): ChatMessage {
 export function ONLINE_PLAYER_COUNT_MESSAGE(count: number): ChatMessage {
   return {system_message: true, content: `There are ${count} players online`} as ChatMessage;
 }
+
+export const PRIVATE_GAME_MESSAGE="One or more users have not consented to their games being observed";
 
 export const SANTAX_ERROR_MESSAGE = {system_message: true, content: "Santax Error"} as ChatMessage;
 

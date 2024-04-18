@@ -19,6 +19,7 @@ export const Instruction = {
 	GST: 'gamestate',
 	MOVE: 'move',
 	NCLNG: 'acknowledge_challenge',
+	NOGME: 'no_game',
 	NOPLR: 'no_player',
 	NOSCP: 'no_scope',
 	READY: 'ready',
@@ -34,6 +35,7 @@ export const Instruction = {
 	WAIT: 'wait_your_turn',
 	WATCH: 'spectate_game',
 	XCLNG: 'deny_challenge',
+	XWTCH: 'spectate_denied',
 }
 
 export const UserEvent = {

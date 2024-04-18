@@ -16,6 +16,7 @@ import { parse_colour, set_for } from 'utils';
 
 import { ChatComponent } from 'components/chat/chat.component';
 import { Instruction as I, Game, PlayerNumber } from 'shared/constants';
+import { NO_GAME_MESSAGE, PRIVATE_GAME_MESSAGE } from 'constants/standard-messages';
 import { owner, generate_algerbraic_names } from 'shared/utils';
 
 class _GameCommon {
@@ -147,7 +148,19 @@ export class SpectateComponent extends _GameCommon {
     route.paramMap.subscribe(params=> {
       ws.on(I.READY, ()=>ws.spectate(params.get('game_id') || ''));
     });
+    ws.on(I.NOGME, ()=>this.onNoGame())
+    ws.on(I.XWTCH, ()=>this.onDenied())
 
     this.player_number=PlayerNumber.ONE;
+  }
+
+  onNoGame() {
+    alert(NO_GAME_MESSAGE);
+    window.location.href='/';
+  }
+
+  onDenied() {
+    alert(PRIVATE_GAME_MESSAGE);
+    window.location.href='/';
   }
 }

@@ -74,10 +74,32 @@ export default (app, http_server, db) => {
 	const ws_server = new WebSocketServer({noServer: true})
 	const games = new Map()
 
+	async function spectate_game(ws, game_id) {
+		var game = games.get(game_id)
+
+		if(!game || !game.player1.user_id || !game.player2.user_id) {
+			ws.send(JSON.stringify({instr: I.NOGME}))
+		}
+		else if (game.player1.profile_flags & game.player2.profile_flags & UserProfileFlag.ALLOW_SPECTATORS) {
+			ws.game=game
+
+			for(var cb of [GAME_MESSAGE, GAME_END]) {
+				ws.game_callbacks[cb] = game_callback_for(ws, cb)
+				ws.game.on(cb, ws.game_callbacks[cb])
+			}
+
+			await ws.game.onjoin(ws)
+			await ws.game.onready()
+		}
+		else {
+			ws.send(JSON.stringify({instr: I.XWTCH}))
+		}
+	}
+
 	async function subscribe_game(ws, game_id=null) {
 		unsubscribe_game(ws)
 
-		ws.game = (game_id==null)?get_game(ws.user):(games.get(game_id) || NullGame)
+		ws.game = get_game(ws.user)
 		if(!ws.game.NULL) {
 			for(var cb of [GAME_MESSAGE, GAME_END]) {
 				ws.game_callbacks[cb] = game_callback_for(ws, cb)
@@ -214,7 +236,7 @@ export default (app, http_server, db) => {
 				break
 			case I.WATCH:
 				if(ws.user.current_gameid==null) {
-					subscribe_game(ws, data.game_id)
+					spectate_game(ws, data.game_id)
 				}
 				break
 			default:
