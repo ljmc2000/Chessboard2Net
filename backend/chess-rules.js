@@ -108,6 +108,13 @@ function getMovesForPosition(gamestate, position, player_number) {
 			moves+=std_mv(-8, (target)=>target>=0)
 			moves+=std_mv(-1, (target)=>same_row(position,target))
 		}
+
+		if('QBqb'.includes(piece)) {
+			moves+=std_mv(9, (target)=>!wraps_right(position,target))
+			moves+=std_mv(7, (target)=>!wraps_left(position,target))
+			moves+=std_mv(-9, (target)=>!wraps_left(position,target))
+			moves+=std_mv(-7, (target)=>!wraps_right(position,target))
+		}
 	}
 
 	return moves
