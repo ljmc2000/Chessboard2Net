@@ -50,6 +50,10 @@ export function owner(piece) {
 		return PlayerNumber.INVALID
 }
 
+export function same_row(position, target) {
+	return Math.floor(position/8)==Math.floor(target/8)
+}
+
 export function wraps_left(position, target) {
 	return (position%8)<(target%8)
 }

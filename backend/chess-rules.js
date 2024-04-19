@@ -1,4 +1,4 @@
-import { generate_algerbraic_names, owner, wraps_left, wraps_right } from './shared/utils.js'
+import { generate_algerbraic_names, owner, same_row, wraps_left, wraps_right } from './shared/utils.js'
 
 const ALGERBRAIC_NAMES=generate_algerbraic_names()
 
@@ -83,6 +83,36 @@ function getMovesForPosition(gamestate, position, player_number) {
 
 			target=position+9
 			if(pawn_diagonal(target, -8, 'E', wraps_right)) {
+				moves+=move(target)
+			}
+		}
+
+		if('QRCqrc'.includes(piece)) {
+			for(target=position+8; position<64 && gamestate[target]==' '; target+=8) {
+				moves+=move(target)
+			}
+			if(owner(gamestate[target])==!player_number) {
+				moves+=move(target)
+			}
+
+			for(target=position-8; position>=0 && gamestate[target]==' '; target-=8) {
+				moves+=move(target)
+			}
+			if(owner(gamestate[target])==!player_number) {
+				moves+=move(target)
+			}
+
+			for(target=position+1; same_row(position,target) && gamestate[target]==' '; target++) {
+				moves+=move(target)
+			}
+			if(owner(gamestate[target])==!player_number && same_row(position,target)) {
+				moves+=move(target)
+			}
+
+			for(target=position-1; same_row(position,target) && gamestate[target]==' '; target--) {
+				moves+=move(target)
+			}
+			if(owner(gamestate[target])==!player_number && same_row(position,target)) {
 				moves+=move(target)
 			}
 		}
