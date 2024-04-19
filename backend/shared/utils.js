@@ -44,6 +44,8 @@ export function owner(piece) {
 		return PlayerNumber.ONE
 	else if (IS_PLAYER2.exec(piece))
 		return PlayerNumber.TWO
+	else if (piece==' ')
+		return PlayerNumber.NOBODY
 	else
 		return PlayerNumber.INVALID
 }

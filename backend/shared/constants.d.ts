@@ -5,7 +5,7 @@ export const GAME_END: string
 export const ChessSet: { DOODLES: number, GOBLINS: number, TEATIME: number }
 export const EndState: { SURRENDER: string, CHECKMATE: string }
 export const Game: { CHECKERS: string, CHESS: string }
-export const PlayerNumber: { ONE: number, TWO: number, INVALID: number }
+export const PlayerNumber: { ONE: number, TWO: number, NOBODY:number, INVALID: number }
 export const Scope: { PRIVATE: number, DIRECT: number, GAME: number, UNIVERSE: number }
 
 export const ChessPiece: {
