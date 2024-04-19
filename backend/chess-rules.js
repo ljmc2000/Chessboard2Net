@@ -19,14 +19,14 @@ function getMovesForPosition(gamestate, position, player_number) {
 	function pawn_diagonal(target, offset, enemy_pawn, wraps) {
 		var collateral=target+offset
 
-		var condition1=owner(gamestate[target])!=player_number && gamestate[target]!=' '
+		var condition1=owner(gamestate[target])==!player_number
 		var condition2=gamestate[collateral]==enemy_pawn
 
-		if(wraps(target)) {
+		if(wraps(position,target)) {
 			return false
 		}
 		else {
-			return !wraps(target) && (condition1 || condition2)
+			return condition1 || condition2
 		}
 	}
 
