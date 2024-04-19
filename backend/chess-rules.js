@@ -16,6 +16,10 @@ function getMovesForPosition(gamestate, position, player_number) {
 	if(position<0 || position>=64)
 		return ''
 
+	function move(target) {
+		return `${p_name}${ALGERBRAIC_NAMES.encoder[target]}*`
+	}
+
 	function pawn_diagonal(target, offset, enemy_pawn, wraps) {
 		var collateral=target+offset
 
@@ -30,10 +34,21 @@ function getMovesForPosition(gamestate, position, player_number) {
 		}
 	}
 
+	function std_mv(step, bound_check) {
+		var target, moves=""
+		for(target=position+step; bound_check(target) && gamestate[target]==' '; target+=step) {
+			moves+=move(target)
+		}
+		if(owner(gamestate[target])==!player_number && bound_check(target)) {
+			moves+=move(target)
+		}
+
+		return moves
+	}
+
 	var moves = ''
 	var piece = gamestate[position]
 	var p_name = ALGERBRAIC_NAMES.encoder[position]
-	var move = (target)=>`${p_name}${ALGERBRAIC_NAMES.encoder[target]}*`
 	var target
 
 	if(owner(piece)==player_number) {
@@ -88,33 +103,10 @@ function getMovesForPosition(gamestate, position, player_number) {
 		}
 
 		if('QRCqrc'.includes(piece)) {
-			for(target=position+8; position<64 && gamestate[target]==' '; target+=8) {
-				moves+=move(target)
-			}
-			if(owner(gamestate[target])==!player_number) {
-				moves+=move(target)
-			}
-
-			for(target=position-8; position>=0 && gamestate[target]==' '; target-=8) {
-				moves+=move(target)
-			}
-			if(owner(gamestate[target])==!player_number) {
-				moves+=move(target)
-			}
-
-			for(target=position+1; same_row(position,target) && gamestate[target]==' '; target++) {
-				moves+=move(target)
-			}
-			if(owner(gamestate[target])==!player_number && same_row(position,target)) {
-				moves+=move(target)
-			}
-
-			for(target=position-1; same_row(position,target) && gamestate[target]==' '; target--) {
-				moves+=move(target)
-			}
-			if(owner(gamestate[target])==!player_number && same_row(position,target)) {
-				moves+=move(target)
-			}
+			moves+=std_mv(8, (target)=>target<64)
+			moves+=std_mv(1, (target)=>same_row(position,target))
+			moves+=std_mv(-8, (target)=>target>=0)
+			moves+=std_mv(-1, (target)=>same_row(position,target))
 		}
 	}
 
