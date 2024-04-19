@@ -24,9 +24,18 @@
           [svgIcon]="player2_set+'/pawn'"
           [ngClass]="{'my_turn': move_number%2==1}" />
       <button class="game_control_left" matSuffix mat-raised-button color="primary" (click)="finishMove()" *ngIf="current_move.length>=4">Finish move</button>
-      <mat-form-field class="game_control_left" *ngIf="promotion_target">
-        <mat-select [(value)]="promotion_target" (selectionChange)="ws.setPromotionTarget(promotion_target)">
-          <mat-option *ngFor="let t of VALID_PROMOTION_TARGETS" [value]="t">{{pieceNameFor(t)}}</mat-option>
+      <mat-form-field class="game_control_left" style="margin-bottom: -1.25em" *ngIf="promotion_target">
+        <mat-select
+          [(value)]="promotion_target"
+          (selectionChange)="ws.setPromotionTarget(promotion_target)">
+
+          <mat-option *ngFor="let t of VALID_PROMOTION_TARGETS" [value]="t">
+            <mat-icon
+              [svgIcon]="(player_number==1?player2_set:player1_set)+'/'+pieceNameFor(t)"
+              [ngClass]="{'player1':player_number==0, 'player2':player_number==1}"
+            />
+            {{pieceNameFor(t)}}
+          </mat-option>
         </mat-select>
       </mat-form-field>
       <button class="game_control" matSuffix mat-raised-button color="primary" (click)="ws.surrender()" *ngIf="in_game">Surrender</button>
