@@ -31,7 +31,7 @@
 
           <mat-option *ngFor="let t of VALID_PROMOTION_TARGETS" [value]="t">
             <mat-icon
-              [svgIcon]="(player_number==1?player2_set:player1_set)+'/'+pieceNameFor(t)"
+              [svgIcon]="pieceIconFor(t)"
               [ngClass]="{'player1':player_number==0, 'player2':player_number==1}"
             />
             {{pieceNameFor(t)}}

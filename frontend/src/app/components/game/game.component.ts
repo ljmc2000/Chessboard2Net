@@ -18,6 +18,7 @@ import { parse_colour, set_for } from 'utils';
 import { ChatComponent } from 'components/chat/chat.component';
 import { Instruction as I, Game, PlayerNumber, ValidPromotionTargets } from 'shared/constants';
 import { NO_GAME_MESSAGE, PRIVATE_GAME_MESSAGE } from 'constants/standard-messages';
+import { PieceNames } from 'constants/piece-names';
 import { owner, generate_algerbraic_names } from 'shared/utils';
 
 class _GameCommon {
@@ -80,8 +81,20 @@ class _GameCommon {
       this.icon_map[mod(key)]=`${c_set}/${IconMapTemplate[key]}${suffix}`;
   }
 
+  pieceIconFor(piece: string) {
+    if(this.player_number==PlayerNumber.ONE) {
+      return this.player1_set+'/'+IconMapTemplate[piece]
+    }
+    else if(this.player_number==PlayerNumber.TWO) {
+      return this.player2_set+'/'+IconMapTemplate[piece]
+    }
+    else {
+      return '';
+    }
+  }
+
   pieceNameFor(piece: string) {
-    return IconMapTemplate[piece];
+    return PieceNames[piece];
   }
 
   updateGamestate(msg: GameState) {
