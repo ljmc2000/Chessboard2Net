@@ -49,7 +49,7 @@ function getMovesForPosition(gamestate, position, player_number) {
 	var moves = ''
 	var piece = gamestate[position]
 	var p_name = ALGERBRAIC_NAMES.encoder[position]
-	var target
+	var target, offset
 
 	if(owner(piece)==player_number) {
 
@@ -99,6 +99,19 @@ function getMovesForPosition(gamestate, position, player_number) {
 			target=position+9
 			if(pawn_diagonal(target, -8, 'E', wraps_right)) {
 				moves+=move(target)
+			}
+		}
+
+		if('Nn'.includes(piece)) {
+			for(offset of [-17, -10, 6, 15]) {
+				target=position+offset
+				if(owner(gamestate[target])!=player_number && !wraps_left(position,target))
+					moves+=move(target)
+			}
+			for(offset of [-15, 10, -6, 17]) {
+				target=position+offset
+				if(owner(gamestate[target])!=player_number && !wraps_right(position,target))
+					moves+=move(target)
 			}
 		}
 
