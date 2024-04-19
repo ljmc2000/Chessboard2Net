@@ -21,7 +21,7 @@ function getMovesForPosition(gamestate, position, player_number, prefix, followi
 		if(!wraps(position, target) && gamestate[target]==' ') {
 			return following?'':`${(prefix+ALGERBRAIC_NAMES.encoder[target])}*`
 		}
-		else if(!wraps(position,secondary_target) && owner(gamestate[target])!=player_number && gamestate[secondary_target]==' ') {
+		else if(!wraps(position,secondary_target) && owner(gamestate[target])==!player_number && gamestate[secondary_target]==' ') {
 			var move=`${(prefix+ALGERBRAIC_NAMES.encoder[secondary_target])}`
 			return move+'*'+getMovesForPosition(doCheckersMove(gamestate, move.substring(move.length-4), player_number), secondary_target, player_number, move, true)
 		}
