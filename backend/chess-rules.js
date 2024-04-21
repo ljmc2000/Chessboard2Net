@@ -152,6 +152,24 @@ function getMovesForPosition(gamestate, position, player_number) {
 				}
 			}
 		}
+
+		if('J'==piece) {
+			if(gamestate.substring(61,64)=='  C') {
+				moves+='E1H1*'
+			}
+			if(gamestate.substring(56,60)=='C   ') {
+				moves+='E1A1*'
+			}
+		}
+
+		if('j'==piece) {
+			if(gamestate.substring(5,8)=='  c') {
+				moves+='E8H8*'
+			}
+			if(gamestate.substring(0,4)=='c   ') {
+				moves+='E8A8*'
+			}
+		}
 	}
 
 	return moves
@@ -200,6 +218,30 @@ export function doChessMove(gamestate, move, player_number, promotion_target) {
 	else if(new_gamestate[origin]=='p' && target>=56) {
 		new_gamestate[target]=promotion_target.p2[0].toLowerCase()
 		new_gamestate[origin]=' '
+	}
+	else if(new_gamestate[origin]=='J' && move=='E1H1') {
+		new_gamestate[62]='K'
+		new_gamestate[60]=' '
+		new_gamestate[61]='R'
+		new_gamestate[63]=' '
+	}
+	else if(new_gamestate[origin]=='J' && move=='E1A1') {
+		new_gamestate[58]='K'
+		new_gamestate[60]=' '
+		new_gamestate[59]='R'
+		new_gamestate[56]=' '
+	}
+	else if(new_gamestate[origin]=='j' && move=='E8H8') {
+		new_gamestate[6]='k'
+		new_gamestate[4]=' '
+		new_gamestate[5]='r'
+		new_gamestate[7]=' '
+	}
+	else if(new_gamestate[origin]=='j' && move=='E8A8') {
+		new_gamestate[2]='k'
+		new_gamestate[4]=' '
+		new_gamestate[3]='r'
+		new_gamestate[0]=' '
 	}
 	else {
 		new_gamestate[target]=pieceAfterMove(new_gamestate[origin])
