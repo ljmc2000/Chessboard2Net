@@ -1,5 +1,5 @@
 import EventEmitter from 'node:events'
-import { CHESS_DEFAULT_GAMESTATE, getValidChessMoves, doChessMove } from './chess-rules.js'
+import { CHESS_DEFAULT_GAMESTATE, getValidChessMoves, doChessMove, getThreats } from './chess-rules.js'
 import { CHECKERS_DEFAULT_GAMESTATE, getValidCheckersMoves, doCheckersMove } from './checkers-rules.js'
 import { GAME_MESSAGE, ChessPiece, EndState, Instruction as I, PlayerNumber, ValidPromotionTargets } from './shared/constants.js'
 
@@ -13,7 +13,7 @@ class Game extends EventEmitter {
 	}
 
 	gamestateMessage() {
-		return {instr: I.GST, gamestate: this.gamestate, move_number: this.moveLog.length, valid_moves: this.validMoves}
+		return {instr: I.GST, gamestate: this.gamestate, move_number: this.moveLog.length, valid_moves: this.validMoves, threats: this.threats}
 	}
 
 	getPlayerNumber(user_id) {
@@ -96,12 +96,14 @@ export class ChessGame extends Game {
 		this.validMoves=getValidChessMoves(this.gamestate, 0)
 		this.player1_promotion_target=ChessPiece.ROOK
 		this.player2_promotion_target=ChessPiece.ROOK
+		this.threats=[]
 	}
 
 	doMove(move, player_number) {
 		this.gamestate=doChessMove(this.gamestate, move, player_number, {p1: this.player1_promotion_target, p2: this.player2_promotion_target})
 		this.moveLog.push(move)
 		this.validMoves=getValidChessMoves(this.gamestate, this.moveLog.length%2)
+		this.threats=getThreats(this.gamestate, this.moveLog.length%2)
 	}
 
 	onjoin(ws) {

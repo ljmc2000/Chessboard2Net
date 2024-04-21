@@ -199,7 +199,7 @@ export function getValidChessMoves(gamestate, player_number) {
 	var tmp_gamestate
 	for(var i=1; i<tmp_moves.length-1; i++) {
 		tmp_gamestate=doChessMove(gamestate,tmp_moves[i], player_number)
-		if(!incheck(tmp_gamestate, player_number)) {
+		if(getThreats(tmp_gamestate, player_number).length==0) {
 			moves+=tmp_moves[i]+'*'
 		}
 	}
@@ -207,16 +207,21 @@ export function getValidChessMoves(gamestate, player_number) {
 	return moves
 }
 
-function incheck(gamestate, player_number) {
+export function getThreats(gamestate, player_number) {
 	var king_location=gamestate.search(player_number?/[jk]/:/[JK]/)
-	var targeting_king_pattern=`${ALGERBRAIC_NAMES.encoder[king_location]}*`
+	var targeting_king_pattern=RegExp(`\\*([A-H][1-8])${ALGERBRAIC_NAMES.encoder[king_location]}\\*`,'g')
 	var potential_enemy_moves='*'
+	var threats=[]
 
 	for(var origin=0; origin<gamestate.length; origin++) {
 		potential_enemy_moves+=getMovesForPosition(gamestate, origin, !player_number)
 	}
 
-	return potential_enemy_moves.includes(targeting_king_pattern)
+	for(var move of potential_enemy_moves.matchAll(targeting_king_pattern)) {
+		threats.push(move[1])
+	}
+
+	return threats
 }
 
 export function doChessMove(gamestate, move, player_number, promotion_target) {
