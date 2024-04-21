@@ -7,7 +7,7 @@ export const IconMapTemplate: any={
   K: 'king',
 
   F: 'pawn',  //fresh
-  E: 'pawn',  //en passe
+  E: 'pawn',  //en passant
   C: 'rook',  //can castle
   J: 'king',  //can castle
 }
