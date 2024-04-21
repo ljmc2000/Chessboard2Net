@@ -8,6 +8,7 @@
   float: left;
   margin-left: 16px;
   margin-right: 16px;
+  box-sizing: border-box;
 }
 
 #gamescreen {
@@ -25,7 +26,6 @@
 }
 
 .board_show_guide {
-  max-height: 72vh !important;
   padding: 32px;
 }
 
