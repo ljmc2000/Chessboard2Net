@@ -17,7 +17,7 @@ function getMovesForPosition(gamestate, position, player_number) {
 		return ''
 
 	function move(target) {
-		return `${p_name}${ALGERBRAIC_NAMES.encoder[target]}*`
+		return (target>=0 && target<64)?`${p_name}${ALGERBRAIC_NAMES.encoder[target]}*`:``
 	}
 
 	function pawn_diagonal(target, offset, enemy_pawn, wraps) {
