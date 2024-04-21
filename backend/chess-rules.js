@@ -128,6 +128,30 @@ function getMovesForPosition(gamestate, position, player_number) {
 			moves+=std_mv(-9, (target)=>!wraps_left(position,target))
 			moves+=std_mv(-7, (target)=>!wraps_right(position,target))
 		}
+
+		if('KkJj'.includes(piece)) {
+			target=position-8
+			if(target>=0 && owner(gamestate[target])!=player_number) {
+				moves+=move(target)
+			}
+
+			target=position+8
+			if(target<64 && owner(gamestate[target])!=player_number) {
+				moves+=move(target)
+			}
+
+			for(target of [position-9, position-1, position+7]) {
+				if(!wraps_left(position,target) && owner(gamestate[target])!=player_number) {
+					moves+=move(target)
+				}
+			}
+
+			for(target of [position-7, position+1, position+9]) {
+				if(!wraps_right(position,target) && owner(gamestate[target])!=player_number) {
+					moves+=move(target)
+				}
+			}
+		}
 	}
 
 	return moves
