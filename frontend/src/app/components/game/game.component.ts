@@ -16,7 +16,7 @@ import { PlayerInfo } from 'models/playerinfo'
 import { parse_colour, set_for } from 'utils';
 
 import { ChatComponent } from 'components/chat/chat.component';
-import { Instruction as I, Game, PlayerNumber, ValidPromotionTargets } from 'shared/constants';
+import { Instruction as I, PlayerNumber, ValidPromotionTargets } from 'shared/constants';
 import { NO_GAME_MESSAGE, PRIVATE_GAME_MESSAGE } from 'constants/standard-messages';
 import { PieceNames } from 'constants/piece-names';
 import { owner, generate_algerbraic_names } from 'shared/utils';

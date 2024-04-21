@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router } from "@angular/router";
 import { HttpClient } from '@angular/common/http';
-import { NgForm } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 import { UserInfo } from 'models/user-info';

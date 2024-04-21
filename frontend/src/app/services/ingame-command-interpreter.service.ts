@@ -1,5 +1,3 @@
-import { Injectable } from '@angular/core';
-
 import { INGAME_HELP_MESSAGE, SANTAX_ERROR_MESSAGE } from 'constants/standard-messages';
 import { ChatMessage } from 'models/chat-message';
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
