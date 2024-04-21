@@ -52,6 +52,7 @@
   aspect-ratio: 1;
   font-size: 0px;
   background-color: #CCCCCC;
+  box-sizing: border-box;
 }
 
 .odd_square {
@@ -78,6 +79,10 @@
   width: 48px;
   height: 48px;
   padding: 8px;
+}
+
+.threat {
+  border: 2px solid red;
 }
 
 .upside_down {

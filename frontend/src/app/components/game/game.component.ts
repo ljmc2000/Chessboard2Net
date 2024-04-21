@@ -29,6 +29,7 @@ class _GameCommon {
   move_number: number;
   promotion_target: string;
   show_guide: boolean;
+  threats: number[]=[];
   valid_moves: string='*';
 
   ALGERBRAIC_NAMES = generate_algerbraic_names();
@@ -100,6 +101,7 @@ class _GameCommon {
   updateGamestate(msg: GameState) {
     this.move_number=msg.move_number;
     this.gamestate=msg.gamestate;
+    this.threats=msg.threats;
   }
 }
 

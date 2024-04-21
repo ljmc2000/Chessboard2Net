@@ -218,7 +218,7 @@ export function getThreats(gamestate, player_number) {
 	}
 
 	for(var move of potential_enemy_moves.matchAll(targeting_king_pattern)) {
-		threats.push(move[1])
+		threats.push(ALGERBRAIC_NAMES.decoder[move[1]])
 	}
 
 	return threats

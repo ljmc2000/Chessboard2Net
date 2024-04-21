@@ -8,6 +8,7 @@ class Game extends EventEmitter {
 	moveLog=[]
 	player1={user_id: null}
 	player2={user_id: null}
+	threats=[]
 
 	doMove(move, player) {
 	}
@@ -96,7 +97,6 @@ export class ChessGame extends Game {
 		this.validMoves=getValidChessMoves(this.gamestate, 0)
 		this.player1_promotion_target=ChessPiece.ROOK
 		this.player2_promotion_target=ChessPiece.ROOK
-		this.threats=[]
 	}
 
 	doMove(move, player_number) {
