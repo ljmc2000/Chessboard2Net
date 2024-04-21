@@ -188,12 +188,35 @@ function pieceAfterMove(piece) {
 }
 
 export function getValidChessMoves(gamestate, player_number) {
+	var tmp_moves = '*'
 	var moves = '*'
 
 	for(var origin=0; origin<gamestate.length; origin++) {
-		moves+=getMovesForPosition(gamestate, origin, player_number)
+		tmp_moves+=getMovesForPosition(gamestate, origin, player_number)
 	}
+	tmp_moves=tmp_moves.split('*')
+
+	var tmp_gamestate
+	for(var i=1; i<tmp_moves.length-1; i++) {
+		tmp_gamestate=doChessMove(gamestate,tmp_moves[i], player_number)
+		if(!incheck(tmp_gamestate, player_number)) {
+			moves+=tmp_moves[i]+'*'
+		}
+	}
+
 	return moves
+}
+
+function incheck(gamestate, player_number) {
+	var king_location=gamestate.search(player_number?/[jk]/:/[JK]/)
+	var targeting_king_pattern=`${ALGERBRAIC_NAMES.encoder[king_location]}*`
+	var potential_enemy_moves='*'
+
+	for(var origin=0; origin<gamestate.length; origin++) {
+		potential_enemy_moves+=getMovesForPosition(gamestate, origin, !player_number)
+	}
+
+	return potential_enemy_moves.includes(targeting_king_pattern)
 }
 
 export function doChessMove(gamestate, move, player_number, promotion_target) {
