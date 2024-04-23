@@ -38,6 +38,14 @@ create table game_logs (
 	foreign key (ender) references users(user_id)
 );
 
+create view game_logs_view as
+select game_id, game, movelog, conclusion,
+json_build_object('user_id',game_logs.player1, 'username',p1.username, 'favourite_colour',player1_colour, 'prefered_set',player1_prefered_set) player1,
+json_build_object('user_id',game_logs.player2, 'username',p2.username, 'favourite_colour',player2_colour, 'prefered_set',player2_prefered_set) player2
+from game_logs
+join users p1 on (p1.user_id=player1)
+join users p2 on (p2.user_id=player2);
+
 create unique index case_insensitive_usernames on users (upper(username));
 
 create or replace function unlock_set()
@@ -61,3 +69,4 @@ execute function unlock_set();
 
 --grant select,insert,update on users
 --grant select,insert on game_logs
+--grant select on game_logs_view

@@ -3,6 +3,16 @@ import { user_info } from './utils.js'
 
 export default function (app, db) {
 
+	app.get('/api/game_logs/:page', async (req, resp, on_error) => {
+		try {
+			var games = await db.pool.query("select * from game_logs_view limit 50 offset $1", [req.params.page])
+			resp.json(games.rows)
+		}
+		catch(err) {
+			on_error(err)
+		}
+	})
+
 	app.get('/api/list_users/:page', async (req, resp, on_error) => {
 		try {
 			var users = await db.pool.query(`select user_id, username, prefered_set, favourite_colour, current_gameid, current_gametype from users where (profile_flags & ${UserProfileFlag.VISIBLE_AS_ONLINE})!=0 limit 50 offset $1`,[req.params.page])
