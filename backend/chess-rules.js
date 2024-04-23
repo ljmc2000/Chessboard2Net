@@ -49,7 +49,7 @@ function getMovesForPosition(gamestate, position, player_number) {
 	var moves = ''
 	var piece = gamestate[position]
 	var p_name = ALGERBRAIC_NAMES.encoder[position]
-	var target, offset
+	var target, offset, tmp_gamestate
 
 	if(owner(piece)==player_number) {
 
@@ -154,19 +154,33 @@ function getMovesForPosition(gamestate, position, player_number) {
 		}
 
 		if('J'==piece) {
-			if(gamestate.substring(61,64)=='  C') {
+			tmp_gamestate=gamestate.replaceAll('j','k')
+			if(gamestate.substring(61,64)=='  C'
+				&& getThreats(tmp_gamestate,player_number,60).length==0
+				&& getThreats(tmp_gamestate,player_number,61).length==0
+			) {
 				moves+='E1H1*'
 			}
-			if(gamestate.substring(56,60)=='C   ') {
+			if(gamestate.substring(56,60)=='C   '
+				&& getThreats(tmp_gamestate,player_number,60).length==0
+				&& getThreats(tmp_gamestate,player_number,59).length==0
+			) {
 				moves+='E1A1*'
 			}
 		}
 
 		if('j'==piece) {
-			if(gamestate.substring(5,8)=='  c') {
+			tmp_gamestate=gamestate.replaceAll('J','K')
+			if(gamestate.substring(5,8)=='  c'
+				&& getThreats(tmp_gamestate,player_number,4).length==0
+				&& getThreats(tmp_gamestate,player_number,5).length==0
+			) {
 				moves+='E8H8*'
 			}
-			if(gamestate.substring(0,4)=='c   ') {
+			if(gamestate.substring(0,4)=='c   '
+				&& getThreats(tmp_gamestate,player_number,4).length==0
+				&& getThreats(tmp_gamestate,player_number,3).length==0
+			) {
 				moves+='E8A8*'
 			}
 		}
@@ -207,8 +221,7 @@ export function getValidChessMoves(gamestate, player_number) {
 	return moves
 }
 
-export function getThreats(gamestate, player_number) {
-	var king_location=gamestate.search(player_number?/[jk]/:/[JK]/)
+export function getThreats(gamestate, player_number, king_location=gamestate.search(player_number?/[jk]/:/[JK]/)) {
 	var targeting_king_pattern=RegExp(`\\*([A-H][1-8])${ALGERBRAIC_NAMES.encoder[king_location]}\\*`,'g')
 	var potential_enemy_moves='*'
 	var threats=[]
