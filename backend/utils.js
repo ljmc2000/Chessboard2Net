@@ -8,9 +8,9 @@ export function create_login_expiry()
 export function unlocked_sets(user) {
 	var sets=[ChessSet.DOODLES]
 
-	for(var i in user.unlocked_sets) {
+	for(var i=0; i<user.unlocked_sets.length; i++) {
 		if(user.unlocked_sets[i]=='1') {
-			sets.push(i)
+			sets.push(user.unlocked_sets.length-1-i)
 		}
 	}
 
