@@ -5,7 +5,17 @@ export default function (app, db) {
 
 	app.get('/api/game_logs/:page', async (req, resp, on_error) => {
 		try {
-			var games = await db.pool.query("select * from game_logs_view limit 50 offset $1", [req.params.page])
+			var sql = "select * from game_logs_view"
+			var parameters = [+req.params.page]
+
+			if(req.query.username) {
+				sql+= ` where player1->>'username'=$${parameters.length+1} or player2->>'username'=$${parameters.length+1}`
+				parameters.push(req.query.username)
+			}
+
+			sql+=" limit 50 offset $1"
+
+			var games = await db.pool.query(sql, parameters)
 			resp.json(games.rows)
 		}
 		catch(err) {
