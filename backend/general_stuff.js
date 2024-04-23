@@ -3,9 +3,22 @@ import { user_info } from './utils.js'
 
 export default function (app, db) {
 
+	app.get('/api/game_log/:game_id', async (req, resp, on_error) => {
+		try {
+			var game = await db.pool.query("select * from game_logs_view where game_id=$1", [req.params.game_id])
+			if(game.rowCount==1)
+				resp.json(game.rows[0])
+			else
+				resp.status(404).send('')
+		}
+		catch(err) {
+			on_error(err)
+		}
+	})
+
 	app.get('/api/game_logs/:page', async (req, resp, on_error) => {
 		try {
-			var sql = "select * from game_logs_view"
+			var sql = "select game_id, game, conclusion, player1, player2, winner from game_logs_view"
 			var parameters = [+req.params.page]
 
 			if(req.query.username) {
