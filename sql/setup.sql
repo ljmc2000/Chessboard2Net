@@ -26,10 +26,12 @@ create table game_logs (
 	player1 character(32),
 	player2 character(32),
 	movelog varchar(18)[],
+	ender character(32),
 	conclusion endstate,
 
 	foreign key (player1) references users(user_id),
-	foreign key (player2) references users(user_id)
+	foreign key (player2) references users(user_id),
+	foreign key (ender) references users(user_id)
 );
 
 create unique index case_insensitive_usernames on users (upper(username));
