@@ -13,7 +13,7 @@ import { parse_colour, set_for } from 'utils';
 import { UserInfo } from 'models/user-info';
 import { PieceColourService } from 'services/piece-colour.service';
 import { UserService } from 'services/user.service';
-import { UserProfileFlag } from 'shared/constants';
+import { ChessSet, UserProfileFlag } from 'shared/constants';
 
 @Component({
   selector: 'app-settings',
@@ -23,6 +23,8 @@ import { UserProfileFlag } from 'shared/constants';
   styleUrl: './settings.component.css'
 })
 export class SettingsComponent {
+
+  AVAILABLE_SETS: number[]=Object.values(ChessSet);
 
   user_id: string;
   username: string;

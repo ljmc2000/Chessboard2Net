@@ -5,7 +5,7 @@
 <h2>Prefered Set</h2>
 <mat-icon
   class="set_icon"
-  *ngFor="let s of [1,2,4]; index as i"
+  *ngFor="let s of AVAILABLE_SETS; index as i"
   [svgIcon]="setFor(s)"
   [ngClass]="{'selected-set': prefered_set==s}"
   (click)="setFavoriteSet(s)" />

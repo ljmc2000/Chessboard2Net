@@ -5,15 +5,13 @@ export function create_login_expiry()
 	return new Date(new Date().valueOf()+2592000000) //30 days hence
 }
 
-export async function unlocked_sets(user, db) {
+export function unlocked_sets(user) {
 	var sets=[ChessSet.DOODLES]
 
-	if(false) {
-		sets.push(ChessSet.GOBLINS)
-	}
-
-	if(false) {
-		sets.push(ChessSet.TEATIME)
+	for(var i in user.unlocked_sets) {
+		if(user.unlocked_sets[i]=='1') {
+			sets.push(i)
+		}
 	}
 
 	return sets
@@ -26,7 +24,7 @@ export async function user_info(user, db) {
 		profile_flags: user.profile_flags,
 		prefered_set: user.prefered_set,
 		favourite_colour: user.favourite_colour,
-		unlocked_sets: await unlocked_sets(user, db),
+		unlocked_sets: unlocked_sets(user),
 		current_gameid: user.current_gameid,
 		current_gametype: user.current_gametype,
 		hidden_profile: 0!=(user.profile_flags & UserProfileFlag.VISIBLE_AS_ONLINE),

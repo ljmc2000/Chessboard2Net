@@ -2,7 +2,7 @@ export const LOGIN_TOKEN='login_token'
 export const GAME_MESSAGE='game_message'
 export const GAME_END='game_end'
 
-export const ChessSet = { DOODLES: 1, GOBLINS: 2, TEATIME: 4 }
+export const ChessSet = { DOODLES: -1, GOBLINS: 0, TEATIME: 1 }
 export const EndState = { SURRENDER: 'surrender', CHECKMATE: 'checkmate' }
 export const Game = { CHECKERS: 'checkers', CHESS: 'chess' }
 export const PlayerNumber = { ONE: 0, TWO: 1, NOBODY: -2, INVALID: -1 }

@@ -9,7 +9,8 @@ create table users (
 	login_expires timestamp,
 
 	profile_flags integer default 0,
-	prefered_set integer default 0,
+	unlocked_sets bit varying(3),
+	prefered_set integer,
 	favourite_colour integer default 16777215,
 
 	current_gameid character(38),
