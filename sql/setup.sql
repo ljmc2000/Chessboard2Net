@@ -41,7 +41,14 @@ create table game_logs (
 create view game_logs_view as
 select game_id, game, movelog, conclusion,
 json_build_object('user_id',game_logs.player1, 'username',p1.username, 'favourite_colour',player1_colour, 'prefered_set',player1_prefered_set) player1,
-json_build_object('user_id',game_logs.player2, 'username',p2.username, 'favourite_colour',player2_colour, 'prefered_set',player2_prefered_set) player2
+json_build_object('user_id',game_logs.player2, 'username',p2.username, 'favourite_colour',player2_colour, 'prefered_set',player2_prefered_set) player2,
+case when conclusion='checkmate' then
+	case
+		when p1.user_id=ender then 'player1'
+		when p2.user_id=ender then 'player2'
+		else null
+	end
+else null end as winner
 from game_logs
 join users p1 on (p1.user_id=player1)
 join users p2 on (p2.user_id=player2);
