@@ -9,7 +9,7 @@ create table users (
 	login_expires timestamp,
 
 	profile_flags integer default 0,
-	unlocked_sets bit varying(3),
+	unlocked_sets bit(2) default b'00',
 	prefered_set integer,
 	favourite_colour integer default 16777215,
 
@@ -39,6 +39,25 @@ create table game_logs (
 );
 
 create unique index case_insensitive_usernames on users (upper(username));
+
+create or replace function unlock_set()
+	returns trigger as
+$$
+begin
+	update users set "unlocked_sets"=unlocked_sets |
+		case
+			when NEW.game='chess' then b'10'
+			when NEW.game='checkers' then b'01'
+		end
+	where users.user_id=NEW.ender;
+	return NEW;
+end;
+$$ language plpgsql;
+
+create or replace trigger unlock_set_trigger after insert on game_logs
+for each row
+when (NEW.conclusion='checkmate')
+execute function unlock_set();
 
 --grant select,insert,update on users
 --grant select,insert on game_logs
