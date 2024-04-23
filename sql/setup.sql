@@ -24,7 +24,11 @@ create table game_logs (
 	game gametype,
 
 	player1 character(32),
+	player1_colour integer,
+	player1_prefered_set integer,
 	player2 character(32),
+	player2_colour integer,
+	player2_prefered_set integer,
 	movelog varchar(18)[],
 	ender character(32),
 	conclusion endstate,

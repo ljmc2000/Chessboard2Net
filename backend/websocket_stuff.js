@@ -143,14 +143,15 @@ export default (app, http_server, db) => {
 
 			game.onend=async function(endstate, player) {
 				await db.pool.query("BEGIN")
-				await db.pool.query("insert into game_logs (game_id, game, player1, player2, movelog, conclusion, ender) values ($1,$2,$3,$4,$5,$6,$7)",[
-					this.game_id,
-					user.current_gametype,
-					this.player1.user_id,
-					this.player2.user_id,
-					this.moveLog,
-					endstate,
-					player.user_id,
+				await db.pool.query("insert into game_logs (game_id, game,"
+				+"player1, player1_colour, player1_prefered_set,"
+				+"player2, player2_colour, player2_prefered_set,"
+				+"movelog, conclusion, ender) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
+				[
+					this.game_id, user.current_gametype,
+					this.player1.user_id, this.player1.favorite_colour, this.player1.prefered_set,
+					this.player2.user_id, this.player2.favorite_colour, this.player2.prefered_set,
+					this.moveLog, endstate, player.user_id,
 				])
 				await db.pool.query("update users set current_gameid=null, current_gametype=null where current_gameid=$1", [this.game_id])
 				await db.pool.query("COMMIT")
