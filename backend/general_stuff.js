@@ -13,7 +13,7 @@ export default function (app, db) {
 				parameters.push(req.query.username)
 			}
 
-			sql+=" limit 50 offset $1"
+			sql+=" limit 50 offset $1*50"
 
 			var games = await db.pool.query(sql, parameters)
 			resp.json(games.rows)
@@ -25,7 +25,7 @@ export default function (app, db) {
 
 	app.get('/api/list_users/:page', async (req, resp, on_error) => {
 		try {
-			var users = await db.pool.query(`select user_id, username, prefered_set, favourite_colour, current_gameid, current_gametype from users where (profile_flags & ${UserProfileFlag.VISIBLE_AS_ONLINE})!=0 limit 50 offset $1`,[req.params.page])
+			var users = await db.pool.query(`select user_id, username, prefered_set, favourite_colour, current_gameid, current_gametype from users where (profile_flags & ${UserProfileFlag.VISIBLE_AS_ONLINE})!=0 limit 50 offset $1*50`,[req.params.page])
 			resp.json(users.rows)
 		}
 		catch(err) {
