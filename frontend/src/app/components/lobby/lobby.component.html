@@ -1,7 +1,7 @@
 <div *ngFor="let user of online_users | keyvalue" class="user_badge">
   <mat-icon
     class="icon"
-    [ngClass]="user.value.favourite_colour.toString(16)"
+    [ngClass]="classNameForColour(user.value.favourite_colour)"
     [svgIcon]="iconFor(user.value.prefered_set)" />
   <div class="details">
     <div class="username">{{user.value.username}}</div>

@@ -60,12 +60,16 @@ export class LobbyComponent {
     }
     else {
       this.online_users.set(user.user_id, user);
-      this.colourService.setColour(user.favourite_colour.toString(16), 'custom_colour', parse_colour(user.favourite_colour));
+      this.colourService.setColour(this.classNameForColour(user.favourite_colour), 'custom_colour', parse_colour(user.favourite_colour));
     }
   }
 
   iconFor(set_id: number): string {
     return set_for(set_id)+"/pawn";
+  }
+
+  classNameForColour(color_id: number): string {
+    return 'c'+color_id;
   }
 }
 
