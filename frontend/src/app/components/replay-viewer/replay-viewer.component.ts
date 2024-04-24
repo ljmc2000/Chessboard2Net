@@ -7,11 +7,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
-import { getDefaultIconMap, getReversedDefaultIconMap } from 'constants/iconmap-template';
+import { IconMapTemplate, getDefaultIconMap, getReversedDefaultIconMap } from 'constants/iconmap-template';
 import { GameLog } from 'models/gamelog';
 import { PieceColourService } from 'services/piece-colour.service';
 import { ReplayService } from 'services/replay.service';
-import { parse_colour } from 'utils';
+import { parse_colour, set_for } from 'utils';
 import { CHESS_DEFAULT_GAMESTATE, doChessMove } from 'shared/chess-rules';
 import { CHECKERS_DEFAULT_GAMESTATE, doCheckersMove } from 'shared/checkers-rules';
 import { Game, PlayerNumber } from 'shared/constants';
@@ -74,6 +74,13 @@ export class ReplayViewerComponent {
         gamestate=doMove(gamestate, replay.movelog[i].slice(j,j+4), i%2);
         this.calculatedBoardStates.push(gamestate);
       }
+    }
+
+    for(var key in IconMapTemplate) {
+      this.iconMap[key.toUpperCase()]=`${set_for(replay.player1.prefered_set)}/${IconMapTemplate[key]}_back`;
+      this.iconMap[key.toLowerCase()]=`${set_for(replay.player2.prefered_set)}/${IconMapTemplate[key]}`;
+      this.reversedIconMap[key.toUpperCase()]=`${set_for(replay.player1.prefered_set)}/${IconMapTemplate[key]}`;
+      this.reversedIconMap[key.toLowerCase()]=`${set_for(replay.player2.prefered_set)}/${IconMapTemplate[key]}_back`;
     }
 
     this.colourService.setColour('player1', 'custom_colour', parse_colour(replay.player1.favourite_colour));
