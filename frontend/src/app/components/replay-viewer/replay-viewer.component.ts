@@ -2,18 +2,20 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
+import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
+import { getDefaultIconMap, getReversedDefaultIconMap } from 'constants/iconmap-template';
 import { GameLog } from 'models/gamelog';
+import { PieceColourService } from 'services/piece-colour.service';
 import { ReplayService } from 'services/replay.service';
+import { parse_colour } from 'utils';
 import { CHESS_DEFAULT_GAMESTATE, doChessMove } from 'shared/chess-rules';
 import { CHECKERS_DEFAULT_GAMESTATE, doCheckersMove } from 'shared/checkers-rules';
 import { Game, PlayerNumber } from 'shared/constants';
-import { getDefaultIconMap, getReversedDefaultIconMap } from 'constants/iconmap-template';
 import { owner } from 'shared/utils';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-replay-viewer',
@@ -25,14 +27,17 @@ import { FormsModule } from '@angular/forms';
 export class ReplayViewerComponent {
 
   asPlayer2: boolean=false;
-  replay: GameLog;
   calculatedBoardStates: string[]=[" ".repeat(64)];
   iconMap = getDefaultIconMap();
   reversedIconMap = getReversedDefaultIconMap();
   pageIndex: number=0;
   showGuide: boolean;
 
-  constructor (replayService: ReplayService, route: ActivatedRoute) {
+  constructor (
+    private colourService: PieceColourService,
+    replayService: ReplayService,
+    route: ActivatedRoute,
+  ) {
     route.paramMap.subscribe((params)=>{
       replayService.getReplay(params.get("game_id")).subscribe((replay)=>this.onRecieveReplay(replay));
     });
@@ -47,7 +52,6 @@ export class ReplayViewerComponent {
   }
 
   onRecieveReplay(replay: GameLog) {
-    this.replay=replay;
     var gamestate: string;
     var doMove: Function;
 
@@ -71,5 +75,8 @@ export class ReplayViewerComponent {
         this.calculatedBoardStates.push(gamestate);
       }
     }
+
+    this.colourService.setColour('player1', 'custom_colour', parse_colour(replay.player1.favourite_colour));
+    this.colourService.setColour('player2', 'custom_colour', parse_colour(replay.player2.favourite_colour));
   }
 }
