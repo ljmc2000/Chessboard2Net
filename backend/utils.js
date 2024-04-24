@@ -1,8 +1,12 @@
-import { ChessSet, UserProfileFlag } from './shared/constants.js'
+import { PAGE_SIZE, ChessSet, UserProfileFlag } from './shared/constants.js'
 
 export function create_login_expiry()
 {
 	return new Date(new Date().valueOf()+2592000000) //30 days hence
+}
+
+export function page(data) {
+	return {data: data.rows.slice(0,PAGE_SIZE), is_last: data.rowCount<=PAGE_SIZE}
 }
 
 export function unlocked_sets(user) {

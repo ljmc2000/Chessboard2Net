@@ -1,5 +1,5 @@
 import { PAGE_SIZE, UserProfileFlag } from './shared/constants.js'
-import { user_info } from './utils.js'
+import { page, user_info } from './utils.js'
 
 export default function (app, db) {
 
@@ -26,10 +26,10 @@ export default function (app, db) {
 				parameters.push(req.query.username)
 			}
 
-			sql+=` limit ${PAGE_SIZE} offset $1*${PAGE_SIZE}`
+			sql+=` limit ${PAGE_SIZE+1} offset $1*${PAGE_SIZE}`
 
 			var games = await db.pool.query(sql, parameters)
-			resp.json({data: games.rows.slice(0,PAGE_SIZE), last: games.rowCount<PAGE_SIZE+1})
+			resp.json(page(games))
 		}
 		catch(err) {
 			on_error(err)
@@ -38,8 +38,8 @@ export default function (app, db) {
 
 	app.get('/api/list_users/:page', async (req, resp, on_error) => {
 		try {
-			var users = await db.pool.query(`select user_id, username, prefered_set, favourite_colour, current_gameid, current_gametype from users where (profile_flags & ${UserProfileFlag.VISIBLE_AS_ONLINE})!=0 limit ${PAGE_SIZE} offset $1*${PAGE_SIZE}`,[req.params.page])
-			resp.json(users.rows)
+			var users = await db.pool.query(`select user_id, username, prefered_set, favourite_colour, current_gameid, current_gametype from users where (profile_flags & ${UserProfileFlag.VISIBLE_AS_ONLINE})!=0 limit ${PAGE_SIZE+1} offset $1*${PAGE_SIZE}`,[req.params.page])
+			resp.json(page(users))
 		}
 		catch(err) {
 			on_error(err)

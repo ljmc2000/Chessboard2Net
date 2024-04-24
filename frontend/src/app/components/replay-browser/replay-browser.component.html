@@ -2,12 +2,12 @@
                (page)="handlePageEvent($event)"
                [pageSize]="pageSize"
                [pageIndex]="pageIndex"
-               [length]="itemCount"
+               [length]="itemCount+(last_page<pageIndex?1:0)"
                hidePageSize="true"
                aria-label="Select page">
 </mat-paginator>
 
-<table mat-table [dataSource]="replay_data[pageIndex]">
+<table mat-table [dataSource]="replay_data.get(pageIndex)||[]">
   <ng-container matColumnDef="game">
     <th mat-header-cell *matHeaderCellDef>Game</th>
     <td mat-cell *matCellDef="let replay"> {{replay.game}} </td>
