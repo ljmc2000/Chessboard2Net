@@ -1,10 +1,10 @@
 import pg from 'pg'
 
 export const pool = new pg.Pool({
-	user: 'chessboardnet',
+	user: process.env.CHESSBOARDNET_DATABASE_USER,
 	password: process.env.CHESSBOARDNET_DATABASE_PASSWORD,
 	host: process.env.CHESSBOARDNET_DATABASE_HOST,
-	database: 'chessboardnet',
+	database: process.env.CHESSBOARDNET_DATABASE_NAME,
 	port:5432,
 })
 
