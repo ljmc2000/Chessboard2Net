@@ -9,7 +9,7 @@ The frontend is angular, so you should just be able to just run `ng --serve`.
 I've been running the backend with node [21.7.3]. You'll need to provide database configuration with environment variables.
 ```
 npm install;
-export CHESSBOARDNET_DATABASE_USER='mr chessman';
+export CHESSBOARDNET_DATABASE_USER='chessmaster';
 export CHESSBOARDNET_DATABASE_PASSWORD='********';
 export CHESSBOARDNET_DATABASE_HOST='mypostgresdatabse.foo';
 export CHESSBOARDNET_DATABASE_NAME='the_chess_database';
