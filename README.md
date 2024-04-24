@@ -28,4 +28,4 @@ Then deploy to nginx with the config attached. Note: If serving the page as http
 The backend should work the same as above, just add the extra environment variable `NODE_ENV='production'`
 
 # See it in action
-At time of writing there's a live instance on `https://chessboardnet.delilahsthings.ie`. I might not maintain it forever, but for now feel free to mess around with it.
+At time of writing there's a live instance [here](https://chessboardnet.delilahsthings.ie). I might not maintain it forever, but for now feel free to mess around with it.
