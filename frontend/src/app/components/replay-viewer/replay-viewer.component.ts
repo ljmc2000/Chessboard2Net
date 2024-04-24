@@ -61,7 +61,7 @@ export class ReplayViewerComponent {
         throw new Error("unsupported game type");
     }
 
-    this.calculatedBoardStates.push(gamestate)
+    this.calculatedBoardStates=[gamestate];
     for(var i=0; i<replay.movelog.length; i++) {
       gamestate=doMove(gamestate, replay.movelog[i], i%2);
       this.calculatedBoardStates.push(gamestate);

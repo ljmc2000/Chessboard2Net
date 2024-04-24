@@ -17,7 +17,7 @@ export function getDefaultIconMap(): any {
   icon_map[' ']=`blank`;
 
   for(var key in IconMapTemplate) {
-    icon_map[key.toUpperCase()]=`doodles/${IconMapTemplate[key]}`;
+    icon_map[key.toUpperCase()]=`doodles/${IconMapTemplate[key]}_back`;
     icon_map[key.toLowerCase()]=`doodles/${IconMapTemplate[key]}`;
   }
 
