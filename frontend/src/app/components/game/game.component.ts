@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 
 import { ChessWebsocketHandlerService } from 'services/chess-websocket-handler.service';
-import { IconMapTemplate } from 'constants/iconmap-template';
+import { IconMapTemplate, getDefaultIconMap } from 'constants/iconmap-template';
 import { GameState } from 'models/gamestate';
 import { PieceColourService } from 'services/piece-colour.service';
 import { PlayerInfo } from 'models/playerinfo'
@@ -34,7 +34,7 @@ class _GameCommon {
 
   ALGERBRAIC_NAMES = generate_algerbraic_names();
   VALID_PROMOTION_TARGETS = ValidPromotionTargets;
-  icon_map: any={};
+  icon_map: any=getDefaultIconMap();
   player1_set: string="doodles";
   player2_set: string="doodles";
   player_number: number;
@@ -46,12 +46,6 @@ class _GameCommon {
     ws.on(I.GOVER, ()=>this.in_game=false);
     ws.on(I.GST, (msg: GameState)=>this.updateGamestate(msg));
     ws.on(I.PINF, (msg: PlayerInfo)=>this.onPlayerInfo(msg));
-
-    this.icon_map[' ']=`blank`
-    for(var key in IconMapTemplate) {
-      this.icon_map[key.toUpperCase()]=`doodles/${IconMapTemplate[key]}`
-      this.icon_map[key.toLowerCase()]=`doodles/${IconMapTemplate[key]}`
-    }
   }
 
   finishMove(): void {};

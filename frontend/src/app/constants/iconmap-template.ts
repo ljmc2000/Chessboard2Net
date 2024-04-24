@@ -11,3 +11,15 @@ export const IconMapTemplate: any={
   C: 'rook',  //can castle
   J: 'king',  //can castle
 }
+
+export function getDefaultIconMap(): any {
+  var icon_map: any={};
+  icon_map[' ']=`blank`;
+
+  for(var key in IconMapTemplate) {
+    icon_map[key.toUpperCase()]=`doodles/${IconMapTemplate[key]}`;
+    icon_map[key.toLowerCase()]=`doodles/${IconMapTemplate[key]}`;
+  }
+
+  return icon_map;
+}
