@@ -1,0 +1,15 @@
+[Unit]
+Description=Chessboard2Net backend
+After=network.target
+
+[Service]
+RestartSec=2s
+WorkingDirectory=/opt/chessboard2net
+User=www-data
+Group=www-data
+ExecStart=/usr/bin/node index.js
+Restart=always
+Environment=NODE_ENV='production' CHESSBOARDNET_DATABASE_USER='…' CHESSBOARDNET_DATABASE_PASSWORD='…' CHESSBOARDNET_DATABASE_HOST='…' CHESSBOARDNET_DATABASE_NAME='…'
+
+[Install]
+WantedBy=multi-user.target
