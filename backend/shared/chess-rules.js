@@ -1,4 +1,4 @@
-import { generate_algerbraic_names, owner, same_row, wraps_left, wraps_right } from './shared/utils.js'
+import { generate_algerbraic_names, owner, same_row, wraps_left, wraps_right } from './utils.js'
 
 const ALGERBRAIC_NAMES=generate_algerbraic_names()
 
