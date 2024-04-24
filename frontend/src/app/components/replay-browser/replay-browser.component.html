@@ -1,1 +1,33 @@
-<p>replay-browser works!</p>
+<table mat-table [dataSource]="replay_data">
+  <ng-container matColumnDef="game">
+    <th mat-header-cell *matHeaderCellDef>Game</th>
+    <td mat-cell *matCellDef="let replay"> {{replay.game}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="conclusion">
+    <th mat-header-cell *matHeaderCellDef>Ending</th>
+    <td mat-cell *matCellDef="let replay"> {{replay.conclusion}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="player1">
+    <th mat-header-cell *matHeaderCellDef>Player 1</th>
+    <td mat-cell *matCellDef="let replay" [ngClass]="{'winner': replay.winner=='player1'}">
+      {{replay.player1.username}}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="player2">
+    <th mat-header-cell *matHeaderCellDef>Player 2</th>
+    <td mat-cell *matCellDef="let replay" [ngClass]="{'winner': replay.winner=='player2'}">
+      {{replay.player2.username}}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="replay">
+    <th mat-header-cell *matHeaderCellDef>Replay</th>
+    <td mat-cell *matCellDef="let replay"> <a [href]="'/replay/'+replay.game_id">{{replay.game_id}}</a> </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayed_columns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayed_columns;"></tr>
+</table>
