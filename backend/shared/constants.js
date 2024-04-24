@@ -1,6 +1,7 @@
 export const LOGIN_TOKEN='login_token'
 export const GAME_MESSAGE='game_message'
 export const GAME_END='game_end'
+export const PAGE_SIZE=50
 
 export const ChessSet = { DOODLES: -1, GOBLINS: 0, TEATIME: 1 }
 export const EndState = { SURRENDER: 'surrender', CHECKMATE: 'checkmate' }

@@ -1,4 +1,13 @@
-<table mat-table [dataSource]="replay_data">
+<mat-paginator #paginator
+               (page)="handlePageEvent($event)"
+               [pageSize]="pageSize"
+               [pageIndex]="pageIndex"
+               [length]="itemCount"
+               hidePageSize="true"
+               aria-label="Select page">
+</mat-paginator>
+
+<table mat-table [dataSource]="replay_data[pageIndex]">
   <ng-container matColumnDef="game">
     <th mat-header-cell *matHeaderCellDef>Game</th>
     <td mat-cell *matCellDef="let replay"> {{replay.game}} </td>

@@ -1,6 +1,7 @@
 export const LOGIN_TOKEN: string
 export const GAME_MESSAGE: string
 export const GAME_END: string
+export const PAGE_SIZE: number
 
 export const ChessSet: { DOODLES: number, GOBLINS: number, TEATIME: number }
 export const EndState: { SURRENDER: string, CHECKMATE: string }
