@@ -1,18 +1,21 @@
-<span id="board" [ngClass]="{'upside_down': upsideDown, 'board_show_guide': showGuide}">
+<span id="board" [ngClass]="{'upside_down': asPlayer2, 'board_show_guide': showGuide}">
   <mat-icon
     class="square"
     *ngFor="let piece of calculatedBoardStates[pageIndex].split(''); index as i"
-    [svgIcon]="iconMap[piece]"
+    [svgIcon]="asPlayer2?reversedIconMap[piece]:iconMap[piece]"
     [ngClass]="{'odd_square': (i%2==1) != (i%16>=8),
                 'player1': isPlayer1(piece),
                 'player2': !isPlayer1(piece),
-                'upside_down': upsideDown}" />
-
-  <mat-paginator #paginator
-    pageSize="1"
-    hidePageSize="true"
-    aria-label="Select page"
-    (page)="handlePageEvent($event)"
-    [pageIndex]="pageIndex"
-    [length]="calculatedBoardStates.length" />
+                'upside_down': asPlayer2}" />
 </span>
+
+<mat-paginator #paginator
+  pageSize="1"
+  hidePageSize="true"
+  aria-label="Select page"
+  style="display: inline-flex"
+  (page)="handlePageEvent($event)"
+  [pageIndex]="pageIndex"
+  [length]="calculatedBoardStates.length" />
+
+  <mat-checkbox [(ngModel)]="asPlayer2">View as Player 2</mat-checkbox>

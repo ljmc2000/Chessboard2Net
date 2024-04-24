@@ -23,3 +23,15 @@ export function getDefaultIconMap(): any {
 
   return icon_map;
 }
+
+export function getReversedDefaultIconMap(): any {
+  var icon_map: any={};
+  icon_map[' ']=`blank`;
+
+  for(var key in IconMapTemplate) {
+    icon_map[key.toUpperCase()]=`doodles/${IconMapTemplate[key]}`;
+    icon_map[key.toLowerCase()]=`doodles/${IconMapTemplate[key]}_back`;
+  }
+
+  return icon_map;
+}
