@@ -66,8 +66,10 @@ export class ReplayViewerComponent {
 
     this.calculatedBoardStates=[gamestate];
     for(var i=0; i<replay.movelog.length; i++) {
-      gamestate=doMove(gamestate, replay.movelog[i], i%2);
-      this.calculatedBoardStates.push(gamestate);
+      for(var j=0; j<=replay.movelog[i].length-4; j+=2) {
+        gamestate=doMove(gamestate, replay.movelog[i].slice(j,j+4), i%2);
+        this.calculatedBoardStates.push(gamestate);
+      }
     }
   }
 }
