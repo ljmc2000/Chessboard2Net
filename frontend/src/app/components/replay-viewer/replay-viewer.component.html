@@ -1,1 +1,18 @@
-<p>replay-viewer works!</p>
+<span id="board" [ngClass]="{'upside_down': upsideDown, 'board_show_guide': showGuide}">
+  <mat-icon
+    class="square"
+    *ngFor="let piece of calculatedBoardStates[pageIndex].split(''); index as i"
+    [svgIcon]="iconMap[piece]"
+    [ngClass]="{'odd_square': (i%2==1) != (i%16>=8),
+                'player1': isPlayer1(piece),
+                'player2': !isPlayer1(piece),
+                'upside_down': upsideDown}" />
+
+  <mat-paginator #paginator
+    pageSize="1"
+    hidePageSize="true"
+    aria-label="Select page"
+    (page)="handlePageEvent($event)"
+    [pageIndex]="pageIndex"
+    [length]="calculatedBoardStates.length" />
+</span>

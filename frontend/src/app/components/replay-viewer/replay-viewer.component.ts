@@ -1,12 +1,70 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+
+import { GameLog } from 'models/gamelog';
+import { ReplayService } from 'services/replay.service';
+import { CHESS_DEFAULT_GAMESTATE, doChessMove } from 'shared/chess-rules';
+import { CHECKERS_DEFAULT_GAMESTATE, doCheckersMove } from 'shared/checkers-rules';
+import { Game, PlayerNumber } from 'shared/constants';
+import { getDefaultIconMap } from 'constants/iconmap-template';
+import { owner } from 'shared/utils';
 
 @Component({
   selector: 'app-replay-viewer',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, MatIconModule, MatPaginatorModule],
   templateUrl: './replay-viewer.component.html',
-  styleUrl: './replay-viewer.component.css'
+  styleUrl: '../game/game.component.css'
 })
 export class ReplayViewerComponent {
 
+  replay: GameLog;
+  calculatedBoardStates: string[]=[" ".repeat(64)];
+  iconMap = getDefaultIconMap();
+  pageIndex: number=0;
+  upsideDown: boolean;
+  showGuide: boolean;
+
+  constructor (replayService: ReplayService, route: ActivatedRoute) {
+    route.paramMap.subscribe((params)=>{
+      replayService.getReplay(params.get("game_id")).subscribe((replay)=>this.onRecieveReplay(replay));
+    });
+  }
+
+  handlePageEvent(pageEvent: PageEvent) {
+    this.pageIndex=pageEvent.pageIndex;
+  }
+
+  isPlayer1(piece: string): boolean {
+    return owner(piece)==PlayerNumber.ONE;
+  }
+
+  onRecieveReplay(replay: GameLog) {
+    this.replay=replay;
+    var gamestate: string;
+    var doMove: Function;
+
+    switch(replay.game) {
+      case Game.CHESS:
+        gamestate=CHESS_DEFAULT_GAMESTATE;
+        doMove=doChessMove
+        break;
+      case Game.CHECKERS:
+        gamestate=CHECKERS_DEFAULT_GAMESTATE;
+        doMove=doCheckersMove
+        break;
+      default:
+        throw new Error("unsupported game type");
+    }
+
+    this.calculatedBoardStates.push(gamestate)
+    for(var i=0; i<replay.movelog.length; i++) {
+      gamestate=doMove(gamestate, replay.movelog[i], i%2);
+      this.calculatedBoardStates.push(gamestate);
+    }
+  }
 }

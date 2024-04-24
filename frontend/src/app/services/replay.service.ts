@@ -12,7 +12,7 @@ export class ReplayService {
 
   constructor(public http: HttpClient) { }
 
-  getReplay(game_id: string):Observable<GameLog> {
+  getReplay(game_id: string|null):Observable<GameLog> {
     return this.http.get<GameLog>(`/api/game_log/${game_id}`);
   }
 
