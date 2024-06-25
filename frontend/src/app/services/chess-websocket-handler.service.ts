@@ -54,7 +54,12 @@ export class ChessWebsocketHandlerService extends EventTarget {
   }
 
   public setupConnection() {
-    this._ws=new WebSocket(`ws://${window.location.host}/api`);
+    if(window.location.protocol=="https:") {
+      this._ws=new WebSocket(`wss://${window.location.host}/api`);
+    }
+    else {
+      this._ws=new WebSocket(`ws://${window.location.host}/api`);
+    }
     this._ws.onmessage = (msg)=>this.onMessage(msg);
     this._ws.onerror = (err)=>this.onError(err);
     this._ws.onclose = ()=>this.onClose();
